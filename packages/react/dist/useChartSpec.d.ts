@@ -5,7 +5,8 @@ export interface UseChartSpecOptions {
     x?: string;
     y?: string;
     color?: string;
+    orientation?: 'vertical' | 'horizontal';
     title?: string;
 }
-export declare function useChartSpec({ data, type, x, y, color, title }: UseChartSpecOptions): ChartSpec;
+export declare function useChartSpec({ data, type, x, y, color, orientation, title }: UseChartSpecOptions): ChartSpec;
 //# sourceMappingURL=useChartSpec.d.ts.map
