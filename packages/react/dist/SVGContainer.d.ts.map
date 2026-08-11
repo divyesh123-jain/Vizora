@@ -1,0 +1,1 @@
+{"version":3,"file":"SVGContainer.d.ts","sourceRoot":"","sources":["../src/SVGContainer.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAC1B,OAAO,EAAmB,SAAS,EAAE,MAAM,cAAc,CAAC;AAG1D,MAAM,WAAW,iBAAiB;IAChC,IAAI,EAAE,SAAS,CAAC;CACjB;AAED,eAAO,MAAM,YAAY,EAAE,KAAK,CAAC,EAAE,CAAC,iBAAiB,CAiBpD,CAAC"}
