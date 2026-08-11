@@ -8,14 +8,16 @@ export interface UseChartSpecOptions {
   x?: string;
   y?: string;
   color?: string;
+  orientation?: 'vertical' | 'horizontal';
   title?: string;
 }
 
-export function useChartSpec({ data, type, x, y, color, title }: UseChartSpecOptions): ChartSpec {
+export function useChartSpec({ data, type, x, y, color, orientation, title }: UseChartSpecOptions): ChartSpec {
   return useMemo(() => {
     if (!type && !x && !y) {
       const recommended = recommendChartSpec(data);
       if (title) recommended.title = title;
+      if (orientation) recommended.encoding.orientation = orientation;
       return recommended;
     }
 
@@ -28,7 +30,9 @@ export function useChartSpec({ data, type, x, y, color, title }: UseChartSpecOpt
         x: x ? { field: x } : undefined,
         y: y ? { field: y } : undefined,
         color: color ? { field: color } : undefined,
+        orientation,
       },
     };
-  }, [data, type, x, y, color, title]);
+  }, [data, type, x, y, color, orientation, title]);
 }
+

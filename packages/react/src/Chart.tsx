@@ -9,10 +9,12 @@ export interface ChartProps {
   x?: string;
   y?: string;
   color?: string;
+  orientation?: 'vertical' | 'horizontal';
   title?: string;
 }
 
-export const Chart: React.FC<ChartProps> = ({ data, type, x, y, color, title }) => {
-  const spec = useChartSpec({ data, type, x, y, color, title });
+export const Chart: React.FC<ChartProps> = ({ data, type, x, y, color, orientation, title }) => {
+  const spec = useChartSpec({ data, type, x, y, color, orientation, title });
   return <SVGContainer spec={spec} />;
 };
+

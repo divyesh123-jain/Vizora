@@ -6,6 +6,7 @@ export interface ChartProps {
     x?: string;
     y?: string;
     color?: string;
+    orientation?: 'vertical' | 'horizontal';
     title?: string;
 }
 export declare const Chart: React.FC<ChartProps>;
