@@ -1,44 +1,194 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090d16;
-  --foreground: #f8fafc;
+  /* Cartography of Data Color Tokens */
+  --field: #ecefea;
+  --field-bright: #f7faf5;
+  --surface-dim: #d8dbd6;
+  --contour: #1e2a22;
+  --datum: #6e756a;
+  --waypoint: #c2872e;
+  --flare: #d6502b;
+  --depth: #b9c4b4;
+  --depth-light: #dee5d7;
+  
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f1f4ef;
+  --surface-container: #ecefea;
+  --surface-container-high: #e6e9e4;
+  --surface-container-highest: #e0e3de;
+
+  --on-surface: #191c1a;
+  --on-surface-variant: #434844;
+  --outline: #747873;
+  --outline-variant: #c3c8c2;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--field);
+  color: var(--contour);
+  font-family: var(--font-source-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 0;
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(51, 65, 85, 0.4);
+/* Typography Utility Classes */
+.font-display-hero {
+  font-family: var(--font-fraunces), serif;
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 64px;
 }
 
-.glass-card {
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(51, 65, 85, 0.3);
+.font-headline-lg {
+  font-family: var(--font-fraunces), serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
 }
 
-/* Custom scrollbars */
+.font-headline-md {
+  font-family: var(--font-fraunces), serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+}
+
+.font-body-doc {
+  font-family: var(--font-source-sans), sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+.font-body-ui {
+  font-family: var(--font-source-sans), sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.font-data-spec {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  text-transform: lowercase;
+}
+
+.font-label-caps {
+  font-family: var(--font-plex-sans), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Instrumental Minimalism Panel & Grid System */
+.carto-panel {
+  background-color: var(--field-bright);
+  border: 1px solid var(--contour);
+  border-radius: 0px !important;
+  box-shadow: none !important;
+}
+
+.carto-panel-recessed {
+  background-color: var(--depth-light);
+  border: 1px solid var(--contour);
+  border-radius: 0px !important;
+  box-shadow: none !important;
+}
+
+.carto-panel-subtle {
+  background-color: var(--surface-container-high);
+  border: 1px solid rgba(110, 117, 106, 0.3);
+  border-radius: 0px !important;
+  box-shadow: none !important;
+}
+
+/* Drafting Paper Background Grid */
+.carto-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(110, 117, 106, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(110, 117, 106, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* 1px Edge-to-Edge Structural Rule */
+.carto-rule {
+  border-bottom: 1px solid var(--datum);
+  opacity: 0.25;
+}
+
+.carto-rule-strong {
+  border-bottom: 1px solid var(--contour);
+}
+
+/* Buttons & Inputs */
+.carto-btn-primary {
+  background-color: var(--waypoint);
+  color: var(--contour);
+  border: 1px solid var(--contour);
+  border-radius: 0px !important;
+  font-family: var(--font-plex-sans), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.carto-btn-primary:hover {
+  background-color: #d99a38;
+}
+
+.carto-btn-secondary {
+  background-color: transparent;
+  color: var(--contour);
+  border: 1px solid var(--contour);
+  border-radius: 0px !important;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 16px;
+  transition: background-color 0.15s ease;
+}
+
+.carto-btn-secondary:hover {
+  background-color: rgba(30, 42, 34, 0.06);
+}
+
+/* Input Fields */
+.carto-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--datum);
+  border-radius: 0px !important;
+  color: var(--contour);
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 13px;
+  padding: 6px 0;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.carto-input:focus {
+  border-bottom: 2px solid var(--waypoint);
+}
+
+/* Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: var(--field);
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 3px;
+  background: var(--datum);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: var(--contour);
 }
-
