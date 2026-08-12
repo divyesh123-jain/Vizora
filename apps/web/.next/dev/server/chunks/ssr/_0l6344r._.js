@@ -955,6 +955,15 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$packages$2f$core$2f$src$2f$f
 ;
 ;
 ;
+// Cartography of Data Palette Tokens
+const COLOR_CONTOUR = '#1e2a22';
+const COLOR_DATUM = '#6e756a';
+const COLOR_WAYPOINT = '#c2872e';
+const COLOR_FLARE = '#d6502b';
+const COLOR_DEPTH = '#b9c4b4';
+const COLOR_GRID_LINE = 'rgba(110, 117, 106, 0.2)';
+const FONT_MONO = 'IBM Plex Mono, monospace';
+const FONT_SERIF = 'Fraunces, serif';
 function buildSceneGraph(inputSpec) {
     const spec = (0, __TURBOPACK__imported__module__$5b$project$5d2f$packages$2f$core$2f$src$2f$spec$2f$validate$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["validateChartSpec"])(inputSpec);
     const width = spec.config?.width ?? 600;
@@ -982,10 +991,10 @@ function buildSceneGraph(inputSpec) {
                 x: width / 2,
                 y: 24,
                 'text-anchor': 'middle',
-                fill: '#f8fafc',
-                'font-size': 16,
+                fill: COLOR_CONTOUR,
+                'font-size': 15,
                 'font-weight': '600',
-                'font-family': 'sans-serif'
+                'font-family': FONT_SERIF
             },
             children: [
                 {
@@ -1018,10 +1027,10 @@ function buildSceneGraph(inputSpec) {
                     attributes: {
                         x: 0,
                         y: 45,
-                        fill: '#f8fafc',
-                        'font-size': 44,
-                        'font-weight': '800',
-                        'font-family': 'sans-serif'
+                        fill: COLOR_CONTOUR,
+                        'font-size': 42,
+                        'font-weight': '600',
+                        'font-family': FONT_SERIF
                     },
                     children: [
                         {
@@ -1059,13 +1068,29 @@ function buildSceneGraph(inputSpec) {
                 attributes: {
                     d: `M ${points}`,
                     fill: 'none',
-                    stroke: '#10b981',
-                    'stroke-width': 3,
-                    'stroke-linecap': 'round',
-                    'stroke-linejoin': 'round'
+                    stroke: COLOR_WAYPOINT,
+                    'stroke-width': 2,
+                    'stroke-linecap': 'square',
+                    'stroke-linejoin': 'miter'
                 }
             };
             kpiGroup.children?.push(sparklinePath);
+            // Last value waypoint dot (square)
+            const lastX = xScale(values.length - 1);
+            const lastY = yScale(values[values.length - 1]);
+            kpiGroup.children?.push({
+                id: 'kpi-waypoint-dot',
+                type: 'rect',
+                attributes: {
+                    x: lastX - 4,
+                    y: lastY - 4,
+                    width: 8,
+                    height: 8,
+                    fill: COLOR_WAYPOINT,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
+                }
+            });
         }
         scene.children.push(kpiGroup);
         return scene;
@@ -1097,6 +1122,7 @@ function buildSceneGraph(inputSpec) {
             const categories = spec.data.map((d)=>String(d[yField] ?? ''));
             const values = spec.data.map((d)=>Number(d[xField] ?? 0));
             const maxVal = Math.max(...values, 0) || 1;
+            const maxValIdx = values.indexOf(maxVal);
             const yScale = (0, __TURBOPACK__imported__module__$5b$project$5d2f$packages$2f$core$2f$src$2f$scales$2f$band$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createScaleBand"])(categories, [
                 0,
                 innerHeight
@@ -1108,7 +1134,7 @@ function buildSceneGraph(inputSpec) {
                 0,
                 innerWidth
             ]);
-            // Grid lines
+            // Grid lines & Scale Bar Ticks (X axis)
             xScale.ticks(5).forEach((t, idx)=>{
                 const x = xScale(t);
                 gridGroup.children?.push({
@@ -1119,8 +1145,21 @@ function buildSceneGraph(inputSpec) {
                         y1: 0,
                         x2: x,
                         y2: innerHeight,
-                        stroke: '#334155',
-                        'stroke-dasharray': '3,3'
+                        stroke: COLOR_GRID_LINE,
+                        'stroke-dasharray': '2,2'
+                    }
+                });
+                // 4px Scale Bar Tick
+                axesGroup.children?.push({
+                    id: `scale-tick-x-${idx}`,
+                    type: 'line',
+                    attributes: {
+                        x1: x,
+                        y1: innerHeight,
+                        x2: x,
+                        y2: innerHeight + 4,
+                        stroke: COLOR_CONTOUR,
+                        'stroke-width': 1
                     }
                 });
                 axesGroup.children?.push({
@@ -1129,10 +1168,10 @@ function buildSceneGraph(inputSpec) {
                     attributes: {
                         x,
                         y: innerHeight + 18,
-                        fill: '#94a3b8',
-                        'font-size': 11,
+                        fill: COLOR_DATUM,
+                        'font-size': 10,
                         'text-anchor': 'middle',
-                        'font-family': 'sans-serif'
+                        'font-family': FONT_MONO
                     },
                     children: [
                         {
@@ -1160,8 +1199,21 @@ function buildSceneGraph(inputSpec) {
                         y,
                         width: w,
                         height: bw,
-                        fill: '#3b82f6',
-                        rx: 4
+                        fill: i === maxValIdx ? COLOR_WAYPOINT : COLOR_CONTOUR,
+                        rx: 0
+                    }
+                });
+                // 4px Scale Bar Tick (Y axis)
+                axesGroup.children?.push({
+                    id: `scale-tick-y-${i}`,
+                    type: 'line',
+                    attributes: {
+                        x1: -4,
+                        y1: y + bw / 2,
+                        x2: 0,
+                        y2: y + bw / 2,
+                        stroke: COLOR_CONTOUR,
+                        'stroke-width': 1
                     }
                 });
                 axesGroup.children?.push({
@@ -1169,11 +1221,11 @@ function buildSceneGraph(inputSpec) {
                     type: 'text',
                     attributes: {
                         x: -8,
-                        y: y + bw / 2 + 4,
-                        fill: '#94a3b8',
-                        'font-size': 11,
+                        y: y + bw / 2 + 3,
+                        fill: COLOR_DATUM,
+                        'font-size': 10,
                         'text-anchor': 'end',
-                        'font-family': 'sans-serif'
+                        'font-family': FONT_MONO
                     },
                     children: [
                         {
@@ -1186,10 +1238,39 @@ function buildSceneGraph(inputSpec) {
                     ]
                 });
             });
+            // Flag Pin Anomaly on Max Bar
+            if (maxValIdx >= 0) {
+                const maxCat = String(spec.data[maxValIdx][yField] ?? '');
+                const maxBarY = yScale(maxCat) + yScale.bandwidth() / 2;
+                const maxBarX = xScale(maxVal);
+                chartGroup.children?.push({
+                    id: 'flag-pin-stem',
+                    type: 'line',
+                    attributes: {
+                        x1: maxBarX,
+                        y1: maxBarY,
+                        x2: maxBarX + 12,
+                        y2: maxBarY,
+                        stroke: COLOR_FLARE,
+                        'stroke-width': 1
+                    }
+                }, {
+                    id: 'flag-pin-top',
+                    type: 'rect',
+                    attributes: {
+                        x: maxBarX + 12,
+                        y: maxBarY - 2,
+                        width: 4,
+                        height: 4,
+                        fill: COLOR_FLARE
+                    }
+                });
+            }
         } else {
             const categories = spec.data.map((d)=>String(d[xField] ?? ''));
             const values = spec.data.map((d)=>Number(d[yField] ?? 0));
             const maxVal = Math.max(...values, 0) || 1;
+            const maxValIdx = values.indexOf(maxVal);
             const xScale = (0, __TURBOPACK__imported__module__$5b$project$5d2f$packages$2f$core$2f$src$2f$scales$2f$band$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createScaleBand"])(categories, [
                 0,
                 innerWidth
@@ -1212,8 +1293,21 @@ function buildSceneGraph(inputSpec) {
                         y1: y,
                         x2: innerWidth,
                         y2: y,
-                        stroke: '#334155',
-                        'stroke-dasharray': '3,3'
+                        stroke: COLOR_GRID_LINE,
+                        'stroke-dasharray': '2,2'
+                    }
+                });
+                // 4px Scale Bar Tick (Y axis)
+                axesGroup.children?.push({
+                    id: `scale-tick-y-${idx}`,
+                    type: 'line',
+                    attributes: {
+                        x1: -4,
+                        y1: y,
+                        x2: 0,
+                        y2: y,
+                        stroke: COLOR_CONTOUR,
+                        'stroke-width': 1
                     }
                 });
                 axesGroup.children?.push({
@@ -1221,11 +1315,11 @@ function buildSceneGraph(inputSpec) {
                     type: 'text',
                     attributes: {
                         x: -8,
-                        y: y + 4,
-                        fill: '#94a3b8',
-                        'font-size': 11,
+                        y: y + 3,
+                        fill: COLOR_DATUM,
+                        'font-size': 10,
                         'text-anchor': 'end',
-                        'font-family': 'sans-serif'
+                        'font-family': FONT_MONO
                     },
                     children: [
                         {
@@ -1254,8 +1348,21 @@ function buildSceneGraph(inputSpec) {
                         y,
                         width: bw,
                         height: h,
-                        fill: '#3b82f6',
-                        rx: 4
+                        fill: i === maxValIdx ? COLOR_WAYPOINT : COLOR_CONTOUR,
+                        rx: 0
+                    }
+                });
+                // 4px Scale Bar Tick (X axis)
+                axesGroup.children?.push({
+                    id: `scale-tick-x-${i}`,
+                    type: 'line',
+                    attributes: {
+                        x1: x + bw / 2,
+                        y1: innerHeight,
+                        x2: x + bw / 2,
+                        y2: innerHeight + 4,
+                        stroke: COLOR_CONTOUR,
+                        'stroke-width': 1
                     }
                 });
                 axesGroup.children?.push({
@@ -1264,10 +1371,10 @@ function buildSceneGraph(inputSpec) {
                     attributes: {
                         x: x + bw / 2,
                         y: innerHeight + 18,
-                        fill: '#94a3b8',
-                        'font-size': 11,
+                        fill: COLOR_DATUM,
+                        'font-size': 10,
                         'text-anchor': 'middle',
-                        'font-family': 'sans-serif'
+                        'font-family': FONT_MONO
                     },
                     children: [
                         {
@@ -1280,12 +1387,41 @@ function buildSceneGraph(inputSpec) {
                     ]
                 });
             });
+            // Flag Pin Anomaly on Max Bar
+            if (maxValIdx >= 0) {
+                const maxCat = String(spec.data[maxValIdx][xField] ?? '');
+                const maxBarX = xScale(maxCat) + xScale.bandwidth() / 2;
+                const maxBarY = yScale(maxVal);
+                chartGroup.children?.push({
+                    id: 'flag-pin-stem',
+                    type: 'line',
+                    attributes: {
+                        x1: maxBarX,
+                        y1: maxBarY,
+                        x2: maxBarX,
+                        y2: maxBarY - 12,
+                        stroke: COLOR_FLARE,
+                        'stroke-width': 1
+                    }
+                }, {
+                    id: 'flag-pin-top',
+                    type: 'rect',
+                    attributes: {
+                        x: maxBarX - 2,
+                        y: maxBarY - 16,
+                        width: 4,
+                        height: 4,
+                        fill: COLOR_FLARE
+                    }
+                });
+            }
         }
     } else if (spec.type === 'line') {
         const rawDates = spec.data.map((d)=>new Date(String(d[xField] ?? '')));
         const isTemporal = rawDates.every((dt)=>!isNaN(dt.getTime()));
         const values = spec.data.map((d)=>Number(d[yField] ?? 0));
         const maxVal = Math.max(...values, 0) || 1;
+        const maxValIdx = values.indexOf(maxVal);
         const yScale = (0, __TURBOPACK__imported__module__$5b$project$5d2f$packages$2f$core$2f$src$2f$scales$2f$linear$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createScaleLinear"])([
             0,
             maxVal * 1.1
@@ -1336,8 +1472,21 @@ function buildSceneGraph(inputSpec) {
                     y1: y,
                     x2: innerWidth,
                     y2: y,
-                    stroke: '#334155',
-                    'stroke-dasharray': '3,3'
+                    stroke: COLOR_GRID_LINE,
+                    'stroke-dasharray': '2,2'
+                }
+            });
+            // 4px Scale Bar Tick (Y axis)
+            axesGroup.children?.push({
+                id: `scale-tick-y-${idx}`,
+                type: 'line',
+                attributes: {
+                    x1: -4,
+                    y1: y,
+                    x2: 0,
+                    y2: y,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
                 }
             });
             axesGroup.children?.push({
@@ -1345,11 +1494,11 @@ function buildSceneGraph(inputSpec) {
                 type: 'text',
                 attributes: {
                     x: -8,
-                    y: y + 4,
-                    fill: '#94a3b8',
-                    'font-size': 11,
+                    y: y + 3,
+                    fill: COLOR_DATUM,
+                    'font-size': 10,
                     'text-anchor': 'end',
-                    'font-family': 'sans-serif'
+                    'font-family': FONT_MONO
                 },
                 children: [
                     {
@@ -1362,18 +1511,30 @@ function buildSceneGraph(inputSpec) {
                 ]
             });
         });
-        // X Ticks
+        // X Ticks & Scale Bar Ticks
         xTickLabels.forEach((t, idx)=>{
+            axesGroup.children?.push({
+                id: `scale-tick-x-${idx}`,
+                type: 'line',
+                attributes: {
+                    x1: t.pos,
+                    y1: innerHeight,
+                    x2: t.pos,
+                    y2: innerHeight + 4,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
+                }
+            });
             axesGroup.children?.push({
                 id: `tick-x-${idx}`,
                 type: 'text',
                 attributes: {
                     x: t.pos,
                     y: innerHeight + 18,
-                    fill: '#94a3b8',
-                    'font-size': 11,
+                    fill: COLOR_DATUM,
+                    'font-size': 10,
                     'text-anchor': 'middle',
-                    'font-family': 'sans-serif'
+                    'font-family': FONT_MONO
                 },
                 children: [
                     {
@@ -1398,29 +1559,57 @@ function buildSceneGraph(inputSpec) {
             attributes: {
                 d: `M ${points}`,
                 fill: 'none',
-                stroke: '#3b82f6',
-                'stroke-width': 3,
-                'stroke-linecap': 'round',
-                'stroke-linejoin': 'round'
+                stroke: COLOR_CONTOUR,
+                'stroke-width': 2,
+                'stroke-linecap': 'square',
+                'stroke-linejoin': 'miter'
             }
         });
-        // Dots
+        // Square Markers (Instrumental Precision: No round circles per shape rules!)
         spec.data.forEach((d, i)=>{
             const x = getXPos(d, i);
             const y = yScale(Number(d[yField] ?? 0));
             chartGroup.children?.push({
                 id: `line-dot-${i}`,
-                type: 'circle',
+                type: 'rect',
                 attributes: {
-                    cx: x,
-                    cy: y,
-                    r: 4,
-                    fill: '#60a5fa',
-                    stroke: '#1e3a8a',
-                    'stroke-width': 2
+                    x: x - 3,
+                    y: y - 3,
+                    width: 6,
+                    height: 6,
+                    fill: i === maxValIdx ? COLOR_WAYPOINT : COLOR_FIELD_BRIGHT(),
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
                 }
             });
         });
+        // Flag Pin Anomaly on Max Point
+        if (maxValIdx >= 0) {
+            const maxX = getXPos(spec.data[maxValIdx], maxValIdx);
+            const maxY = yScale(maxVal);
+            chartGroup.children?.push({
+                id: 'flag-pin-stem',
+                type: 'line',
+                attributes: {
+                    x1: maxX,
+                    y1: maxY,
+                    x2: maxX,
+                    y2: maxY - 14,
+                    stroke: COLOR_FLARE,
+                    'stroke-width': 1
+                }
+            }, {
+                id: 'flag-pin-top',
+                type: 'rect',
+                attributes: {
+                    x: maxX - 2,
+                    y: maxY - 18,
+                    width: 4,
+                    height: 4,
+                    fill: COLOR_FLARE
+                }
+            });
+        }
     } else if (spec.type === 'scatter') {
         const xValues = spec.data.map((d)=>Number(d[xField] ?? 0));
         const yValues = spec.data.map((d)=>Number(d[yField] ?? 0));
@@ -1453,8 +1642,20 @@ function buildSceneGraph(inputSpec) {
                     y1: y,
                     x2: innerWidth,
                     y2: y,
-                    stroke: '#334155',
-                    'stroke-dasharray': '3,3'
+                    stroke: COLOR_GRID_LINE,
+                    'stroke-dasharray': '2,2'
+                }
+            });
+            axesGroup.children?.push({
+                id: `scale-tick-y-${idx}`,
+                type: 'line',
+                attributes: {
+                    x1: -4,
+                    y1: y,
+                    x2: 0,
+                    y2: y,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
                 }
             });
             axesGroup.children?.push({
@@ -1462,11 +1663,11 @@ function buildSceneGraph(inputSpec) {
                 type: 'text',
                 attributes: {
                     x: -8,
-                    y: y + 4,
-                    fill: '#94a3b8',
-                    'font-size': 11,
+                    y: y + 3,
+                    fill: COLOR_DATUM,
+                    'font-size': 10,
                     'text-anchor': 'end',
-                    'font-family': 'sans-serif'
+                    'font-family': FONT_MONO
                 },
                 children: [
                     {
@@ -1482,15 +1683,27 @@ function buildSceneGraph(inputSpec) {
         xScale.ticks(5).forEach((t, idx)=>{
             const x = xScale(t);
             axesGroup.children?.push({
+                id: `scale-tick-x-${idx}`,
+                type: 'line',
+                attributes: {
+                    x1: x,
+                    y1: innerHeight,
+                    x2: x,
+                    y2: innerHeight + 4,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
+                }
+            });
+            axesGroup.children?.push({
                 id: `tick-x-${idx}`,
                 type: 'text',
                 attributes: {
                     x,
                     y: innerHeight + 18,
-                    fill: '#94a3b8',
-                    'font-size': 11,
+                    fill: COLOR_DATUM,
+                    'font-size': 10,
                     'text-anchor': 'middle',
-                    'font-family': 'sans-serif'
+                    'font-family': FONT_MONO
                 },
                 children: [
                     {
@@ -1503,21 +1716,21 @@ function buildSceneGraph(inputSpec) {
                 ]
             });
         });
-        // Scatter circles
+        // Scatter Square Markers
         spec.data.forEach((d, i)=>{
             const x = xScale(Number(d[xField] ?? 0));
             const y = yScale(Number(d[yField] ?? 0));
             chartGroup.children?.push({
                 id: `scatter-dot-${i}`,
-                type: 'circle',
+                type: 'rect',
                 attributes: {
-                    cx: x,
-                    cy: y,
-                    r: 6,
-                    fill: '#818cf8',
-                    opacity: 0.85,
-                    stroke: '#312e81',
-                    'stroke-width': 1.5
+                    x: x - 3,
+                    y: y - 3,
+                    width: 6,
+                    height: 6,
+                    fill: COLOR_WAYPOINT,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
                 }
             });
         });
@@ -1548,8 +1761,20 @@ function buildSceneGraph(inputSpec) {
                     y1: y,
                     x2: innerWidth,
                     y2: y,
-                    stroke: '#334155',
-                    'stroke-dasharray': '3,3'
+                    stroke: COLOR_GRID_LINE,
+                    'stroke-dasharray': '2,2'
+                }
+            });
+            axesGroup.children?.push({
+                id: `scale-tick-y-${idx}`,
+                type: 'line',
+                attributes: {
+                    x1: -4,
+                    y1: y,
+                    x2: 0,
+                    y2: y,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
                 }
             });
             axesGroup.children?.push({
@@ -1557,11 +1782,11 @@ function buildSceneGraph(inputSpec) {
                 type: 'text',
                 attributes: {
                     x: -8,
-                    y: y + 4,
-                    fill: '#94a3b8',
-                    'font-size': 11,
+                    y: y + 3,
+                    fill: COLOR_DATUM,
+                    'font-size': 10,
                     'text-anchor': 'end',
-                    'font-family': 'sans-serif'
+                    'font-family': FONT_MONO
                 },
                 children: [
                     {
@@ -1588,8 +1813,20 @@ function buildSceneGraph(inputSpec) {
                     y,
                     width: bw,
                     height: h,
-                    fill: '#38bdf8',
-                    rx: 3
+                    fill: COLOR_CONTOUR,
+                    rx: 0
+                }
+            });
+            axesGroup.children?.push({
+                id: `scale-tick-x-${i}`,
+                type: 'line',
+                attributes: {
+                    x1: x + bw / 2,
+                    y1: innerHeight,
+                    x2: x + bw / 2,
+                    y2: innerHeight + 4,
+                    stroke: COLOR_CONTOUR,
+                    'stroke-width': 1
                 }
             });
             axesGroup.children?.push({
@@ -1598,10 +1835,10 @@ function buildSceneGraph(inputSpec) {
                 attributes: {
                     x: x + bw / 2,
                     y: innerHeight + 18,
-                    fill: '#94a3b8',
+                    fill: COLOR_DATUM,
                     'font-size': 10,
                     'text-anchor': 'middle',
-                    'font-family': 'sans-serif'
+                    'font-family': FONT_MONO
                 },
                 children: [
                     {
@@ -1615,7 +1852,7 @@ function buildSceneGraph(inputSpec) {
             });
         });
     }
-    // Base Axis lines
+    // Base Physical Axis lines (1px solid Contour rule)
     axesGroup.children?.push({
         id: 'x-axis-line',
         type: 'line',
@@ -1624,8 +1861,8 @@ function buildSceneGraph(inputSpec) {
             y1: innerHeight,
             x2: innerWidth,
             y2: innerHeight,
-            stroke: '#475569',
-            'stroke-width': 1.5
+            stroke: COLOR_CONTOUR,
+            'stroke-width': 1
         }
     }, {
         id: 'y-axis-line',
@@ -1635,14 +1872,17 @@ function buildSceneGraph(inputSpec) {
             y1: 0,
             x2: 0,
             y2: innerHeight,
-            stroke: '#475569',
-            'stroke-width': 1.5
+            stroke: COLOR_CONTOUR,
+            'stroke-width': 1
         }
     });
     chartGroup.children?.unshift(gridGroup);
     chartGroup.children?.push(axesGroup);
     scene.children.push(chartGroup);
     return scene;
+}
+function COLOR_FIELD_BRIGHT() {
+    return '#f7faf5';
 }
 }),
 "[project]/packages/core/src/scales/band.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {

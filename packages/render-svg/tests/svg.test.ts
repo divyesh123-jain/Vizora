@@ -15,7 +15,7 @@ describe('SVG Renderer & Accessible Data Table', () => {
     const svgStr = renderSceneGraphToSVGString(scene);
     expect(svgStr).toContain('<svg');
     expect(svgStr).toContain('<rect');
-    expect(svgStr).toContain('fill="#3b82f6"');
+    expect(svgStr).toContain('fill="#c2872e"');
   });
 
   it('generates a screen-reader accessible HTML data table fallback', () => {
