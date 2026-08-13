@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export const Navbar: React.FC = () => {
+  const pathname = usePathname();
   const [copiedInstall, setCopiedInstall] = useState(false);
 
   const handleCopyInstall = () => {
@@ -16,14 +19,14 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo & Version Badge */}
         <div className="flex items-center gap-3">
-          <a href="#" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group">
             <div className="w-7 h-7 bg-[#1e2a22] text-[#ecefea] flex items-center justify-center font-bold text-xs tracking-tighter group-hover:bg-[#c2872e] transition-colors">
               VZ
             </div>
             <span className="font-headline-md text-xl font-bold text-[#1e2a22] tracking-tight group-hover:text-[#c2872e] transition-colors">
               Vizora
             </span>
-          </a>
+          </Link>
           <span className="inline-flex items-center px-2 py-0.5 border border-[#1e2a22]/30 text-[10px] font-mono font-semibold text-[#6e756a] bg-[#ecefea] uppercase tracking-wider">
             v0.1.0 MVP
           </span>
@@ -31,21 +34,46 @@ export const Navbar: React.FC = () => {
 
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-6 text-xs font-mono font-medium text-[#434844]">
-          <a href="#features" className="hover:text-[#1e2a22] hover:underline underline-offset-4 transition-colors">
-            Features
-          </a>
-          <a href="#playground" className="hover:text-[#1e2a22] hover:underline underline-offset-4 transition-colors">
-            Playground
-          </a>
-          <a href="#chart-types" className="hover:text-[#1e2a22] hover:underline underline-offset-4 transition-colors">
-            Chart Types
-          </a>
-          <a href="#architecture" className="hover:text-[#1e2a22] hover:underline underline-offset-4 transition-colors">
-            Architecture
-          </a>
-          <a href="#docs" className="hover:text-[#1e2a22] hover:underline underline-offset-4 transition-colors">
-            API Docs
-          </a>
+          <Link
+            href="/"
+            className={`hover:text-[#1e2a22] transition-colors ${
+              pathname === '/' ? 'text-[#1e2a22] font-bold underline underline-offset-4' : ''
+            }`}
+          >
+            Overview
+          </Link>
+          <Link
+            href="/charts/line"
+            className={`hover:text-[#1e2a22] transition-colors ${
+              pathname.startsWith('/charts') ? 'text-[#1e2a22] font-bold underline underline-offset-4' : ''
+            }`}
+          >
+            Charts Gallery
+          </Link>
+          <Link
+            href="/templates"
+            className={`hover:text-[#1e2a22] transition-colors ${
+              pathname === '/templates' ? 'text-[#1e2a22] font-bold underline underline-offset-4' : ''
+            }`}
+          >
+            Dashboard Blocks
+          </Link>
+          <Link
+            href="/playground"
+            className={`hover:text-[#1e2a22] transition-colors ${
+              pathname === '/playground' ? 'text-[#1e2a22] font-bold underline underline-offset-4' : ''
+            }`}
+          >
+            Playground Studio
+          </Link>
+          <Link
+            href="/docs/getting-started"
+            className={`hover:text-[#1e2a22] transition-colors ${
+              pathname.startsWith('/docs') ? 'text-[#1e2a22] font-bold underline underline-offset-4' : ''
+            }`}
+          >
+            Docs & API
+          </Link>
         </nav>
 
         {/* Right CTA Actions */}
@@ -66,12 +94,12 @@ export const Navbar: React.FC = () => {
             )}
           </button>
 
-          <a
-            href="#playground"
+          <Link
+            href="/playground"
             className="px-4 py-2 bg-[#c2872e] hover:bg-[#d99a38] text-[#1e2a22] font-mono text-[11px] font-bold uppercase tracking-wider border border-[#1e2a22] transition-colors"
           >
-            GET STARTED
-          </a>
+            STUDIO PLAYGROUND
+          </Link>
         </div>
       </div>
     </header>

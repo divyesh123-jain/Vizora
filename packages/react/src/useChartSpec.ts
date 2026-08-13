@@ -10,14 +10,42 @@ export interface UseChartSpecOptions {
   color?: string;
   orientation?: 'vertical' | 'horizontal';
   title?: string;
+  bins?: number;
+  showGrid?: boolean;
+  theme?: 'light' | 'dark';
+  width?: number;
+  height?: number;
 }
 
-export function useChartSpec({ data, type, x, y, color, orientation, title }: UseChartSpecOptions): ChartSpec {
+export function useChartSpec({
+  data,
+  type,
+  x,
+  y,
+  color,
+  orientation,
+  title,
+  bins,
+  showGrid,
+  theme,
+  width,
+  height,
+}: UseChartSpecOptions): ChartSpec {
   return useMemo(() => {
     if (!type && !x && !y) {
       const recommended = recommendChartSpec(data);
       if (title) recommended.title = title;
       if (orientation) recommended.encoding.orientation = orientation;
+      if (bins) recommended.encoding.bins = bins;
+      if (showGrid !== undefined || theme || width || height) {
+        recommended.config = {
+          ...recommended.config,
+          ...(showGrid !== undefined ? { showGrid } : {}),
+          ...(theme ? { theme } : {}),
+          ...(width ? { width } : {}),
+          ...(height ? { height } : {}),
+        };
+      }
       return recommended;
     }
 
@@ -31,8 +59,15 @@ export function useChartSpec({ data, type, x, y, color, orientation, title }: Us
         y: y ? { field: y } : undefined,
         color: color ? { field: color } : undefined,
         orientation,
+        bins,
+      },
+      config: {
+        showGrid: showGrid ?? true,
+        theme: theme || 'light',
+        ...(width ? { width } : {}),
+        ...(height ? { height } : {}),
       },
     };
-  }, [data, type, x, y, color, orientation, title]);
+  }, [data, type, x, y, color, orientation, title, bins, showGrid, theme, width, height]);
 }
 

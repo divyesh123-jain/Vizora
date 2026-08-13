@@ -666,7 +666,9 @@ export function buildSceneGraph(inputSpec: unknown): SceneGraph {
     }
   );
 
-  chartGroup.children?.unshift(gridGroup);
+  if (spec.config?.showGrid !== false) {
+    chartGroup.children?.unshift(gridGroup);
+  }
   chartGroup.children?.push(axesGroup);
   scene.children.push(chartGroup);
 

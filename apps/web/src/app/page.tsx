@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { AutoChart, Chart } from '@vizora/react';
 import { recommendChartSpec, profileField } from '@vizora/intelligence';
 import { ChartType } from '@vizora/core';
@@ -278,15 +279,29 @@ export function MyExplicitChart() {
                   </span>
                 </button>
 
-                <a
-                  href="#playground"
+                <Link
+                  href="/playground"
                   className="px-6 py-3 bg-[#c2872e] hover:bg-[#d99a38] text-[#1e2a22] font-mono text-xs font-bold uppercase tracking-wider border border-[#1e2a22] transition-colors flex items-center gap-2"
                 >
-                  <span>TRY PLAYGROUND</span>
+                  <span>STUDIO PLAYGROUND</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
-                </a>
+                </Link>
+
+                <Link
+                  href="/templates"
+                  className="px-6 py-3 bg-[#1e2a22] hover:bg-[#c2872e] text-[#ecefea] hover:text-[#1e2a22] font-mono text-xs font-bold uppercase tracking-wider border border-[#1e2a22] transition-colors flex items-center gap-2"
+                >
+                  <span>DASHBOARD BLOCKS</span>
+                </Link>
+
+                <Link
+                  href="/docs/getting-started"
+                  className="px-6 py-3 bg-[#ecefea] hover:bg-[#1e2a22] text-[#1e2a22] hover:text-[#ecefea] font-mono text-xs font-bold uppercase tracking-wider border border-[#1e2a22] transition-colors flex items-center gap-2"
+                >
+                  <span>READ DOCS</span>
+                </Link>
               </div>
 
               {/* Badges */}
@@ -699,20 +714,17 @@ export function MyExplicitChart() {
             {(Object.keys(PRESETS) as ChartType[]).map((key) => {
               const item = PRESETS[key];
               return (
-                <div
+                <Link
                   key={key}
-                  onClick={() => {
-                    handleSelectPreset(key);
-                    document.getElementById('playground')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="bg-[#f7faf5] border border-[#1e2a22] p-5 space-y-3 cursor-pointer hover:border-[#c2872e] hover:shadow-md transition-all group"
+                  href={`/charts/${key}`}
+                  className="bg-[#f7faf5] border border-[#1e2a22] p-5 space-y-3 block hover:border-[#c2872e] hover:shadow-md transition-all group"
                 >
                   <div className="flex items-center justify-between border-b border-[#1e2a22]/15 pb-2">
                     <span className="font-mono text-xs font-bold text-[#c2872e] uppercase">
                       {item.badge}
                     </span>
-                    <span className="text-xs font-mono text-[#6e756a] group-hover:text-[#1e2a22]">
-                      TRY IN PLAYGROUND →
+                    <span className="text-xs font-mono text-[#6e756a] group-hover:text-[#1e2a22] font-bold">
+                      EXPLORE /charts/{key} →
                     </span>
                   </div>
                   <h3 className="font-headline-md text-lg text-[#1e2a22] font-bold">
@@ -726,7 +738,7 @@ export function MyExplicitChart() {
                       <Chart type={item.type} data={item.data} x={item.x} y={item.y} />
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

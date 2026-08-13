@@ -11,10 +11,28 @@ export interface ChartProps {
   color?: string;
   orientation?: 'vertical' | 'horizontal';
   title?: string;
+  bins?: number;
+  showGrid?: boolean;
+  theme?: 'light' | 'dark';
+  width?: number;
+  height?: number;
 }
 
-export const Chart: React.FC<ChartProps> = ({ data, type, x, y, color, orientation, title }) => {
-  const spec = useChartSpec({ data, type, x, y, color, orientation, title });
+export const Chart: React.FC<ChartProps> = ({
+  data,
+  type,
+  x,
+  y,
+  color,
+  orientation,
+  title,
+  bins,
+  showGrid,
+  theme,
+  width,
+  height,
+}) => {
+  const spec = useChartSpec({ data, type, x, y, color, orientation, title, bins, showGrid, theme, width, height });
   return <SVGContainer spec={spec} />;
 };
 
