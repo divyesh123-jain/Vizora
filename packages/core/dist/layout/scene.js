@@ -591,7 +591,9 @@ export function buildSceneGraph(inputSpec) {
         type: 'line',
         attributes: { x1: 0, y1: 0, x2: 0, y2: innerHeight, stroke: COLOR_CONTOUR, 'stroke-width': 1 },
     });
-    chartGroup.children?.unshift(gridGroup);
+    if (spec.config?.showGrid !== false) {
+        chartGroup.children?.unshift(gridGroup);
+    }
     chartGroup.children?.push(axesGroup);
     scene.children.push(chartGroup);
     return scene;
