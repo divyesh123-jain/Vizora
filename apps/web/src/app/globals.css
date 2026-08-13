@@ -178,6 +178,10 @@ body {
   border-bottom: 2px solid var(--waypoint);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Scrollbars */
 ::-webkit-scrollbar {
   width: 5px;
@@ -192,3 +196,22 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--contour);
 }
+
+/* Syntax & Tab Utility Helpers */
+.tab-active {
+  background-color: var(--field-bright) !important;
+  color: var(--contour) !important;
+  border-bottom: 2px solid var(--waypoint) !important;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #111813;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #2d3a30;
+}
+
