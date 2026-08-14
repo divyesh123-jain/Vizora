@@ -22,6 +22,42 @@
   --on-surface-variant: #434844;
   --outline: #747873;
   --outline-variant: #c3c8c2;
+
+  /* Shadcn UI Chart Tokens */
+  --background: #f7faf5;
+  --foreground: #1e2a22;
+  --muted: #ecefea;
+  --muted-foreground: #6e756a;
+  --border: rgba(110, 117, 106, 0.25);
+  --card: #ffffff;
+  --card-foreground: #1e2a22;
+  --popover: #ffffff;
+  --popover-foreground: #1e2a22;
+  --radius: 0.5rem;
+
+  --chart-1: #c2872e;
+  --chart-2: #b9c4b4;
+  --chart-3: #d6502b;
+  --chart-4: #3b82f6;
+  --chart-5: #8b5cf6;
+}
+
+.dark {
+  --background: #111813;
+  --foreground: #f1f4ef;
+  --muted: #1e2a22;
+  --muted-foreground: #a3a89e;
+  --border: rgba(163, 168, 158, 0.25);
+  --card: #18221b;
+  --card-foreground: #f1f4ef;
+  --popover: #18221b;
+  --popover-foreground: #f1f4ef;
+
+  --chart-1: #e5a43b;
+  --chart-2: #8a9985;
+  --chart-3: #f06a43;
+  --chart-4: #60a5fa;
+  --chart-5: #a78bfa;
 }
 
 body {

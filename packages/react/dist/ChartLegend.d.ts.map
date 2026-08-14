@@ -1,0 +1,1 @@
+{"version":3,"file":"ChartLegend.d.ts","sourceRoot":"","sources":["../src/ChartLegend.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAG1B,MAAM,WAAW,gBAAiB,SAAQ,KAAK,CAAC,cAAc,CAAC,KAAK,CAAC;IACnE,OAAO,CAAC,EAAE;QAAE,KAAK,EAAE,MAAM,CAAC;QAAC,KAAK,CAAC,EAAE,MAAM,CAAA;KAAE,EAAE,CAAC;CAC/C;AAED,eAAO,MAAM,WAAW,sGAsBvB,CAAC"}
