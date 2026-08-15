@@ -2,6 +2,7 @@ import React from 'react';
 import { ChartType } from '@vizora/core';
 import { useChartSpec } from './useChartSpec';
 import { SVGContainer } from './SVGContainer';
+import { ChartContainer, ChartConfig } from './ChartContainer';
 
 export interface ChartProps {
   data: Record<string, unknown>[];
@@ -16,6 +17,10 @@ export interface ChartProps {
   theme?: 'light' | 'dark';
   width?: number;
   height?: number;
+  className?: string;
+  containerClassName?: string;
+  config?: ChartConfig;
+  style?: React.CSSProperties;
 }
 
 export const Chart: React.FC<ChartProps> = ({
@@ -31,8 +36,22 @@ export const Chart: React.FC<ChartProps> = ({
   theme,
   width,
   height,
+  className,
+  containerClassName,
+  config,
+  style,
 }) => {
   const spec = useChartSpec({ data, type, x, y, color, orientation, title, bins, showGrid, theme, width, height });
-  return <SVGContainer spec={spec} />;
+
+  if (config || containerClassName) {
+    return (
+      <ChartContainer config={config} className={containerClassName}>
+        <SVGContainer spec={spec} className={className} style={style} />
+      </ChartContainer>
+    );
+  }
+
+  return <SVGContainer spec={spec} className={className} style={style} />;
 };
+
 
