@@ -26,23 +26,23 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   const lines = code.trim().split('\n');
 
   return (
-    <div className="rounded-none border border-[#1e2a22] bg-[#111813] text-[#e0e3de] overflow-hidden font-mono text-xs shadow-lg">
+    <div className="rounded-2xl border border-slate-800/80 bg-[#0f1712] text-[#e0e3de] overflow-hidden font-mono text-xs shadow-2xl backdrop-blur-md transition-all duration-300">
       {title && (
-        <div className="flex items-center justify-between px-4 py-2 bg-[#1b251e] border-b border-[#2d3a30] text-[#909c8d] text-[11px] font-mono">
+        <div className="flex items-center justify-between px-4 py-3 bg-[#18231a] border-b border-slate-800/80 text-[#909c8d] text-[11px] font-mono">
           <div className="flex items-center gap-2">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#d6502b]/60"></span>
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#c2872e]/60"></span>
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#6e756a]/60"></span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#d6502b]/80 shadow-sm"></span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#c2872e]/80 shadow-sm"></span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#88c070]/80 shadow-sm"></span>
             <span className="ml-2 font-medium text-[#c3c8c2]">{title}</span>
           </div>
-          <span className="uppercase text-[10px] tracking-wider text-[#6e756a]">{language}</span>
+          <span className="uppercase text-[10px] tracking-wider text-[#6e756a] px-2 py-0.5 bg-[#0f1712] rounded-full border border-slate-800">{language}</span>
         </div>
       )}
 
       <div className="relative group">
         <button
           onClick={handleCopy}
-          className="absolute top-2.5 right-2.5 z-10 px-2.5 py-1 text-[11px] font-mono bg-[#1b251e] hover:bg-[#2d3a30] text-[#c3c8c2] border border-[#2d3a30] transition-colors flex items-center gap-1.5"
+          className="absolute top-3 right-3 z-10 px-3 py-1.5 text-[11px] font-mono bg-[#1b251e] hover:bg-[#28382c] text-[#c3c8c2] border border-[#2d3a30] rounded-xl transition-all duration-200 active:scale-95 shadow-sm flex items-center gap-1.5"
           title="Copy code"
         >
           {copied ? (
@@ -50,7 +50,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
               <svg className="w-3.5 h-3.5 text-[#88c070]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <span className="text-[#88c070]">COPIED</span>
+              <span className="text-[#88c070] font-semibold">COPIED</span>
             </>
           ) : (
             <>
@@ -66,7 +66,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           <table className="w-full border-collapse">
             <tbody>
               {lines.map((line, idx) => (
-                <tr key={idx} className="hover:bg-[#18221b]/50">
+                <tr key={idx} className="hover:bg-[#18221b]/50 transition-colors">
                   {showLineNumbers && (
                     <td className="w-8 pr-4 text-right select-none text-[#434844] font-mono text-[11px] align-top">
                       {idx + 1}

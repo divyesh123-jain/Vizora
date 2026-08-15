@@ -30,7 +30,7 @@ export const CompassDial: React.FC<CompassDialProps> = ({
   const bearingAngle = activeWaypoint.angle;
 
   return (
-    <div className={`relative w-full aspect-square max-w-[340px] mx-auto bg-[#ecefea]/60 border border-[#1e2a22]/30 carto-grid-bg p-6 flex items-center justify-center ${className}`}>
+    <div className={`relative w-full aspect-square max-w-[340px] mx-auto bg-white/80 border border-[#18241b]/15 rounded-3xl shadow-xl backdrop-blur-md carto-grid-bg p-6 flex items-center justify-center transition-all ${className}`}>
       {/* Corner Crosshairs ┌ ┐ └ ┘ */}
       <span className="absolute top-2 left-2 font-mono text-xs text-[#1e2a22]/40 select-none">┌</span>
       <span className="absolute top-2 right-2 font-mono text-xs text-[#1e2a22]/40 select-none">┐</span>

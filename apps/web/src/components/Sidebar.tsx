@@ -22,23 +22,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ sections }) => {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full md:w-64 shrink-0 bg-[#f7faf5] border-r border-[#1e2a22] p-4 md:p-6 space-y-6 md:min-h-[calc(100vh-4rem)]">
+    <aside className="w-full md:w-64 shrink-0 bg-[#f4f7f3]/80 backdrop-blur-md border-r border-[#18241b]/10 p-4 md:p-6 space-y-6 md:min-h-[calc(100vh-4rem)]">
       {sections.map((sec, idx) => (
         <div key={idx} className="space-y-2">
           <h4 className="font-mono text-[11px] font-bold text-[#c2872e] uppercase tracking-wider px-2">
             {sec.title}
           </h4>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             {sec.items.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center justify-between px-3 py-2 text-xs font-mono transition-colors border ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 text-xs font-mono rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-[#1e2a22] text-[#ecefea] font-bold border-[#1e2a22]'
-                      : 'text-[#434844] hover:text-[#1e2a22] hover:bg-[#ecefea] border-transparent'
+                      ? 'bg-[#18241b] text-[#f4f7f3] font-bold shadow-md shadow-emerald-950/10'
+                      : 'text-[#404641] hover:text-[#18241b] hover:bg-[#18241b]/5 hover:translate-x-0.5'
                   }`}
                 >
                   <span className="flex items-center gap-2">
@@ -47,10 +47,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ sections }) => {
                   </span>
                   {item.badge && (
                     <span
-                      className={`text-[9px] px-1.5 py-0.2 uppercase ${
+                      className={`text-[9px] px-2 py-0.5 rounded-full font-semibold uppercase ${
                         isActive
-                          ? 'bg-[#c2872e] text-[#1e2a22] font-bold'
-                          : 'bg-[#ecefea] text-[#6e756a] border border-[#1e2a22]/20'
+                          ? 'bg-[#c2872e] text-white'
+                          : 'bg-[#18241b]/10 text-[#60685c]'
                       }`}
                     >
                       {item.badge}
