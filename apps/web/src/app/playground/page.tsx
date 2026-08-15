@@ -210,11 +210,11 @@ export default function StudioPlaygroundPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#18241b]/10 pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+              <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
                 STUDIO PLAYGROUND
               </span>
               {isStreaming && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-600 text-white text-[10px] font-mono font-bold rounded-full animate-pulse shadow-sm">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-600 text-white text-[10px] font-sans font-bold rounded-full animate-pulse shadow-sm">
                   🔴 LIVE STREAMING
                 </span>
               )}
@@ -228,7 +228,7 @@ export default function StudioPlaygroundPage() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setIsStreaming(!isStreaming)}
-              className={`px-3.5 py-2 font-mono text-xs font-bold rounded-xl transition-all shadow-sm active:scale-95 border ${
+              className={`px-3.5 py-2 font-sans text-xs font-bold rounded-xl transition-all shadow-sm active:scale-95 border ${
                 isStreaming
                   ? 'bg-red-600 text-white border-red-700'
                   : 'bg-[#0f1611] text-[#c2872e] border-slate-800 hover:bg-[#1a251d]'
@@ -240,7 +240,7 @@ export default function StudioPlaygroundPage() {
             <div className="flex items-center gap-1 bg-[#18241b]/8 p-1 rounded-full border border-[#18241b]/10">
               <button
                 onClick={() => setMode('auto')}
-                className={`px-3.5 py-1.5 font-mono text-xs font-bold rounded-full transition-all duration-200 ${
+                className={`px-3.5 py-1.5 font-sans text-xs font-bold rounded-full transition-all duration-200 ${
                   mode === 'auto'
                     ? 'bg-[#18241b] text-white shadow-sm'
                     : 'text-[#60685c] hover:text-[#18241b]'
@@ -250,7 +250,7 @@ export default function StudioPlaygroundPage() {
               </button>
               <button
                 onClick={() => setMode('explicit')}
-                className={`px-3.5 py-1.5 font-mono text-xs font-bold rounded-full transition-all duration-200 ${
+                className={`px-3.5 py-1.5 font-sans text-xs font-bold rounded-full transition-all duration-200 ${
                   mode === 'explicit'
                     ? 'bg-[#18241b] text-white shadow-sm'
                     : 'text-[#60685c] hover:text-[#18241b]'
@@ -268,9 +268,9 @@ export default function StudioPlaygroundPage() {
             <button
               key={key}
               onClick={() => handleSelectPreset(key)}
-              className={`px-3.5 py-1.5 font-mono text-xs font-bold rounded-xl transition-all duration-200 whitespace-nowrap active:scale-95 border ${
+              className={`px-3.5 py-1.5 font-sans text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap active:scale-95 border ${
                 presetKey === key
-                  ? 'bg-[#18241b] text-white border-[#18241b] shadow-md'
+                  ? 'bg-[#18241b] text-white border-[#18241b] shadow-md font-bold'
                   : 'bg-white text-[#60685c] hover:text-[#18241b] hover:bg-[#18241b]/5 border-[#18241b]/15 shadow-sm'
               }`}
             >

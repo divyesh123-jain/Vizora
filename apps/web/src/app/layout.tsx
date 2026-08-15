@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Fraunces, Source_Sans_3, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const sourceSans = Source_Sans_3({
   variable: "--font-source-sans",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600"],
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -21,28 +23,22 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const plexSans = IBM_Plex_Sans({
-  weight: ["400", "600", "700"],
-  variable: "--font-plex-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Vizora | Cartography of Data",
-  description: "An intelligent, developer-first data-visualization engine. Instrumental Minimalism & Geodetic Precision.",
+  title: "Vizora | Intelligent Data-Visualization Engine",
+  description: "An intelligent, developer-first data-visualization engine. Zero-config charting and typed ChartSpec contract.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${sourceSans.variable} ${plexMono.variable} ${plexSans.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${sourceSans.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#ecefea] text-[#1e2a22] font-sans selection:bg-[#c2872e] selection:text-white">
+      <body className="min-h-full flex flex-col bg-[#f4f7f3] text-[#18241b] font-sans selection:bg-[#c2872e] selection:text-white">
         {children}
       </body>
     </html>
   );
 }
+
 

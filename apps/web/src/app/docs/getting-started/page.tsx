@@ -8,14 +8,14 @@ export default function GettingStartedPage() {
   return (
     <div className="space-y-10">
       {/* Page Title Header */}
-      <div className="border-b border-[#1e2a22]/20 pb-6 space-y-2">
-        <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+      <div className="border-b border-[#18241b]/10 pb-6 space-y-2">
+        <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
           GETTING STARTED
         </span>
-        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#1e2a22] font-bold">
+        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
           Quickstart Guide
         </h1>
-        <p className="font-body-doc text-[#434844] text-base leading-relaxed">
+        <p className="font-body-doc text-[#404641] text-base leading-relaxed">
           Learn how to install Vizora and render your first zero-config chart in React in under 2 minutes.
         </p>
       </div>
@@ -23,16 +23,16 @@ export default function GettingStartedPage() {
       {/* Step 1 */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#1e2a22] text-[#c2872e] font-mono font-bold flex items-center justify-center text-sm">
+          <div className="w-8 h-8 rounded-xl bg-[#18241b] text-[#c2872e] font-sans font-bold flex items-center justify-center text-sm shadow-sm">
             01
           </div>
-          <h2 className="font-headline-md text-xl text-[#1e2a22] font-bold">
+          <h2 className="font-headline-md text-xl text-[#18241b] font-bold">
             Install Packages
           </h2>
         </div>
 
-        <p className="font-body-ui text-sm text-[#434844]">
-          Install <code className="font-mono text-xs bg-[#f7faf5] px-1.5 py-0.5 border border-[#1e2a22]/20">@vizora/react</code> alongside <code className="font-mono text-xs bg-[#f7faf5] px-1.5 py-0.5 border border-[#1e2a22]/20">@vizora/core</code> via npm, yarn, or pnpm:
+        <p className="font-body-ui text-sm text-[#404641]">
+          Install <code className="font-mono text-xs bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">@vizora/react</code> alongside <code className="font-mono text-xs bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">@vizora/core</code> via npm, yarn, or pnpm:
         </p>
 
         <CodeBlock
@@ -52,16 +52,16 @@ yarn add @vizora/react @vizora/core`}
       {/* Step 2 */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#1e2a22] text-[#c2872e] font-mono font-bold flex items-center justify-center text-sm">
+          <div className="w-8 h-8 rounded-xl bg-[#18241b] text-[#c2872e] font-sans font-bold flex items-center justify-center text-sm shadow-sm">
             02
           </div>
-          <h2 className="font-headline-md text-xl text-[#1e2a22] font-bold">
+          <h2 className="font-headline-md text-xl text-[#18241b] font-bold">
             Option A: Zero-Config AutoChart
           </h2>
         </div>
 
-        <p className="font-body-ui text-sm text-[#434844]">
-          Pass any array of JSON objects to <code className="font-mono text-xs bg-[#f7faf5] px-1.5 py-0.5 border border-[#1e2a22]/20">&lt;AutoChart data=&#123;myData&#125; /&gt;</code>. Vizora automatically profiles field data types and infers the correct chart type.
+        <p className="font-body-ui text-sm text-[#404641]">
+          Pass any array of JSON objects to <code className="font-mono text-xs bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">&lt;AutoChart data=&#123;myData&#125; /&gt;</code>. Vizora automatically profiles field data types and infers the correct chart type.
         </p>
 
         <CodeBlock
@@ -90,16 +90,16 @@ export function SalesOverviewWidget() {
       {/* Step 3 */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#1e2a22] text-[#c2872e] font-mono font-bold flex items-center justify-center text-sm">
+          <div className="w-8 h-8 rounded-xl bg-[#18241b] text-[#c2872e] font-sans font-bold flex items-center justify-center text-sm shadow-sm">
             03
           </div>
-          <h2 className="font-headline-md text-xl text-[#1e2a22] font-bold">
+          <h2 className="font-headline-md text-xl text-[#18241b] font-bold">
             Option B: Explicit Encoding Component
           </h2>
         </div>
 
-        <p className="font-body-ui text-sm text-[#434844]">
-          When you want explicit control over chart type and axis bindings, use <code className="font-mono text-xs bg-[#f7faf5] px-1.5 py-0.5 border border-[#1e2a22]/20">&lt;Chart /&gt;</code>:
+        <p className="font-body-ui text-sm text-[#404641]">
+          When you want explicit control over chart type and axis bindings, use <code className="font-mono text-xs bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">&lt;Chart /&gt;</code>:
         </p>
 
         <CodeBlock
@@ -119,7 +119,7 @@ export function StockChart() {
       data={stockData}
       x="date"
       y="price"
-      title="AAPL Stock Price"
+      title="Stock Price History"
     />
   );
 }`}
@@ -128,25 +128,26 @@ export function StockChart() {
         />
       </div>
 
-      {/* Next Steps Links */}
-      <div className="p-6 bg-[#f7faf5] border border-[#1e2a22] space-y-4">
-        <h3 className="font-headline-md text-lg font-bold text-[#1e2a22]">
+      {/* Next Steps Card */}
+      <div className="p-6 bg-white/80 rounded-2xl border border-[#18241b]/15 shadow-sm space-y-3">
+        <h3 className="font-headline-md text-lg text-[#18241b] font-bold">
           Next Steps & Exploration
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
-          <Link
-            href="/docs/data-profiling"
-            className="p-3 bg-white border border-[#1e2a22]/20 hover:border-[#c2872e] transition-colors"
-          >
-            <div className="font-bold text-[#1e2a22]">🔍 Data Profiling Rules →</div>
-            <div className="text-[#6e756a] mt-1">Learn how Vizora infers chart types automatically.</div>
-          </Link>
+        <p className="font-body-ui text-sm text-[#404641]">
+          Deepen your understanding of Vizora's architecture and typed spec model:
+        </p>
+        <div className="flex flex-wrap gap-3 pt-2">
           <Link
             href="/docs/chart-spec"
-            className="p-3 bg-white border border-[#1e2a22]/20 hover:border-[#c2872e] transition-colors"
+            className="px-4 py-2 rounded-xl bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider shadow-sm transition-all"
           >
-            <div className="font-bold text-[#1e2a22]">📜 ChartSpec JSON Contract →</div>
-            <div className="text-[#6e756a] mt-1">Understand the JSON specification schema.</div>
+            READ CHARTSPEC CONTRACT →
+          </Link>
+          <Link
+            href="/playground"
+            className="px-4 py-2 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-xs font-bold uppercase tracking-wider shadow-sm transition-all"
+          >
+            OPEN STUDIO PLAYGROUND →
           </Link>
         </div>
       </div>

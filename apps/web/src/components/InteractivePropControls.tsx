@@ -71,7 +71,7 @@ export const SelectControl: React.FC<{
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="px-3 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-mono text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm cursor-pointer"
+      className="px-3 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-sans font-medium text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm cursor-pointer"
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>
@@ -91,12 +91,12 @@ export const ToggleControl: React.FC<{
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className="flex items-center gap-2 cursor-pointer select-none font-mono text-xs text-[#18241b] group"
+      className="flex items-center gap-2 cursor-pointer select-none font-sans text-xs text-[#18241b] group"
     >
       <div className={`w-9 h-5 rounded-full transition-colors duration-200 ease-in-out relative p-0.5 border border-black/10 ${value ? 'bg-[#c2872e]' : 'bg-[#18241b]/20'}`}>
         <div className={`w-3.5 h-3.5 rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out ${value ? 'translate-x-4' : 'translate-x-0'}`} />
       </div>
-      <span className="font-semibold text-xs text-[#404641]">{label || (value ? 'true' : 'false')}</span>
+      <span className="font-semibold text-xs text-[#404641] font-sans">{label || (value ? 'true' : 'false')}</span>
     </button>
   );
 };
@@ -142,7 +142,7 @@ export const TextControl: React.FC<{
       value={value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
-      className="w-36 px-3 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-mono text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm"
+      className="w-36 px-3 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-sans font-medium text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm"
     />
   );
 };

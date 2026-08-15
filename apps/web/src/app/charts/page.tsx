@@ -95,14 +95,14 @@ export default function ChartsOverviewPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="border-b border-[#1e2a22]/20 pb-6 space-y-2">
-        <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+      <div className="border-b border-[#18241b]/10 pb-6 space-y-2">
+        <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
           VIZORA COMPONENT GALLERY
         </span>
-        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#1e2a22]">
+        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
           Supported MVP Chart Types
         </h1>
-        <p className="font-body-doc text-[#434844] max-w-2xl text-base">
+        <p className="font-body-doc text-[#404641] max-w-2xl text-base leading-relaxed">
           Vizora implements 5 core chart primitives with strict Zod validation, headless scene graph resolution, and accessible fallback data tables.
         </p>
       </div>
@@ -112,38 +112,38 @@ export default function ChartsOverviewPage() {
         {CHARTS_METADATA.map((chart) => (
           <div
             key={chart.slug}
-            className="bg-[#f7faf5] border border-[#1e2a22] p-6 space-y-4 hover:border-[#c2872e] shadow-sm transition-all flex flex-col justify-between"
+            className="bg-white/80 border border-[#18241b]/15 rounded-3xl p-6 space-y-4 shadow-xl backdrop-blur-xl hover:border-[#c2872e] transition-all flex flex-col justify-between"
           >
             <div className="space-y-3">
-              <div className="flex items-center justify-between border-b border-[#1e2a22]/15 pb-2">
-                <span className="font-mono text-xs font-bold text-[#c2872e] uppercase">
+              <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-3">
+                <span className="font-sans text-xs font-bold text-[#c2872e] uppercase tracking-wider">
                   {chart.badge}
                 </span>
-                <span className="font-mono text-[10px] bg-[#ecefea] px-2 py-0.5 border border-[#1e2a22]/20 font-bold text-[#1e2a22]">
+                <span className="font-mono text-[10px] bg-[#18241b]/8 px-2.5 py-0.5 rounded-full border border-[#18241b]/10 font-bold text-[#18241b]">
                   /charts/{chart.slug}
                 </span>
               </div>
 
-              <h2 className="font-headline-md text-xl text-[#1e2a22] font-bold">
+              <h2 className="font-headline-md text-xl text-[#18241b] font-bold">
                 {chart.title}
               </h2>
-              <p className="font-body-ui text-xs text-[#434844] leading-relaxed">
+              <p className="font-body-ui text-xs text-[#404641] leading-relaxed">
                 {chart.description}
               </p>
-              <div className="p-2 bg-[#ecefea] border border-[#1e2a22]/20 font-mono text-[11px] text-[#6e756a]">
-                <span className="font-bold text-[#1e2a22]">Inference Rule: </span>
+              <div className="p-3 bg-[#18241b]/5 rounded-xl border border-[#18241b]/10 font-sans text-[11px] text-[#60685c]">
+                <span className="font-bold text-[#18241b]">Inference Rule: </span>
                 {chart.heuristics}
               </div>
             </div>
 
             <div className="space-y-4 pt-2">
-              <div className="bg-white border border-[#1e2a22]/20 p-3 h-44 flex items-center justify-center">
+              <div className="bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-3 h-44 flex items-center justify-center shadow-inner">
                 <Chart type={chart.slug} data={chart.data} x={chart.x} y={chart.y} />
               </div>
 
               <Link
                 href={`/charts/${chart.slug}`}
-                className="w-full py-2 bg-[#1e2a22] hover:bg-[#c2872e] text-[#ecefea] hover:text-[#1e2a22] font-mono text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <span>OPEN DETAILED PAGE & PROPS</span>
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

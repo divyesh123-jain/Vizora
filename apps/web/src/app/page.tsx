@@ -252,12 +252,12 @@ export function MyExplicitChart() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Hero Text */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18241b] text-[#f4f7f3] border border-[#18241b] text-[11px] font-mono font-medium shadow-sm">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18241b] text-[#f4f7f3] border border-[#18241b] text-[11px] font-sans font-bold tracking-wider uppercase shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-[#c2872e] animate-pulse" />
                 <span>VIZORA 0.1.0 MVP • ZERO-CONFIG CHART ENGINE</span>
               </div>
 
-              <h1 className="font-display-hero text-4xl sm:text-5xl lg:text-6xl text-[#18241b] leading-[1.12] tracking-tight font-bold">
+              <h1 className="font-display-hero text-4xl sm:text-5xl lg:text-6xl text-[#18241b] leading-[1.12] tracking-tight font-extrabold">
                 Charts made simple.<br />
                 <span className="text-[#c2872e]">Give it data, Vizora profiles the rest.</span>
               </h1>
@@ -274,14 +274,14 @@ export function MyExplicitChart() {
                 >
                   <span className="text-[#c2872e] font-bold">$</span>
                   <span>npm install @vizora/react @vizora/core</span>
-                  <span className="ml-2 px-2.5 py-0.5 rounded-lg bg-[#1a251d] text-[#9ba196] text-[10px] uppercase tracking-wider group-hover:bg-[#28382c] transition-colors">
+                  <span className="ml-2 px-2.5 py-0.5 rounded-lg bg-[#1a251d] text-[#9ba196] text-[10px] font-sans font-bold uppercase tracking-wider group-hover:bg-[#28382c] transition-colors">
                     {copiedHeroInstall ? 'COPIED!' : 'COPY'}
                   </span>
                 </button>
 
                 <Link
                   href="/playground"
-                  className="px-6 py-3.5 rounded-2xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-mono text-xs font-bold uppercase tracking-wider shadow-md shadow-amber-600/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
+                  className="px-6 py-3.5 rounded-2xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-xs font-bold uppercase tracking-wider shadow-md shadow-amber-600/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
                 >
                   <span>STUDIO PLAYGROUND</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -291,21 +291,21 @@ export function MyExplicitChart() {
 
                 <Link
                   href="/templates"
-                  className="px-6 py-3.5 rounded-2xl bg-[#18241b] hover:bg-[#28382c] text-[#f4f7f3] font-mono text-xs font-bold uppercase tracking-wider shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
+                  className="px-6 py-3.5 rounded-2xl bg-[#18241b] hover:bg-[#28382c] text-[#f4f7f3] font-sans text-xs font-bold uppercase tracking-wider shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
                 >
                   <span>DASHBOARD BLOCKS</span>
                 </Link>
 
                 <Link
                   href="/docs/getting-started"
-                  className="px-6 py-3.5 rounded-2xl bg-white hover:bg-[#18241b]/5 text-[#18241b] font-mono text-xs font-bold uppercase tracking-wider border border-[#18241b]/15 shadow-sm hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
+                  className="px-6 py-3.5 rounded-2xl bg-white hover:bg-[#18241b]/5 text-[#18241b] font-sans text-xs font-bold uppercase tracking-wider border border-[#18241b]/15 shadow-sm hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
                 >
                   <span>READ DOCS</span>
                 </Link>
               </div>
 
               {/* Badges */}
-              <div className="flex flex-wrap items-center gap-6 pt-4 text-xs font-mono text-[#60685c] border-t border-[#18241b]/10">
+              <div className="flex flex-wrap items-center gap-6 pt-4 text-xs font-sans font-semibold text-[#60685c] border-t border-[#18241b]/10">
                 <div className="flex items-center gap-2">
                   <span className="w-5 h-5 rounded-full bg-[#c2872e]/15 text-[#c2872e] flex items-center justify-center font-bold text-[10px]">✓</span> Zero JSX Boilerplate
                 </div>
@@ -324,7 +324,7 @@ export function MyExplicitChart() {
                 <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-3">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#d6502b] shadow-sm" />
-                    <span className="font-mono text-xs font-bold uppercase text-[#18241b]">
+                    <span className="font-sans text-xs font-bold uppercase text-[#18241b]">
                       LIVE INFERENCE PREVIEW
                     </span>
                   </div>
@@ -339,9 +339,9 @@ export function MyExplicitChart() {
                     <button
                       key={type}
                       onClick={() => setHeroPresetKey(type)}
-                      className={`px-3 py-1 rounded-full text-[11px] font-mono transition-all duration-200 uppercase ${
+                      className={`px-3 py-1 rounded-full text-[11px] font-sans font-bold transition-all duration-200 uppercase ${
                         heroPresetKey === type
-                          ? 'bg-[#18241b] text-white font-bold shadow-sm'
+                          ? 'bg-[#18241b] text-white shadow-sm'
                           : 'bg-[#18241b]/5 text-[#60685c] hover:text-[#18241b] hover:bg-[#18241b]/10'
                       }`}
                     >
@@ -356,9 +356,9 @@ export function MyExplicitChart() {
                 </div>
 
                 {/* Profile Output Strip */}
-                <div className="p-3 bg-[#18241b]/5 rounded-xl border border-[#18241b]/10 font-mono text-[11px] text-[#404641] flex items-center justify-between">
-                  <span>Profiles: {PRESETS[heroPresetKey].profileDescription}</span>
-                  <span className="text-[#c2872e] font-bold uppercase">AUTO-MAPPED</span>
+                <div className="p-3 bg-[#18241b]/5 rounded-xl border border-[#18241b]/10 font-sans text-[11px] font-medium text-[#404641] flex items-center justify-between">
+                  <span>Profiles: <code className="font-mono text-[11px]">{PRESETS[heroPresetKey].profileDescription}</code></span>
+                  <span className="text-[#c2872e] font-bold uppercase tracking-wider text-[10px]">AUTO-MAPPED</span>
                 </div>
               </div>
             </div>
@@ -370,7 +370,7 @@ export function MyExplicitChart() {
       <section id="features" className="py-16 sm:py-24 border-b border-[#18241b]/10 bg-[#f4f7f3]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#c2872e]">
+            <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
               SIMPLIFIED ARCHITECTURE
             </span>
             <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b]">
@@ -443,7 +443,7 @@ export function MyExplicitChart() {
           {/* Section Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#18241b]/10 pb-6">
             <div>
-              <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#c2872e]">
+              <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
                 INTERACTIVE PLAYGROUND
               </span>
               <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] mt-1">
@@ -699,7 +699,7 @@ export function MyExplicitChart() {
       <section id="chart-types" className="py-16 sm:py-24 border-b border-[#18241b]/10 bg-[#f4f7f3]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#c2872e]">
+            <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
               SUPPORTED MVP CHARTS
             </span>
             <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b]">
@@ -749,7 +749,7 @@ export function MyExplicitChart() {
       <section id="architecture" className="py-16 sm:py-24 border-b border-[#18241b]/10 bg-white/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#c2872e]">
+            <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
               MONOREPO ARCHITECTURE
             </span>
             <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b]">
@@ -820,7 +820,7 @@ export function MyExplicitChart() {
       <section id="docs" className="py-16 sm:py-24 border-b border-[#18241b]/10 bg-[#f4f7f3]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
           <div>
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#c2872e]">
+            <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
               API REFERENCE
             </span>
             <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] mt-1">

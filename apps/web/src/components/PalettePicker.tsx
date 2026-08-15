@@ -25,7 +25,7 @@ interface PalettePickerProps {
 
 export const PalettePicker: React.FC<PalettePickerProps> = ({ selectedId, onSelect }) => {
   return (
-    <div className="space-y-2 font-mono text-xs">
+    <div className="space-y-2 font-sans text-xs">
       <span className="text-[#60685c] font-bold block">Theme Color Palette</span>
       <div className="flex flex-wrap gap-2">
         {PALETTES.map((p) => {

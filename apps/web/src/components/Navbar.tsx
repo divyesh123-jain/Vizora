@@ -33,12 +33,12 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1.5 text-xs font-mono font-medium text-[#404641]">
+        <nav className="hidden md:flex items-center gap-1.5 text-xs font-sans font-semibold text-[#404641]">
           <Link
             href="/"
-            className={`px-3 py-1.5 rounded-full transition-all duration-200 ${
+            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
               pathname === '/'
-                ? 'bg-[#18241b] text-white font-semibold shadow-sm'
+                ? 'bg-[#18241b] text-white font-bold shadow-sm'
                 : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
             }`}
           >
@@ -46,9 +46,9 @@ export const Navbar: React.FC = () => {
           </Link>
           <Link
             href="/charts/line"
-            className={`px-3 py-1.5 rounded-full transition-all duration-200 ${
+            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
               pathname.startsWith('/charts')
-                ? 'bg-[#18241b] text-white font-semibold shadow-sm'
+                ? 'bg-[#18241b] text-white font-bold shadow-sm'
                 : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
             }`}
           >
@@ -56,9 +56,9 @@ export const Navbar: React.FC = () => {
           </Link>
           <Link
             href="/templates"
-            className={`px-3 py-1.5 rounded-full transition-all duration-200 ${
+            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
               pathname === '/templates'
-                ? 'bg-[#18241b] text-white font-semibold shadow-sm'
+                ? 'bg-[#18241b] text-white font-bold shadow-sm'
                 : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
             }`}
           >
@@ -66,9 +66,9 @@ export const Navbar: React.FC = () => {
           </Link>
           <Link
             href="/playground"
-            className={`px-3 py-1.5 rounded-full transition-all duration-200 ${
+            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
               pathname === '/playground'
-                ? 'bg-[#18241b] text-white font-semibold shadow-sm'
+                ? 'bg-[#18241b] text-white font-bold shadow-sm'
                 : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
             }`}
           >
@@ -76,9 +76,9 @@ export const Navbar: React.FC = () => {
           </Link>
           <Link
             href="/docs/getting-started"
-            className={`px-3 py-1.5 rounded-full transition-all duration-200 ${
+            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
               pathname.startsWith('/docs')
-                ? 'bg-[#18241b] text-white font-semibold shadow-sm'
+                ? 'bg-[#18241b] text-white font-bold shadow-sm'
                 : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
             }`}
           >
@@ -106,7 +106,7 @@ export const Navbar: React.FC = () => {
 
           <Link
             href="/playground"
-            className="px-4 py-2 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-mono text-[11px] font-bold uppercase tracking-wider shadow-md shadow-amber-600/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+            className="px-4 py-2 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-[11px] font-bold uppercase tracking-wider shadow-md shadow-amber-600/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all"
           >
             STUDIO PLAYGROUND
           </Link>
