@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { recommendChartSpec } from '../src';
+import { recommendChartSpec, scoreChartRecommendations } from '../src';
 
 describe('AutoChart Heuristic Recommender (FR-10, NFR-7 Benchmark)', () => {
   it('recommends Line chart for Temporal + Quantitative data', () => {
@@ -27,5 +27,13 @@ describe('AutoChart Heuristic Recommender (FR-10, NFR-7 Benchmark)', () => {
     ];
     const spec = recommendChartSpec(data);
     expect(spec.type).toBe('scatter');
+  });
+
+  it('computes weighted recommendation scores with reasons', () => {
+    const data = [{ date: '2026-01-01', value: 100 }];
+    const scores = scoreChartRecommendations(data);
+    expect(scores.length).toBeGreaterThan(0);
+    expect(scores[0].score).toBeGreaterThan(50);
+    expect(scores[0].reason).toBeDefined();
   });
 });
