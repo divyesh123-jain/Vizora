@@ -81,13 +81,47 @@ export class LineChartStrategy implements ChartLayoutStrategy {
       axesGroup.children?.push(createTickTextX(`tick-x-${idx}`, t.pos, innerHeight + 18, t.label));
     });
 
-    const points = spec.data
-      .map((d, i) => {
-        const x = getXPos(d, i);
-        const y = yScale(parseNum(d[yField]));
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
+    const firstX = getXPos(spec.data[0], 0);
+    const lastX = getXPos(spec.data[spec.data.length - 1], spec.data.length - 1);
+    const pointsList = spec.data.map((d, i) => ({
+      x: getXPos(d, i),
+      y: yScale(parseNum(d[yField])),
+    }));
+
+    const points = pointsList
+      .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
       .join(' L ');
+
+    if (spec.encoding.area !== false) {
+      const gradId = `vizora-line-area-grad`;
+      chartGroup.children?.push({
+        id: 'area-defs',
+        type: 'defs',
+        attributes: {},
+        children: [
+          {
+            id: gradId,
+            type: 'linearGradient',
+            attributes: { x1: '0', y1: '0', x2: '0', y2: '1' },
+            children: [
+              { id: 'stop-1', type: 'stop', attributes: { offset: '0%', 'stop-color': palette.waypoint, 'stop-opacity': 0.35 } },
+              { id: 'stop-2', type: 'stop', attributes: { offset: '100%', 'stop-color': palette.waypoint, 'stop-opacity': 0.02 } },
+            ],
+          },
+        ],
+      });
+
+      const areaD = `M ${points} L ${lastX.toFixed(1)},${innerHeight} L ${firstX.toFixed(1)},${innerHeight} Z`;
+      chartGroup.children?.push({
+        id: 'area-path',
+        type: 'path',
+        attributes: {
+          d: areaD,
+          fill: `url(#${gradId})`,
+          stroke: 'none',
+        },
+      });
+    }
 
     chartGroup.children?.push({
       id: 'line-path',
@@ -95,10 +129,10 @@ export class LineChartStrategy implements ChartLayoutStrategy {
       attributes: {
         d: `M ${points}`,
         fill: 'none',
-        stroke: palette.contour,
-        'stroke-width': 2,
-        'stroke-linecap': 'square',
-        'stroke-linejoin': 'miter',
+        stroke: palette.waypoint,
+        'stroke-width': 2.5,
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round',
       },
     });
 

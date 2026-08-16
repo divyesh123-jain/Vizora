@@ -2,7 +2,7 @@ import { ChartSpec } from '../spec/types';
 
 export interface SceneNode {
   id: string;
-  type: 'group' | 'line' | 'rect' | 'circle' | 'text' | 'path';
+  type: 'group' | 'line' | 'rect' | 'circle' | 'text' | 'path' | 'defs' | 'linearGradient' | 'stop';
   attributes: Record<string, string | number>;
   children?: SceneNode[];
 }
@@ -49,17 +49,34 @@ export interface ThemePalette {
   flare: string;
   depth: string;
   gridLine: string;
+  series: string[];
 }
 
-export function resolveThemeColors(theme?: 'light' | 'dark', customColor?: string): ThemePalette {
+export const THEME_PALETTES: Record<string, string[]> = {
+  default: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'],
+  zinc: ['#18181b', '#52525b', '#a1a1aa', '#d4d4d8', '#e4e4e7'],
+  emerald: ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0'],
+  indigo: ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'],
+  sunset: ['#f43f5e', '#fb923c', '#facc15', '#a855f7', '#ec4899'],
+  cyberpunk: ['#00f0ff', '#ff007f', '#ffe600', '#7000ff', '#00ff66'],
+};
+
+export function resolveThemeColors(
+  theme?: string,
+  customColor?: string
+): ThemePalette {
   const isDark = theme === 'dark';
+  const paletteColors = THEME_PALETTES[theme || 'default'] || THEME_PALETTES.default;
+  const primaryColor = customColor || (isDark ? 'var(--chart-1, #e6a745)' : COLOR_WAYPOINT);
+
   return {
     contour: isDark ? 'var(--foreground, #f4f7f3)' : COLOR_CONTOUR,
     datum: isDark ? 'var(--muted-foreground, #9ba196)' : COLOR_DATUM,
-    waypoint: customColor || (isDark ? 'var(--chart-1, #e6a745)' : COLOR_WAYPOINT),
+    waypoint: primaryColor,
     flare: isDark ? 'var(--chart-3, #e06c53)' : COLOR_FLARE,
     depth: isDark ? 'var(--chart-2, #60685c)' : COLOR_DEPTH,
     gridLine: isDark ? 'rgba(255, 255, 255, 0.12)' : COLOR_GRID_LINE,
+    series: [primaryColor, ...paletteColors],
   };
 }
 

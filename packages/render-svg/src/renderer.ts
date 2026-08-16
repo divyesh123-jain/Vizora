@@ -15,11 +15,12 @@ export function renderSceneNodeToString(node: SceneNode): string {
     .map(([k, v]) => `${k}="${escapeXml(v)}"`)
     .join(' ');
 
-  if (node.type === 'group') {
+  if (node.type === 'group' || node.type === 'defs' || node.type === 'linearGradient') {
+    const tagName = node.type === 'group' ? 'g' : node.type;
     const childrenStr = (node.children || [])
       .map((c) => renderSceneNodeToString(c))
       .join('');
-    return attrs ? `<g ${attrs}>${childrenStr}</g>` : `<g>${childrenStr}</g>`;
+    return attrs ? `<${tagName} ${attrs}>${childrenStr}</${tagName}>` : `<${tagName}>${childrenStr}</${tagName}>`;
   }
 
   if (node.type === 'text') {

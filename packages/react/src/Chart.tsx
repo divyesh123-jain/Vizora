@@ -10,11 +10,15 @@ export interface ChartProps {
   x?: string;
   y?: string;
   color?: string;
+  series?: string;
   orientation?: 'vertical' | 'horizontal';
   title?: string;
   bins?: number;
+  mode?: 'grouped' | 'stacked';
+  area?: boolean;
+  curve?: boolean;
   showGrid?: boolean;
-  theme?: 'light' | 'dark';
+  theme?: string;
   width?: number;
   height?: number;
   className?: string;
@@ -29,9 +33,13 @@ export const Chart: React.FC<ChartProps> = ({
   x,
   y,
   color,
+  series,
   orientation,
   title,
   bins,
+  mode,
+  area,
+  curve,
   showGrid,
   theme,
   width,
@@ -41,7 +49,24 @@ export const Chart: React.FC<ChartProps> = ({
   config,
   style,
 }) => {
-  const spec = useChartSpec({ data, type, x, y, color, orientation, title, bins, showGrid, theme, width, height });
+  const spec = useChartSpec({
+    data,
+    type,
+    x,
+    y,
+    color,
+    series,
+    orientation,
+    title,
+    bins,
+    mode,
+    area,
+    curve,
+    showGrid,
+    theme,
+    width,
+    height,
+  });
 
   if (config || containerClassName) {
     return (

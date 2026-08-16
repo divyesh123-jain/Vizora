@@ -15,9 +15,13 @@ export const EncodingMapSchema = z.object({
   x: FieldEncodingSchema.optional(),
   y: FieldEncodingSchema.optional(),
   color: FieldEncodingSchema.optional(),
+  series: FieldEncodingSchema.optional(),
   size: FieldEncodingSchema.optional(),
   orientation: z.enum(['vertical', 'horizontal']).optional(),
   bins: z.number().positive().optional(),
+  mode: z.enum(['grouped', 'stacked']).optional(),
+  area: z.boolean().optional(),
+  curve: z.boolean().optional(),
 });
 
 export const ChartConfigSchema = z.object({
@@ -31,7 +35,7 @@ export const ChartConfigSchema = z.object({
       left: z.number().optional(),
     })
     .optional(),
-  theme: z.enum(['light', 'dark']).optional(),
+  theme: z.string().optional(),
   showGrid: z.boolean().optional(),
   showLegend: z.boolean().optional(),
   showTooltip: z.boolean().optional(),
