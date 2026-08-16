@@ -25,8 +25,8 @@ interface PalettePickerProps {
 
 export const PalettePicker: React.FC<PalettePickerProps> = ({ selectedId, onSelect }) => {
   return (
-    <div className="space-y-2 font-mono text-xs">
-      <span className="text-[#909c8d] font-bold block">Theme Color Palette</span>
+    <div className="space-y-2 font-sans text-xs">
+      <span className="text-[#60685c] font-bold block">Theme Color Palette</span>
       <div className="flex flex-wrap gap-2">
         {PALETTES.map((p) => {
           const isSelected = selectedId === p.id;
@@ -34,14 +34,14 @@ export const PalettePicker: React.FC<PalettePickerProps> = ({ selectedId, onSele
             <button
               key={p.id}
               onClick={() => onSelect(p)}
-              className={`flex items-center gap-2 px-2.5 py-1.5 border transition-all ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-200 active:scale-95 ${
                 isSelected
-                  ? 'bg-[#1e2a22] text-[#ecefea] border-[#1e2a22] font-bold'
-                  : 'bg-[#f7faf5] text-[#434844] hover:text-[#1e2a22] border-[#1e2a22]/20'
+                  ? 'bg-[#18241b] text-white border-[#18241b] font-bold shadow-md shadow-emerald-950/10'
+                  : 'bg-white text-[#404641] hover:text-[#18241b] hover:bg-slate-50 border-[#18241b]/15 shadow-sm'
               }`}
             >
               <span
-                className="w-3.5 h-3.5 rounded-full border border-black/20"
+                className="w-3.5 h-3.5 rounded-full border border-black/10 shadow-sm"
                 style={{ backgroundColor: p.primary }}
               />
               <span>{p.name}</span>

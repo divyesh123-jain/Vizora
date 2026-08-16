@@ -315,25 +315,25 @@ export default function DynamicChartDetailPage() {
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div className="border-b border-[#1e2a22]/20 pb-6 space-y-3">
+      <div className="border-b border-[#18241b]/10 pb-6 space-y-3">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold text-[#c2872e] bg-[#ecefea] px-2.5 py-0.5 border border-[#1e2a22]/20 uppercase">
+          <span className="font-mono text-xs font-bold text-[#c2872e] bg-[#c2872e]/10 px-3 py-1 rounded-full border border-[#c2872e]/20 uppercase">
             {config.badge}
           </span>
-          <span className="font-mono text-xs text-[#6e756a]">
+          <span className="font-mono text-xs text-[#60685c]">
             @vizora/react • &lt;Chart type="{config.slug}" /&gt;
           </span>
         </div>
 
-        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#1e2a22] font-bold">
+        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
           {config.title}
         </h1>
 
-        <p className="font-body-doc text-[#434844] max-w-3xl text-base leading-relaxed">
+        <p className="font-body-doc text-[#404641] max-w-3xl text-base leading-relaxed">
           {config.description}
         </p>
 
-        <div className="p-3 bg-[#f7faf5] border border-[#1e2a22]/20 font-mono text-xs text-[#1e2a22] flex items-center gap-2">
+        <div className="p-3.5 bg-white/80 rounded-2xl border border-[#18241b]/10 shadow-sm backdrop-blur-md font-mono text-xs text-[#18241b] flex items-center gap-2">
           <span className="text-[#c2872e] font-bold">Heuristic Profiling:</span>
           <span>{config.heuristics}</span>
         </div>
@@ -341,18 +341,18 @@ export default function DynamicChartDetailPage() {
 
       {/* Parent & Child Component Hierarchy Badges (Recharts Style) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-[#f7faf5] border border-[#1e2a22]/20 space-y-2">
+        <div className="p-5 bg-white/80 border border-[#18241b]/10 rounded-2xl shadow-sm space-y-2.5 backdrop-blur-md">
           <h3 className="font-mono text-xs font-bold text-[#c2872e] uppercase tracking-wider">
             Parent Component
           </h3>
-          <p className="font-body-doc text-xs text-[#6e756a]">
+          <p className="font-body-doc text-xs text-[#60685c]">
             This chart element can be wrapped inside the following parent runtime containers:
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
             {config.parents.map((p) => (
               <span
                 key={p}
-                className="font-mono text-xs bg-[#1e2a22] text-[#ecefea] px-2.5 py-1 font-semibold border border-[#1e2a22]"
+                className="font-mono text-xs bg-[#18241b] text-white px-3 py-1 rounded-xl font-semibold shadow-sm"
               >
                 {p}
               </span>
@@ -360,18 +360,18 @@ export default function DynamicChartDetailPage() {
           </div>
         </div>
 
-        <div className="p-4 bg-[#f7faf5] border border-[#1e2a22]/20 space-y-2">
+        <div className="p-5 bg-white/80 border border-[#18241b]/10 rounded-2xl shadow-sm space-y-2.5 backdrop-blur-md">
           <h3 className="font-mono text-xs font-bold text-[#c2872e] uppercase tracking-wider">
             Child Components / Scene Nodes
           </h3>
-          <p className="font-body-doc text-xs text-[#6e756a]">
+          <p className="font-body-doc text-xs text-[#60685c]">
             Headless scene graph nodes emitted during SVG layout resolution:
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
             {config.childrenNodes.map((c) => (
               <span
                 key={c}
-                className="font-mono text-xs bg-[#ecefea] text-[#1e2a22] px-2 py-0.5 border border-[#1e2a22]/30 font-medium"
+                className="font-mono text-xs bg-[#18241b]/8 text-[#18241b] px-2.5 py-0.5 rounded-lg border border-[#18241b]/15 font-medium"
               >
                 {c}
               </span>
@@ -383,10 +383,10 @@ export default function DynamicChartDetailPage() {
       {/* Preset Switcher & Sandbox Controls */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-headline-md text-xl text-[#1e2a22] font-bold">
+          <h2 className="font-headline-md text-xl text-[#18241b] font-bold">
             Interactive Live Component Sandbox
           </h2>
-          <div className="font-mono text-xs text-[#6e756a]">
+          <div className="font-mono text-xs text-[#60685c]">
             Real-time interactive prop updates below
           </div>
         </div>

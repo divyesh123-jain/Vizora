@@ -6,8 +6,8 @@ export default function ApiReferencePage() {
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div className="border-b border-[#1e2a22]/20 pb-6 space-y-2">
-        <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+      <div className="border-b border-[#18241b]/10 pb-6 space-y-2">
+        <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
           API REFERENCE
         </span>
         <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#1e2a22] font-bold">

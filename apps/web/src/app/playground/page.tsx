@@ -202,24 +202,24 @@ export default function StudioPlaygroundPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#ecefea] text-[#1e2a22] font-sans antialiased">
+    <div className="min-h-screen bg-[#f4f7f3] text-[#18241b] font-sans antialiased">
       <Navbar />
 
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
         {/* Studio Title Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1e2a22]/20 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#18241b]/10 pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+              <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
                 STUDIO PLAYGROUND
               </span>
               {isStreaming && (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-red-600 text-white text-[10px] font-mono font-bold animate-pulse">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-600 text-white text-[10px] font-sans font-bold rounded-full animate-pulse shadow-sm">
                   🔴 LIVE STREAMING
                 </span>
               )}
             </div>
-            <h1 className="font-headline-lg text-2xl sm:text-3xl text-[#1e2a22] font-bold">
+            <h1 className="font-headline-lg text-2xl sm:text-3xl text-[#18241b] font-bold">
               Interactive Chart Customizer
             </h1>
           </div>
@@ -228,32 +228,32 @@ export default function StudioPlaygroundPage() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setIsStreaming(!isStreaming)}
-              className={`px-3 py-1.5 font-mono text-xs font-bold transition-all border ${
+              className={`px-3.5 py-2 font-sans text-xs font-bold rounded-xl transition-all shadow-sm active:scale-95 border ${
                 isStreaming
                   ? 'bg-red-600 text-white border-red-700'
-                  : 'bg-[#1b251e] text-[#c2872e] border-[#2d3a30] hover:bg-[#2d3a30]'
+                  : 'bg-[#0f1611] text-[#c2872e] border-slate-800 hover:bg-[#1a251d]'
               }`}
             >
               {isStreaming ? 'STOP STREAMING' : '⚡ STREAM LIVE DATA'}
             </button>
 
-            <div className="flex items-center gap-2 bg-[#f7faf5] p-1 border border-[#1e2a22]">
+            <div className="flex items-center gap-1 bg-[#18241b]/8 p-1 rounded-full border border-[#18241b]/10">
               <button
                 onClick={() => setMode('auto')}
-                className={`px-3 py-1 font-mono text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 font-sans text-xs font-bold rounded-full transition-all duration-200 ${
                   mode === 'auto'
-                    ? 'bg-[#1e2a22] text-[#ecefea]'
-                    : 'text-[#6e756a] hover:text-[#1e2a22]'
+                    ? 'bg-[#18241b] text-white shadow-sm'
+                    : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
                 &lt;AutoChart /&gt;
               </button>
               <button
                 onClick={() => setMode('explicit')}
-                className={`px-3 py-1 font-mono text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 font-sans text-xs font-bold rounded-full transition-all duration-200 ${
                   mode === 'explicit'
-                    ? 'bg-[#1e2a22] text-[#ecefea]'
-                    : 'text-[#6e756a] hover:text-[#1e2a22]'
+                    ? 'bg-[#18241b] text-white shadow-sm'
+                    : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
                 &lt;Chart /&gt;
@@ -263,15 +263,15 @@ export default function StudioPlaygroundPage() {
         </div>
 
         {/* Preset Selector Bar */}
-        <div className="flex overflow-x-auto gap-2 border-b border-[#1e2a22]/20 pb-2 scrollbar-thin">
+        <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin">
           {Object.keys(PLAYGROUND_PRESETS).map((key) => (
             <button
               key={key}
               onClick={() => handleSelectPreset(key)}
-              className={`px-3 py-1.5 font-mono text-xs font-bold transition-all border whitespace-nowrap ${
+              className={`px-3.5 py-1.5 font-sans text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap active:scale-95 border ${
                 presetKey === key
-                  ? 'bg-[#1e2a22] text-[#ecefea] border-[#1e2a22]'
-                  : 'bg-[#f7faf5] text-[#6e756a] hover:text-[#1e2a22] border-[#1e2a22]/20'
+                  ? 'bg-[#18241b] text-white border-[#18241b] shadow-md font-bold'
+                  : 'bg-white text-[#60685c] hover:text-[#18241b] hover:bg-[#18241b]/5 border-[#18241b]/15 shadow-sm'
               }`}
             >
               Preset: {PLAYGROUND_PRESETS[key].name}
@@ -285,21 +285,21 @@ export default function StudioPlaygroundPage() {
         {/* Studio Grid (Left: Visual Spreadsheet/JSON Data Editor, Right: SVG Live Canvas) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Data Editor */}
-          <div className="lg:col-span-5 bg-[#f7faf5] border border-[#1e2a22] p-4 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#1e2a22]/20 pb-2">
-              <div className="flex items-center gap-2 font-mono text-xs">
+          <div className="lg:col-span-5 bg-white/80 border border-[#18241b]/15 rounded-3xl p-5 space-y-4 shadow-xl backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-3">
+              <div className="flex items-center gap-1.5 font-mono text-xs bg-[#18241b]/8 p-1 rounded-full border border-[#18241b]/10">
                 <button
                   onClick={() => setEditorMode('table')}
-                  className={`px-2.5 py-1 font-bold transition-colors ${
-                    editorMode === 'table' ? 'bg-[#1e2a22] text-[#ecefea]' : 'text-[#6e756a]'
+                  className={`px-3 py-1 font-bold rounded-full transition-all duration-200 ${
+                    editorMode === 'table' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
                   }`}
                 >
                   Spreadsheet Grid
                 </button>
                 <button
                   onClick={() => setEditorMode('json')}
-                  className={`px-2.5 py-1 font-bold transition-colors ${
-                    editorMode === 'json' ? 'bg-[#1e2a22] text-[#ecefea]' : 'text-[#6e756a]'
+                  className={`px-3 py-1 font-bold rounded-full transition-all duration-200 ${
+                    editorMode === 'json' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
                   }`}
                 >
                   Raw JSON
@@ -316,27 +316,27 @@ export default function StudioPlaygroundPage() {
                 value={customJson || JSON.stringify(dataset, null, 2)}
                 onChange={(e) => handleJsonTextChange(e.target.value)}
                 rows={14}
-                className="w-full bg-[#18221b] text-[#a4c995] font-mono text-xs p-3 border border-[#1e2a22] focus:outline-none focus:border-[#c2872e] resize-y"
+                className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3.5 rounded-2xl border border-slate-800 focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 resize-y transition-all"
                 placeholder="Paste custom JSON array here..."
               />
             )}
 
             <button
               onClick={() => handleSelectPreset(presetKey)}
-              className="w-full py-2 bg-[#ecefea] hover:bg-[#1e2a22] hover:text-[#ecefea] font-mono text-xs font-bold uppercase border border-[#1e2a22] transition-colors"
+              className="w-full py-2.5 bg-[#18241b]/5 hover:bg-[#18241b] hover:text-white text-[#18241b] font-mono text-xs font-bold uppercase rounded-xl border border-[#18241b]/15 transition-all shadow-sm active:scale-95"
             >
               RESET TO PRESET DATA
             </button>
           </div>
 
           {/* Right Live SVG Canvas */}
-          <div className="lg:col-span-7 bg-white border border-[#1e2a22] p-6 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between border-b border-[#1e2a22]/20 pb-3">
+          <div className="lg:col-span-7 bg-white rounded-3xl border border-[#18241b]/15 p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-3">
               <div className="space-y-0.5">
                 <span className="font-mono text-[10px] font-bold uppercase text-[#c2872e]">
                   LIVE WORKBENCH PREVIEW
                 </span>
-                <h3 className="font-headline-md text-xl font-bold text-[#1e2a22]">
+                <h3 className="font-headline-md text-xl font-bold text-[#18241b]">
                   {currentPreset.name}
                 </h3>
               </div>
@@ -346,7 +346,7 @@ export default function StudioPlaygroundPage() {
                   <select
                     value={chartType}
                     onChange={(e) => setChartType(e.target.value as ChartType)}
-                    className="bg-[#ecefea] border border-[#1e2a22]/30 px-2 py-1 font-mono text-xs font-bold text-[#1e2a22]"
+                    className="bg-[#f4f7f3] border border-[#18241b]/20 rounded-xl px-3 py-1.5 font-mono text-xs font-bold text-[#18241b] outline-none cursor-pointer shadow-sm"
                   >
                     <option value="line">line</option>
                     <option value="bar">bar</option>
@@ -358,14 +358,14 @@ export default function StudioPlaygroundPage() {
 
                 <button
                   onClick={handleExportSvg}
-                  className="px-3 py-1 bg-[#1e2a22] hover:bg-[#c2872e] text-[#ecefea] hover:text-[#1e2a22] font-mono text-xs font-bold uppercase transition-colors"
+                  className="px-4 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase rounded-xl shadow-md hover:-translate-y-0.5 active:scale-95 transition-all"
                 >
                   DOWNLOAD SVG
                 </button>
               </div>
             </div>
 
-            <div id="playground-svg-container" className="bg-[#f7faf5] border border-[#1e2a22]/20 p-6 min-h-[320px] flex items-center justify-center">
+            <div id="playground-svg-container" className="bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-6 min-h-[320px] flex items-center justify-center shadow-inner">
               {mode === 'auto' ? (
                 <AutoChart data={dataset} title={currentPreset.name} />
               ) : (
@@ -383,44 +383,44 @@ export default function StudioPlaygroundPage() {
         </div>
 
         {/* Multi-Tab Inspector Section */}
-        <div className="bg-[#111813] border border-[#1e2a22] shadow-lg">
-          <div className="flex items-center bg-[#1b251e] border-b border-[#2d3a30] px-3 pt-2">
+        <div className="bg-[#0f1611] border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-md">
+          <div className="flex items-center bg-[#151f17] border-b border-slate-800/80 px-4 pt-3 pb-2 gap-1.5 overflow-x-auto scrollbar-thin">
             <button
               onClick={() => setInspectorTab('jsx')}
-              className={`px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
+              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
                 inspectorTab === 'jsx'
-                  ? 'bg-[#111813] text-[#c2872e] border-t border-x border-[#2d3a30]'
-                  : 'text-[#909c8d] hover:text-white'
+                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
+                  : 'text-[#9ba196] hover:text-white'
               }`}
             >
               React JSX Code
             </button>
             <button
               onClick={() => setInspectorTab('spec')}
-              className={`px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
+              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
                 inspectorTab === 'spec'
-                  ? 'bg-[#111813] text-[#c2872e] border-t border-x border-[#2d3a30]'
-                  : 'text-[#909c8d] hover:text-white'
+                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
+                  : 'text-[#9ba196] hover:text-white'
               }`}
             >
               ChartSpec JSON
             </button>
             <button
               onClick={() => setInspectorTab('scenegraph')}
-              className={`px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
+              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
                 inspectorTab === 'scenegraph'
-                  ? 'bg-[#111813] text-[#c2872e] border-t border-x border-[#2d3a30]'
-                  : 'text-[#909c8d] hover:text-white'
+                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
+                  : 'text-[#9ba196] hover:text-white'
               }`}
             >
               Scene Graph Tree
             </button>
             <button
               onClick={() => setInspectorTab('table')}
-              className={`px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
+              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
                 inspectorTab === 'table'
-                  ? 'bg-[#111813] text-[#c2872e] border-t border-x border-[#2d3a30]'
-                  : 'text-[#909c8d] hover:text-white'
+                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
+                  : 'text-[#9ba196] hover:text-white'
               }`}
             >
               Accessible Data Table
@@ -441,26 +441,28 @@ export default function StudioPlaygroundPage() {
             )}
 
             {inspectorTab === 'table' && (
-              <div className="space-y-3 font-mono text-xs text-[#e0e3de]">
+              <div className="space-y-3 font-mono text-xs text-[#e0e4dc]">
                 <div className="text-[#c2872e] font-bold uppercase">Screen Reader Fallback Table</div>
-                <table className="w-full text-left border-collapse border border-[#2d3a30]">
-                  <thead>
-                    <tr className="bg-[#18221b] text-[#c2872e]">
-                      {dataset.length > 0 && Object.keys(dataset[0]).map((k) => (
-                        <th key={k} className="p-2 border border-[#2d3a30] uppercase">{k}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dataset.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-[#18221b]/50 border-b border-[#2d3a30]">
-                        {Object.values(row).map((v, j) => (
-                          <td key={j} className="p-2 border border-[#2d3a30] text-[#a4c995]">{String(v)}</td>
+                <div className="overflow-x-auto rounded-xl border border-slate-800">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[#151f17] text-[#c2872e] border-b border-slate-800">
+                        {dataset.length > 0 && Object.keys(dataset[0]).map((k) => (
+                          <th key={k} className="p-2.5 border-r border-slate-800 uppercase font-bold text-[11px]">{k}</th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {dataset.map((row, idx) => (
+                        <tr key={idx} className="hover:bg-[#1a251d]/60 border-b border-slate-800/50 transition-colors">
+                          {Object.values(row).map((v, j) => (
+                            <td key={j} className="p-2.5 border-r border-slate-800/50 text-[#a4c995]">{String(v)}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
