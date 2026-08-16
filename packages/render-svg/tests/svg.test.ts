@@ -48,4 +48,20 @@ describe('SVG Renderer & Accessible Data Table', () => {
     expect(svgStr).toContain('Sales Overview</text>');
     expect(svgStr).not.toContain('text="Sales Overview"');
   });
+
+  it('escapes special XML characters in attributes and text nodes', () => {
+    const spec = {
+      version: '0.1.0' as const,
+      type: 'bar' as const,
+      title: 'Q1 "Growth" & <Metrics>',
+      data: [{ category: 'Category <A>', sales: 100 }],
+      encoding: { x: { field: 'category' }, y: { field: 'sales' } },
+    };
+
+    const scene = buildSceneGraph(spec);
+    const svgStr = renderSceneGraphToSVGString(scene);
+    expect(svgStr).toContain('Q1 &quot;Growth&quot; &amp; &lt;Metrics&gt;</text>');
+    expect(svgStr).toContain('Category &lt;A&gt;</text>');
+  });
 });
+

@@ -17,6 +17,11 @@ import {
   createBaseAxes,
 } from '../primitives/axis';
 
+const parseNum = (v: unknown): number => {
+  const n = Number(v);
+  return isNaN(n) ? 0 : n;
+};
+
 export class BarChartStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField, yField } = ctx;
@@ -35,7 +40,7 @@ export class BarChartStrategy implements ChartLayoutStrategy {
 
     if (isHorizontal) {
       const categories = spec.data.map((d) => String(d[yField] ?? ''));
-      const values = spec.data.map((d) => Number(d[xField] ?? 0));
+      const values = spec.data.map((d) => parseNum(d[xField]));
       const maxVal = Math.max(...values, 0) || 1;
       const maxValIdx = values.indexOf(maxVal);
 
@@ -51,7 +56,7 @@ export class BarChartStrategy implements ChartLayoutStrategy {
 
       spec.data.forEach((d, i) => {
         const cat = String(d[yField] ?? '');
-        const val = Number(d[xField] ?? 0);
+        const val = parseNum(d[xField]);
         const y = yScale(cat);
         const bw = yScale.bandwidth();
         const w = xScale(val);
@@ -92,7 +97,7 @@ export class BarChartStrategy implements ChartLayoutStrategy {
       }
     } else {
       const categories = spec.data.map((d) => String(d[xField] ?? ''));
-      const values = spec.data.map((d) => Number(d[yField] ?? 0));
+      const values = spec.data.map((d) => parseNum(d[yField]));
       const maxVal = Math.max(...values, 0) || 1;
       const maxValIdx = values.indexOf(maxVal);
 
@@ -108,7 +113,7 @@ export class BarChartStrategy implements ChartLayoutStrategy {
 
       spec.data.forEach((d, i) => {
         const cat = String(d[xField] ?? '');
-        const val = Number(d[yField] ?? 0);
+        const val = parseNum(d[yField]);
         const x = xScale(cat);
         const y = yScale(val);
         const bw = xScale.bandwidth();
