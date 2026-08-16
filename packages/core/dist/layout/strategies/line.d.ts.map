@@ -1,0 +1,1 @@
+{"version":3,"file":"line.d.ts","sourceRoot":"","sources":["../../../src/layout/strategies/line.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,mBAAmB,EACnB,aAAa,EACb,SAAS,EAKV,MAAM,UAAU,CAAC;AAelB,qBAAa,iBAAkB,YAAW,mBAAmB;IAC3D,MAAM,CAAC,GAAG,EAAE,aAAa,GAAG,SAAS,EAAE;CAwHxC"}

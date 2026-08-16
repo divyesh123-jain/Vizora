@@ -16,20 +16,20 @@ export const EncodingMapSchema = z.object({
     bins: z.number().positive().optional(),
 });
 export const ChartConfigSchema = z.object({
-    width: z.number().positive().optional().default(600),
-    height: z.number().positive().optional().default(400),
+    width: z.number().positive().optional(),
+    height: z.number().positive().optional(),
     margin: z
         .object({
-        top: z.number().default(20),
-        right: z.number().default(20),
-        bottom: z.number().default(40),
-        left: z.number().default(50),
+        top: z.number().optional(),
+        right: z.number().optional(),
+        bottom: z.number().optional(),
+        left: z.number().optional(),
     })
         .optional(),
-    theme: z.enum(['light', 'dark']).optional().default('light'),
-    showGrid: z.boolean().optional().default(true),
-    showLegend: z.boolean().optional().default(true),
-    showTooltip: z.boolean().optional().default(true),
+    theme: z.enum(['light', 'dark']).optional(),
+    showGrid: z.boolean().optional(),
+    showLegend: z.boolean().optional(),
+    showTooltip: z.boolean().optional(),
 });
 export const ChartSpecSchema = z.object({
     $schema: z.string().optional(),

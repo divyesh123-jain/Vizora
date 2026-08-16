@@ -1,0 +1,1 @@
+{"version":3,"file":"kpi.d.ts","sourceRoot":"","sources":["../../../src/layout/strategies/kpi.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,mBAAmB,EACnB,aAAa,EACb,SAAS,EAIV,MAAM,UAAU,CAAC;AAIlB,qBAAa,oBAAqB,YAAW,mBAAmB;IAC9D,MAAM,CAAC,GAAG,EAAE,aAAa,GAAG,SAAS,EAAE;CAoExC"}

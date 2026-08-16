@@ -140,41 +140,41 @@ export declare const EncodingMapSchema: z.ZodObject<{
     bins?: number | undefined;
 }>;
 export declare const ChartConfigSchema: z.ZodObject<{
-    width: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
-    height: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
+    width: z.ZodOptional<z.ZodNumber>;
+    height: z.ZodOptional<z.ZodNumber>;
     margin: z.ZodOptional<z.ZodObject<{
-        top: z.ZodDefault<z.ZodNumber>;
-        right: z.ZodDefault<z.ZodNumber>;
-        bottom: z.ZodDefault<z.ZodNumber>;
-        left: z.ZodDefault<z.ZodNumber>;
+        top: z.ZodOptional<z.ZodNumber>;
+        right: z.ZodOptional<z.ZodNumber>;
+        bottom: z.ZodOptional<z.ZodNumber>;
+        left: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
+        top?: number | undefined;
+        right?: number | undefined;
+        bottom?: number | undefined;
+        left?: number | undefined;
     }, {
         top?: number | undefined;
         right?: number | undefined;
         bottom?: number | undefined;
         left?: number | undefined;
     }>>;
-    theme: z.ZodDefault<z.ZodOptional<z.ZodEnum<["light", "dark"]>>>;
-    showGrid: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
-    showLegend: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
-    showTooltip: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
+    theme: z.ZodOptional<z.ZodEnum<["light", "dark"]>>;
+    showGrid: z.ZodOptional<z.ZodBoolean>;
+    showLegend: z.ZodOptional<z.ZodBoolean>;
+    showTooltip: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    width: number;
-    height: number;
-    theme: "light" | "dark";
-    showGrid: boolean;
-    showLegend: boolean;
-    showTooltip: boolean;
+    width?: number | undefined;
+    height?: number | undefined;
     margin?: {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
+        top?: number | undefined;
+        right?: number | undefined;
+        bottom?: number | undefined;
+        left?: number | undefined;
     } | undefined;
+    theme?: "light" | "dark" | undefined;
+    showGrid?: boolean | undefined;
+    showLegend?: boolean | undefined;
+    showTooltip?: boolean | undefined;
 }, {
     width?: number | undefined;
     height?: number | undefined;
@@ -319,41 +319,41 @@ export declare const ChartSpecSchema: z.ZodObject<{
         bins?: number | undefined;
     }>;
     config: z.ZodOptional<z.ZodObject<{
-        width: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
-        height: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
+        width: z.ZodOptional<z.ZodNumber>;
+        height: z.ZodOptional<z.ZodNumber>;
         margin: z.ZodOptional<z.ZodObject<{
-            top: z.ZodDefault<z.ZodNumber>;
-            right: z.ZodDefault<z.ZodNumber>;
-            bottom: z.ZodDefault<z.ZodNumber>;
-            left: z.ZodDefault<z.ZodNumber>;
+            top: z.ZodOptional<z.ZodNumber>;
+            right: z.ZodOptional<z.ZodNumber>;
+            bottom: z.ZodOptional<z.ZodNumber>;
+            left: z.ZodOptional<z.ZodNumber>;
         }, "strip", z.ZodTypeAny, {
-            top: number;
-            right: number;
-            bottom: number;
-            left: number;
+            top?: number | undefined;
+            right?: number | undefined;
+            bottom?: number | undefined;
+            left?: number | undefined;
         }, {
             top?: number | undefined;
             right?: number | undefined;
             bottom?: number | undefined;
             left?: number | undefined;
         }>>;
-        theme: z.ZodDefault<z.ZodOptional<z.ZodEnum<["light", "dark"]>>>;
-        showGrid: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
-        showLegend: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
-        showTooltip: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
+        theme: z.ZodOptional<z.ZodEnum<["light", "dark"]>>;
+        showGrid: z.ZodOptional<z.ZodBoolean>;
+        showLegend: z.ZodOptional<z.ZodBoolean>;
+        showTooltip: z.ZodOptional<z.ZodBoolean>;
     }, "strip", z.ZodTypeAny, {
-        width: number;
-        height: number;
-        theme: "light" | "dark";
-        showGrid: boolean;
-        showLegend: boolean;
-        showTooltip: boolean;
+        width?: number | undefined;
+        height?: number | undefined;
         margin?: {
-            top: number;
-            right: number;
-            bottom: number;
-            left: number;
+            top?: number | undefined;
+            right?: number | undefined;
+            bottom?: number | undefined;
+            left?: number | undefined;
         } | undefined;
+        theme?: "light" | "dark" | undefined;
+        showGrid?: boolean | undefined;
+        showLegend?: boolean | undefined;
+        showTooltip?: boolean | undefined;
     }, {
         width?: number | undefined;
         height?: number | undefined;
@@ -404,18 +404,18 @@ export declare const ChartSpecSchema: z.ZodObject<{
     title?: string | undefined;
     subtitle?: string | undefined;
     config?: {
-        width: number;
-        height: number;
-        theme: "light" | "dark";
-        showGrid: boolean;
-        showLegend: boolean;
-        showTooltip: boolean;
+        width?: number | undefined;
+        height?: number | undefined;
         margin?: {
-            top: number;
-            right: number;
-            bottom: number;
-            left: number;
+            top?: number | undefined;
+            right?: number | undefined;
+            bottom?: number | undefined;
+            left?: number | undefined;
         } | undefined;
+        theme?: "light" | "dark" | undefined;
+        showGrid?: boolean | undefined;
+        showLegend?: boolean | undefined;
+        showTooltip?: boolean | undefined;
     } | undefined;
 }, {
     type: "line" | "bar" | "scatter" | "histogram" | "kpi-sparkline";

@@ -32,4 +32,20 @@ describe('SVG Renderer & Accessible Data Table', () => {
     expect(tableHtml).toContain('Sales Report');
     expect(tableHtml).toContain('Product A');
   });
+
+  it('renders SVG text elements with inner text content instead of text attribute', () => {
+    const spec = {
+      version: '0.1.0' as const,
+      type: 'bar' as const,
+      title: 'Sales Overview',
+      data: [{ category: 'Widget', sales: 250 }],
+      encoding: { x: { field: 'category' }, y: { field: 'sales' } },
+    };
+
+    const scene = buildSceneGraph(spec);
+    const svgStr = renderSceneGraphToSVGString(scene);
+    expect(svgStr).toContain('<text');
+    expect(svgStr).toContain('Sales Overview</text>');
+    expect(svgStr).not.toContain('text="Sales Overview"');
+  });
 });
