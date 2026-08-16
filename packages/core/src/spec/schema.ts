@@ -43,7 +43,7 @@ export const ChartSpecSchema = z.object({
   type: ChartTypeSchema,
   title: z.string().optional(),
   subtitle: z.string().optional(),
-  data: z.array(z.record(z.unknown())).min(1, 'ChartSpec data array must contain at least 1 record'),
+  data: z.array(z.record(z.unknown())),
   encoding: EncodingMapSchema,
   config: ChartConfigSchema.optional(),
 });

@@ -54,8 +54,10 @@ export class ScatterChartStrategy implements ChartLayoutStrategy {
     });
 
     spec.data.forEach((d, i) => {
-      const x = xScale(Number(d[xField] ?? 0));
-      const y = yScale(Number(d[yField] ?? 0));
+      const xVal = Number(d[xField] ?? 0);
+      const yVal = Number(d[yField] ?? 0);
+      const x = xScale(xVal);
+      const y = yScale(yVal);
       chartGroup.children?.push({
         id: `scatter-dot-${i}`,
         type: 'rect',
@@ -67,6 +69,10 @@ export class ScatterChartStrategy implements ChartLayoutStrategy {
           fill: palette.waypoint,
           stroke: palette.contour,
           'stroke-width': 1,
+          'data-vizora-item': 'true',
+          'data-x-val': formatNumber(xVal),
+          'data-y-val': formatNumber(yVal),
+          'data-index': String(i),
         },
       });
     });

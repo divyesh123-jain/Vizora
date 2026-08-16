@@ -104,7 +104,9 @@ export class LineChartStrategy implements ChartLayoutStrategy {
 
     spec.data.forEach((d, i) => {
       const x = getXPos(d, i);
-      const y = yScale(parseNum(d[yField]));
+      const val = parseNum(d[yField]);
+      const y = yScale(val);
+      const xVal = isTemporal ? formatDate(new Date(String(d[xField] ?? ''))) : String(d[xField] ?? '');
       chartGroup.children?.push({
         id: `line-dot-${i}`,
         type: 'rect',
@@ -116,6 +118,10 @@ export class LineChartStrategy implements ChartLayoutStrategy {
           fill: i === maxValIdx ? palette.waypoint : COLOR_FIELD_BRIGHT(),
           stroke: palette.contour,
           'stroke-width': 1,
+          'data-vizora-item': 'true',
+          'data-x-val': xVal,
+          'data-y-val': String(val),
+          'data-index': String(i),
         },
       });
     });
