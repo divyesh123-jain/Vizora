@@ -71,6 +71,10 @@ export class BarChartStrategy implements ChartLayoutStrategy {
             height: bw,
             fill: i === maxValIdx ? palette.waypoint : palette.contour,
             rx: 0,
+            'data-vizora-item': 'true',
+            'data-x-val': cat,
+            'data-y-val': String(val),
+            'data-index': String(i),
           },
         });
 
@@ -129,6 +133,10 @@ export class BarChartStrategy implements ChartLayoutStrategy {
             height: h,
             fill: i === maxValIdx ? palette.waypoint : palette.contour,
             rx: 0,
+            'data-vizora-item': 'true',
+            'data-x-val': cat,
+            'data-y-val': String(val),
+            'data-index': String(i),
           },
         });
 

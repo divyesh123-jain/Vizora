@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
-import { Chart, AutoChart, ChartContainer, ChartTooltip, ChartLegend } from '../src';
+import {
+  Chart,
+  AutoChart,
+  ChartContainer,
+  ChartTooltip,
+  ChartLegend,
+  ResponsiveContainer,
+  ChartEmptyState,
+  exportToPNG,
+  exportToSVG,
+  copyChartSpec,
+} from '../src';
 
 describe('React Component Wrappers', () => {
   it('exports Chart and AutoChart React component functions', () => {
@@ -12,6 +23,14 @@ describe('React Component Wrappers', () => {
     expect(ChartContainer).toBeDefined();
     expect(ChartTooltip).toBeDefined();
     expect(ChartLegend).toBeDefined();
+  });
+
+  it('exports ResponsiveContainer, ChartEmptyState, and export utilities', () => {
+    expect(ResponsiveContainer).toBeDefined();
+    expect(ChartEmptyState).toBeDefined();
+    expect(typeof exportToPNG).toBe('function');
+    expect(typeof exportToSVG).toBe('function');
+    expect(typeof copyChartSpec).toBe('function');
   });
 });
 

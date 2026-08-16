@@ -3,7 +3,15 @@ import { profileField } from './profile';
 
 export function recommendChartSpec(data: Record<string, unknown>[]): ChartSpec {
   if (!data || data.length === 0) {
-    throw new Error('Cannot recommend ChartSpec for empty dataset');
+    return {
+      version: '0.1.0',
+      type: 'bar',
+      data: [],
+      encoding: {
+        x: { field: 'x' },
+        y: { field: 'y' },
+      },
+    };
   }
 
   const fields = Object.keys(data[0]);
