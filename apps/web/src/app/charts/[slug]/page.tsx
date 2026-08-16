@@ -197,6 +197,143 @@ const DETAILS_MAP: Record<ChartType, ChartDetailConfig> = {
     ],
   },
 
+  donut: {
+    slug: 'donut',
+    title: 'Donut Chart (Categorical Proportions)',
+    badge: 'PROPORTIONAL SHARE',
+    subtitle: 'Categorical distribution represented as radial arc slices with inner cutout.',
+    description:
+      'The Donut Chart calculates radial slice angle proportions (0 to 2π) to visualize market share, device usage, and percentage breakdowns.',
+    heuristics: 'Recommended for discrete categorical shares (3–7 items) summing to 100%.',
+    xDefault: 'device',
+    yDefault: 'users',
+    availableFields: ['device', 'users'],
+    parents: ['<AutoChart />', '<Chart />', '<SVGContainer />'],
+    childrenNodes: ['<g>', '<path>', '<text>'],
+    presets: [
+      {
+        name: 'Device Traffic Distribution',
+        description: 'User breakdown by device category.',
+        data: [
+          { device: 'Desktop', users: 14200 },
+          { device: 'Mobile Safari', users: 9800 },
+          { device: 'Mobile Chrome', users: 6100 },
+          { device: 'Tablet', users: 1500 },
+        ],
+      },
+    ],
+  },
+
+  pie: {
+    slug: 'pie',
+    title: 'Pie Chart (Category Share)',
+    badge: 'PROPORTIONAL SHARE',
+    subtitle: 'Radial slice representation of category proportions without center cutout.',
+    description:
+      'The Pie Chart represents proportional shares as solid radial wedges.',
+    heuristics: 'Ideal for 3–5 category proportion shares.',
+    xDefault: 'category',
+    yDefault: 'share',
+    availableFields: ['category', 'share'],
+    parents: ['<AutoChart />', '<Chart />', '<SVGContainer />'],
+    childrenNodes: ['<g>', '<path>', '<text>'],
+    presets: [
+      {
+        name: 'Market Share Breakdown',
+        description: 'Product share by tier.',
+        data: [
+          { category: 'Enterprise', share: 55 },
+          { category: 'Pro Plan', share: 30 },
+          { category: 'Starter', share: 15 },
+        ],
+      },
+    ],
+  },
+
+  area: {
+    slug: 'area',
+    title: 'Area Chart (Volume Trend)',
+    badge: 'GRADIENT VOLUME',
+    subtitle: 'Continuous time-series trend with vector gradient fill below line paths.',
+    description:
+      'The Area Chart emphasizes cumulative magnitude over time with linear SVG gradient defs.',
+    heuristics: 'Recommended for continuous volume, bandwidth, and cumulative metrics.',
+    xDefault: 'month',
+    yDefault: 'bandwidth',
+    availableFields: ['month', 'bandwidth'],
+    parents: ['<AutoChart />', '<Chart />', '<SVGContainer />'],
+    childrenNodes: ['<g>', '<defs>', '<linearGradient>', '<path>', '<rect>', '<line>', '<text>'],
+    presets: [
+      {
+        name: 'Monthly Bandwidth Usage',
+        description: 'Network bandwidth consumption (GB).',
+        data: [
+          { month: 'Jan', bandwidth: 120 },
+          { month: 'Feb', bandwidth: 190 },
+          { month: 'Mar', bandwidth: 310 },
+          { month: 'Apr', bandwidth: 480 },
+          { month: 'May', bandwidth: 640 },
+        ],
+      },
+    ],
+  },
+
+  candlestick: {
+    slug: 'candlestick',
+    title: 'Candlestick Chart (Financial Trading)',
+    badge: 'FINANCIAL OHLC',
+    subtitle: 'Financial price action visualization with Open, High, Low, and Close wicks.',
+    description:
+      'The Candlestick Chart maps trading sessions using green bullish and red bearish candle bodies with high-low wicks.',
+    heuristics: 'Inferred when data profiling detects Open, High, Low, and Close price fields.',
+    xDefault: 'date',
+    yDefault: 'close',
+    availableFields: ['date', 'open', 'high', 'low', 'close'],
+    parents: ['<AutoChart />', '<Chart />', '<SVGContainer />'],
+    childrenNodes: ['<g>', '<line>', '<rect>', '<text>'],
+    presets: [
+      {
+        name: 'Daily Price Action (USD)',
+        description: '5-day asset trading session.',
+        data: [
+          { date: 'Mon', open: 150, high: 162, low: 145, close: 158 },
+          { date: 'Tue', open: 158, high: 165, low: 152, close: 153 },
+          { date: 'Wed', open: 153, high: 170, low: 150, close: 168 },
+          { date: 'Thu', open: 168, high: 174, low: 160, close: 162 },
+          { date: 'Fri', open: 162, high: 180, low: 159, close: 176 },
+        ],
+      },
+    ],
+  },
+
+  funnel: {
+    slug: 'funnel',
+    title: 'Funnel Chart (Conversion Drop-off)',
+    badge: 'CONVERSION STAGES',
+    subtitle: 'User retention and drop-off rates across sequential sales funnel stages.',
+    description:
+      'The Funnel Chart renders proportional trapezoids to track conversion progression.',
+    heuristics: 'Recommended for sequential user conversion funnels.',
+    xDefault: 'stage',
+    yDefault: 'count',
+    availableFields: ['stage', 'count'],
+    parents: ['<AutoChart />', '<Chart />', '<SVGContainer />'],
+    childrenNodes: ['<g>', '<path>', '<text>'],
+    presets: [
+      {
+        name: 'E-commerce Checkout Funnel',
+        description: 'User conversion through purchase pipeline.',
+        data: [
+          { stage: 'Site Visitors', count: 125000 },
+          { stage: 'Product Views', count: 68000 },
+          { stage: 'Added to Cart', count: 24000 },
+          { stage: 'Checkout Started', count: 14200 },
+          { stage: 'Purchase Complete', count: 9800 },
+        ],
+      },
+    ],
+  },
+
   'kpi-sparkline': {
     slug: 'kpi-sparkline',
     title: 'KPI + Sparkline (Executive Metric)',

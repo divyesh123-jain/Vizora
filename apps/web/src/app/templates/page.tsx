@@ -1,183 +1,141 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { Chart, ChartContainer, ChartTooltip, ChartLegend } from '@vizora/react';
 import { Navbar } from '../../components/Navbar';
-import { AutoChart, Chart } from '@vizora/react';
-import { CodeBlock } from '../../components/CodeBlock';
 
-const SAAS_METRICS = [
-  { month: 'Jan', mrr: 12400 },
-  { month: 'Feb', mrr: 14800 },
-  { month: 'Mar', mrr: 18200 },
-  { month: 'Apr', mrr: 21500 },
-  { month: 'May', mrr: 26800 },
-  { month: 'Jun', mrr: 32400 },
+const SAAS_METRICS_DATA = [
+  { month: 'Jan', arr: 42000, mrr: 3500 },
+  { month: 'Feb', arr: 58000, mrr: 4800 },
+  { month: 'Mar', arr: 84000, mrr: 7000 },
+  { month: 'Apr', arr: 110000, mrr: 9200 },
+  { month: 'May', arr: 145000, mrr: 12100 },
 ];
 
-const REGIONAL_BREAKDOWN = [
-  { region: 'North America', arr: 145000 },
-  { region: 'Europe', arr: 98000 },
-  { region: 'Asia Pacific', arr: 162000 },
-  { region: 'Latin America', arr: 48000 },
+const DEVICE_SHARE_DATA = [
+  { device: 'Desktop', users: 14200 },
+  { device: 'Mobile Safari', users: 9800 },
+  { device: 'Mobile Chrome', users: 6100 },
+  { device: 'Tablet', users: 1500 },
 ];
 
-const INFRASTRUCTURE_CPU = [
-  { time: '00:00', load: 22 },
-  { time: '04:00', load: 18 },
-  { time: '08:00', load: 68 },
-  { time: '12:00', load: 89 },
-  { time: '16:00', load: 74 },
-  { time: '20:00', load: 45 },
+const TRAFFIC_TREND_DATA = [
+  { day: 'Mon', visitors: 2400 },
+  { day: 'Tue', visitors: 3800 },
+  { day: 'Wed', visitors: 4200 },
+  { day: 'Thu', visitors: 3900 },
+  { day: 'Fri', visitors: 5100 },
+  { day: 'Sat', visitors: 2800 },
+  { day: 'Sun', visitors: 3100 },
 ];
 
 export default function TemplatesPage() {
-  const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
-  const [copiedSuite, setCopiedSuite] = useState(false);
-
-  const saasSuiteCode = `import React from 'react';
-import { AutoChart, Chart } from '@vizora/react';
-
-const mrrData = [
-  { month: 'Jan', mrr: 12400 },
-  { month: 'Feb', mrr: 14800 },
-  { month: 'Mar', mrr: 18200 },
-  { month: 'Apr', mrr: 21500 },
-  { month: 'May', mrr: 26800 },
-  { month: 'Jun', mrr: 32400 },
-];
-
-const regionalData = [
-  { region: 'North America', arr: 145000 },
-  { region: 'Europe', arr: 98000 },
-  { region: 'Asia Pacific', arr: 162000 },
-  { region: 'Latin America', arr: 48000 },
-];
-
-export function SaaSExecutiveDashboard() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 border">
-      <div className="bg-white p-4 rounded shadow">
-        <AutoChart data={mrrData} title="MRR Growth Trend ($)" />
-      </div>
-
-      <div className="bg-white p-4 rounded shadow">
-        <Chart type="bar" data={regionalData} x="region" y="arr" title="ARR by Region" />
-      </div>
-    </div>
-  );
-}`;
-
-  const handleCopySuite = () => {
-    navigator.clipboard.writeText(saasSuiteCode);
-    setCopiedSuite(true);
-    setTimeout(() => setCopiedSuite(false), 2000);
-  };
-
   return (
     <div className="min-h-screen bg-[#f4f7f3] text-[#18241b] font-sans antialiased">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-        {/* Header */}
-        <div className="border-b border-[#18241b]/10 pb-6 space-y-2">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-12">
+        {/* Title */}
+        <div className="space-y-3 border-b border-[#18241b]/10 pb-6">
           <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
-            READY-TO-USE DASHBOARD BLOCKS
+            PRODUCTION DASHBOARD TEMPLATES
           </span>
           <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
-            Pre-Built Dashboard Suites
+            Real-World Analytics Dashboards
           </h1>
-          <p className="font-body-doc text-[#404641] text-base max-w-2xl leading-relaxed">
-            Copy complete, fully responsive dashboard layouts directly into your React or Next.js app. Zero configuration needed.
+          <p className="font-body-doc text-[#404641] max-w-2xl text-base leading-relaxed">
+            Demonstrates how Vizora's framework-agnostic core primitives and React adapters compose into production-grade SaaS, Web Analytics, and DevOps monitoring dashboards.
           </p>
         </div>
 
-        {/* Template Suite 1: SaaS Executive Metrics */}
-        <div className="bg-white/80 border border-[#18241b]/15 rounded-3xl p-6 space-y-6 shadow-xl backdrop-blur-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#18241b]/10 pb-4">
-            <div className="space-y-1">
-              <span className="font-sans text-[10px] font-bold uppercase tracking-wider text-[#c2872e]">
-                SUITE 01 • EXECUTIVE METRICS
+        {/* Template 1: SaaS Revenue & Growth */}
+        <section className="bg-white/90 border border-[#18241b]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl backdrop-blur-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#18241b]/10 pb-4 gap-4">
+            <div>
+              <span className="text-[10px] font-mono uppercase bg-[#c2872e]/15 text-[#c2872e] px-2.5 py-0.5 rounded-full font-bold">
+                TEMPLATE 01
               </span>
-              <h2 className="font-headline-md text-2xl text-[#18241b] font-bold">
-                SaaS Growth & ARR Dashboard
+              <h2 className="font-headline-md text-2xl text-[#18241b] font-bold mt-1">
+                SaaS Revenue & MRR Growth
               </h2>
             </div>
-
-            <div className="flex items-center gap-3 font-sans text-xs">
-              <div className="flex bg-[#18241b]/8 p-1 rounded-full border border-[#18241b]/10">
-                <button
-                  onClick={() => setActiveTab('preview')}
-                  className={`px-3.5 py-1.5 font-bold rounded-full transition-all duration-200 ${
-                    activeTab === 'preview' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
-                  }`}
-                >
-                  Preview
-                </button>
-                <button
-                  onClick={() => setActiveTab('code')}
-                  className={`px-3.5 py-1.5 font-bold rounded-full transition-all duration-200 ${
-                    activeTab === 'code' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
-                  }`}
-                >
-                  Component Code
-                </button>
-              </div>
-
-              <button
-                onClick={handleCopySuite}
-                className="px-4 py-2 bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-xs font-bold rounded-xl uppercase tracking-wider shadow-md hover:-translate-y-0.5 active:scale-95 transition-all"
-              >
-                {copiedSuite ? '✓ COPIED CODE' : 'COPY DASHBOARD CODE'}
-              </button>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-[#60685c]">Theme: Zinc Preset</span>
             </div>
           </div>
 
-          {activeTab === 'preview' ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Widget 1 */}
-              <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-5 space-y-3 shadow-inner">
-                <div className="flex justify-between font-sans text-xs font-bold text-[#60685c] border-b border-[#18241b]/10 pb-2">
-                  <span>MRR REVENUE TREND</span>
-                  <span className="text-[#c2872e] font-mono text-[11px] font-bold">&lt;AutoChart /&gt;</span>
-                </div>
-                <div className="min-h-[240px] flex items-center justify-center">
-                  <AutoChart data={SAAS_METRICS} title="Monthly Recurring Revenue ($)" />
-                </div>
-              </div>
-
-              {/* Widget 2 */}
-              <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-5 space-y-3 shadow-inner">
-                <div className="flex justify-between font-sans text-xs font-bold text-[#60685c] border-b border-[#18241b]/10 pb-2">
-                  <span>REGIONAL ARR DISTRIBUTION</span>
-                  <span className="text-[#c2872e] font-mono text-[11px] font-bold">&lt;Chart type="bar" /&gt;</span>
-                </div>
-                <div className="min-h-[240px] flex items-center justify-center">
-                  <Chart type="bar" data={REGIONAL_BREAKDOWN} x="region" y="arr" title="ARR by Territory ($)" />
-                </div>
-              </div>
+          {/* KPI Cards Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-4 space-y-1">
+              <span className="text-xs text-[#60685c] font-medium">ARR (Annual Recurring)</span>
+              <div className="text-2xl font-bold font-mono text-[#18241b]">$145,000</div>
+              <span className="text-[11px] text-[#059669] font-bold">↑ +31.8% vs last month</span>
             </div>
-          ) : (
-            <CodeBlock code={saasSuiteCode} language="typescript" title="SaaSExecutiveDashboard.tsx" />
-          )}
-        </div>
+            <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-4 space-y-1">
+              <span className="text-xs text-[#60685c] font-medium">Net MRR Added</span>
+              <div className="text-2xl font-bold font-mono text-[#18241b]">$12,100</div>
+              <span className="text-[11px] text-[#059669] font-bold">↑ +18.2% new subscribers</span>
+            </div>
+            <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-4 space-y-1">
+              <span className="text-xs text-[#60685c] font-medium">Gross Retention Rate</span>
+              <div className="text-2xl font-bold font-mono text-[#18241b]">97.4%</div>
+              <span className="text-[11px] text-[#60685c]">Enterprise cohort tier</span>
+            </div>
+          </div>
 
-        {/* Template Suite 2: Infrastructure Monitor */}
-        <div className="bg-white/80 border border-[#18241b]/15 rounded-3xl p-6 space-y-6 shadow-xl backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-4">
-            <div className="space-y-1">
-              <span className="font-sans text-[10px] font-bold uppercase tracking-wider text-[#c2872e]">
-                SUITE 02 • INFRASTRUCTURE MONITORING
+          {/* Main Revenue Chart */}
+          <div className="bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-4 h-72">
+            <Chart
+              type="area"
+              data={SAAS_METRICS_DATA}
+              x="month"
+              y="arr"
+              theme="zinc"
+              title="Annual Recurring Revenue Progression ($)"
+            />
+          </div>
+        </section>
+
+        {/* Template 2: Web Traffic & Device Share */}
+        <section className="bg-white/90 border border-[#18241b]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl backdrop-blur-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#18241b]/10 pb-4 gap-4">
+            <div>
+              <span className="text-[10px] font-mono uppercase bg-[#059669]/15 text-[#059669] px-2.5 py-0.5 rounded-full font-bold">
+                TEMPLATE 02
               </span>
-              <h2 className="font-headline-md text-2xl text-[#18241b] font-bold">
-                Server Performance & Cpu Telemetry
+              <h2 className="font-headline-md text-2xl text-[#18241b] font-bold mt-1">
+                Web Traffic & Proportional Share
               </h2>
             </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-[#60685c]">Theme: Emerald Preset</span>
+            </div>
           </div>
 
-          <div className="bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-6 min-h-[260px] flex items-center justify-center shadow-inner">
-            <AutoChart data={INFRASTRUCTURE_CPU} title="24-Hour CPU Utilization Rate (%)" />
+          {/* Grid Layout: Line + Donut */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-4 h-72">
+              <Chart
+                type="line"
+                data={TRAFFIC_TREND_DATA}
+                x="day"
+                y="visitors"
+                theme="emerald"
+                title="Daily Active Visitors (7-Day)"
+              />
+            </div>
+            <div className="bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-4 h-72">
+              <Chart
+                type="donut"
+                data={DEVICE_SHARE_DATA}
+                x="device"
+                y="users"
+                theme="emerald"
+                title="Device Breakdown"
+              />
+            </div>
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );

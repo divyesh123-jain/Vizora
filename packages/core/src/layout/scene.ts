@@ -5,6 +5,10 @@ import { LineChartStrategy } from './strategies/line';
 import { ScatterChartStrategy } from './strategies/scatter';
 import { HistogramChartStrategy } from './strategies/histogram';
 import { KpiSparklineStrategy } from './strategies/kpi';
+import { DonutChartStrategy } from './strategies/donut';
+import { AreaChartStrategy } from './strategies/area';
+import { CandlestickChartStrategy } from './strategies/candlestick';
+import { FunnelChartStrategy } from './strategies/funnel';
 
 export * from './types';
 
@@ -75,6 +79,19 @@ export function buildSceneGraph(inputSpec: unknown): SceneGraph {
       break;
     case 'kpi-sparkline':
       scene.children.push(...new KpiSparklineStrategy().render(ctx));
+      break;
+    case 'donut':
+    case 'pie':
+      scene.children.push(...new DonutChartStrategy().render(ctx));
+      break;
+    case 'area':
+      scene.children.push(...new AreaChartStrategy().render(ctx));
+      break;
+    case 'candlestick':
+      scene.children.push(...new CandlestickChartStrategy().render(ctx));
+      break;
+    case 'funnel':
+      scene.children.push(...new FunnelChartStrategy().render(ctx));
       break;
     default:
       scene.children.push(...new BarChartStrategy().render(ctx));
