@@ -8,11 +8,15 @@ export interface UseChartSpecOptions {
   x?: string;
   y?: string;
   color?: string;
+  series?: string;
   orientation?: 'vertical' | 'horizontal';
   title?: string;
   bins?: number;
+  mode?: 'grouped' | 'stacked';
+  area?: boolean;
+  curve?: boolean;
   showGrid?: boolean;
-  theme?: 'light' | 'dark';
+  theme?: string;
   width?: number;
   height?: number;
 }
@@ -23,9 +27,13 @@ export function useChartSpec({
   x,
   y,
   color,
+  series,
   orientation,
   title,
   bins,
+  mode,
+  area,
+  curve,
   showGrid,
   theme,
   width,
@@ -37,6 +45,10 @@ export function useChartSpec({
       if (title) recommended.title = title;
       if (orientation) recommended.encoding.orientation = orientation;
       if (bins) recommended.encoding.bins = bins;
+      if (series) recommended.encoding.series = { field: series };
+      if (mode) recommended.encoding.mode = mode;
+      if (area !== undefined) recommended.encoding.area = area;
+      if (curve !== undefined) recommended.encoding.curve = curve;
       if (showGrid !== undefined || theme || width || height) {
         recommended.config = {
           ...recommended.config,
@@ -58,8 +70,12 @@ export function useChartSpec({
         x: x ? { field: x } : undefined,
         y: y ? { field: y } : undefined,
         color: color ? { field: color } : undefined,
+        series: series ? { field: series } : undefined,
         orientation,
         bins,
+        mode,
+        area,
+        curve,
       },
       config: {
         showGrid: showGrid ?? true,
@@ -68,6 +84,6 @@ export function useChartSpec({
         ...(height ? { height } : {}),
       },
     };
-  }, [data, type, x, y, color, orientation, title, bins, showGrid, theme, width, height]);
+  }, [data, type, x, y, color, series, orientation, title, bins, mode, area, curve, showGrid, theme, width, height]);
 }
 
