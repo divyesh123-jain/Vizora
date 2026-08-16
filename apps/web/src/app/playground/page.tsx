@@ -133,7 +133,7 @@ export default function StudioPlaygroundPage() {
 
     const interval = setInterval(() => {
       setDataset((prev) => {
-        const lastRow = prev[prev.length - 1] || { time: '00:00', value: 10 };
+        const _lastRow = prev[prev.length - 1] || { time: '00:00', value: 10 };
         const nextValue = Math.floor(Math.random() * 50) + 20;
         const nextTime = `T+${prev.length + 1}s`;
         const updated = [...prev.slice(-9), { time: nextTime, value: nextValue }];

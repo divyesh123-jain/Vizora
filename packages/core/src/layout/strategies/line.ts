@@ -2,9 +2,7 @@ import {
   ChartLayoutStrategy,
   LayoutContext,
   SceneNode,
-  COLOR_CONTOUR,
-  COLOR_WAYPOINT,
-  COLOR_FLARE,
+  resolveThemeColors,
   COLOR_FIELD_BRIGHT,
 } from '../types';
 import { createScaleBand } from '../../scales/band';
@@ -24,6 +22,7 @@ import {
 export class LineChartStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField, yField } = ctx;
+    const palette = resolveThemeColors(spec.config?.theme, spec.encoding.color?.field);
     const chartGroup: SceneNode = {
       id: 'chart-main-group',
       type: 'group',
@@ -91,7 +90,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
       attributes: {
         d: `M ${points}`,
         fill: 'none',
-        stroke: COLOR_CONTOUR,
+        stroke: palette.contour,
         'stroke-width': 2,
         'stroke-linecap': 'square',
         'stroke-linejoin': 'miter',
@@ -109,8 +108,8 @@ export class LineChartStrategy implements ChartLayoutStrategy {
           y: y - 3,
           width: 6,
           height: 6,
-          fill: i === maxValIdx ? COLOR_WAYPOINT : COLOR_FIELD_BRIGHT(),
-          stroke: COLOR_CONTOUR,
+          fill: i === maxValIdx ? palette.waypoint : COLOR_FIELD_BRIGHT(),
+          stroke: palette.contour,
           'stroke-width': 1,
         },
       });
@@ -123,12 +122,12 @@ export class LineChartStrategy implements ChartLayoutStrategy {
         {
           id: 'flag-pin-stem',
           type: 'line',
-          attributes: { x1: maxX, y1: maxY, x2: maxX, y2: maxY - 14, stroke: COLOR_FLARE, 'stroke-width': 1 },
+          attributes: { x1: maxX, y1: maxY, x2: maxX, y2: maxY - 14, stroke: palette.flare, 'stroke-width': 1 },
         },
         {
           id: 'flag-pin-top',
           type: 'rect',
-          attributes: { x: maxX - 2, y: maxY - 18, width: 4, height: 4, fill: COLOR_FLARE },
+          attributes: { x: maxX - 2, y: maxY - 18, width: 4, height: 4, fill: palette.flare },
         }
       );
     }

@@ -87,5 +87,46 @@ describe('Headless SceneGraph Resolution', () => {
     expect(scene).toBeDefined();
     expect(scene.children[0].id).toBe('kpi-group');
   });
+
+  it('handles dark theme configuration and custom colors', () => {
+    const spec = {
+      version: '0.1.0',
+      type: 'bar',
+      data: [{ item: 'A', count: 50 }],
+      encoding: {
+        x: { field: 'item' },
+        y: { field: 'count' },
+        color: { field: '#00ff88' },
+      },
+      config: {
+        theme: 'dark' as const,
+      },
+    };
+
+    const scene = buildSceneGraph(spec);
+    expect(scene).toBeDefined();
+    expect(scene.children.length).toBeGreaterThan(0);
+  });
+
+  it('renders horizontal bar chart strategy correctly', () => {
+    const spec = {
+      version: '0.1.0',
+      type: 'bar',
+      data: [
+        { cat: 'Alpha', score: 90 },
+        { cat: 'Beta', score: 100 },
+      ],
+      encoding: {
+        x: { field: 'score' },
+        y: { field: 'cat' },
+        orientation: 'horizontal' as const,
+      },
+    };
+
+    const scene = buildSceneGraph(spec);
+    expect(scene).toBeDefined();
+    expect(scene.children[0].id).toBe('chart-main-group');
+  });
 });
+
 

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   Chart as VizoraChart,
   AutoChart as VizoraAutoChart,

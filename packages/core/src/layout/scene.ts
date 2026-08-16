@@ -1,5 +1,5 @@
 import { validateChartSpec } from '../spec/validate';
-import { SceneGraph, SceneNode, LayoutContext, COLOR_CONTOUR, FONT_SERIF } from './types';
+import { SceneGraph, LayoutContext, COLOR_CONTOUR, FONT_SERIF } from './types';
 import { BarChartStrategy } from './strategies/bar';
 import { LineChartStrategy } from './strategies/line';
 import { ScatterChartStrategy } from './strategies/scatter';
