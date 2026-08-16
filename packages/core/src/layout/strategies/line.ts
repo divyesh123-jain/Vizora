@@ -19,6 +19,11 @@ import {
   createBaseAxes,
 } from '../primitives/axis';
 
+const parseNum = (v: unknown): number => {
+  const n = Number(v);
+  return isNaN(n) ? 0 : n;
+};
+
 export class LineChartStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField, yField } = ctx;
@@ -36,7 +41,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
     const rawDates = spec.data.map((d) => new Date(String(d[xField] ?? '')));
     const isTemporal = rawDates.every((dt) => !isNaN(dt.getTime()));
 
-    const values = spec.data.map((d) => Number(d[yField] ?? 0));
+    const values = spec.data.map((d) => parseNum(d[yField]));
     const maxVal = Math.max(...values, 0) || 1;
     const maxValIdx = values.indexOf(maxVal);
     const yScale = createScaleLinear([0, maxVal * 1.1], [innerHeight, 0]);
@@ -79,7 +84,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
     const points = spec.data
       .map((d, i) => {
         const x = getXPos(d, i);
-        const y = yScale(Number(d[yField] ?? 0));
+        const y = yScale(parseNum(d[yField]));
         return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
       .join(' L ');
@@ -99,7 +104,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
 
     spec.data.forEach((d, i) => {
       const x = getXPos(d, i);
-      const y = yScale(Number(d[yField] ?? 0));
+      const y = yScale(parseNum(d[yField]));
       chartGroup.children?.push({
         id: `line-dot-${i}`,
         type: 'rect',
