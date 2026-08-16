@@ -1,0 +1,1 @@
+{"version":3,"file":"scatter.d.ts","sourceRoot":"","sources":["../../../src/layout/strategies/scatter.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,mBAAmB,EACnB,aAAa,EACb,SAAS,EAGV,MAAM,UAAU,CAAC;AAYlB,qBAAa,oBAAqB,YAAW,mBAAmB;IAC9D,MAAM,CAAC,GAAG,EAAE,aAAa,GAAG,SAAS,EAAE;CA+DxC"}

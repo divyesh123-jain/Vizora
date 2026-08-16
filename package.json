@@ -11,7 +11,7 @@
     "build": "npm run build --workspaces",
     "test": "vitest run --workspaces",
     "test:workspaces": "vitest run --workspaces",
-    "lint": "eslint packages/*/src --ext .ts,.tsx"
+    "lint": "eslint packages/*/src apps/web/src"
   },
   "devDependencies": {
     "eslint": "^9.0.0",

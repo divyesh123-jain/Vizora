@@ -19,5 +19,5 @@ export function validateChartSpec(spec: unknown): ChartSpec {
     );
     throw new ChartSpecValidationError(issues);
   }
-  return result.data as ChartSpec;
+  return result.data;
 }
