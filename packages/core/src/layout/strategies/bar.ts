@@ -2,9 +2,7 @@ import {
   ChartLayoutStrategy,
   LayoutContext,
   SceneNode,
-  COLOR_CONTOUR,
-  COLOR_WAYPOINT,
-  COLOR_FLARE,
+  resolveThemeColors,
 } from '../types';
 import { createScaleBand } from '../../scales/band';
 import { createScaleLinear } from '../../scales/linear';
@@ -22,6 +20,7 @@ import {
 export class BarChartStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField, yField } = ctx;
+    const palette = resolveThemeColors(spec.config?.theme, spec.encoding.color?.field);
     const chartGroup: SceneNode = {
       id: 'chart-main-group',
       type: 'group',
@@ -65,7 +64,7 @@ export class BarChartStrategy implements ChartLayoutStrategy {
             y,
             width: w,
             height: bw,
-            fill: i === maxValIdx ? COLOR_WAYPOINT : COLOR_CONTOUR,
+            fill: i === maxValIdx ? palette.waypoint : palette.contour,
             rx: 0,
           },
         });
@@ -82,12 +81,12 @@ export class BarChartStrategy implements ChartLayoutStrategy {
           {
             id: 'flag-pin-stem',
             type: 'line',
-            attributes: { x1: maxBarX, y1: maxBarY, x2: maxBarX + 12, y2: maxBarY, stroke: COLOR_FLARE, 'stroke-width': 1 },
+            attributes: { x1: maxBarX, y1: maxBarY, x2: maxBarX + 12, y2: maxBarY, stroke: palette.flare, 'stroke-width': 1 },
           },
           {
             id: 'flag-pin-top',
             type: 'rect',
-            attributes: { x: maxBarX + 12, y: maxBarY - 2, width: 4, height: 4, fill: COLOR_FLARE },
+            attributes: { x: maxBarX + 12, y: maxBarY - 2, width: 4, height: 4, fill: palette.flare },
           }
         );
       }
@@ -123,7 +122,7 @@ export class BarChartStrategy implements ChartLayoutStrategy {
             y,
             width: bw,
             height: h,
-            fill: i === maxValIdx ? COLOR_WAYPOINT : COLOR_CONTOUR,
+            fill: i === maxValIdx ? palette.waypoint : palette.contour,
             rx: 0,
           },
         });
@@ -140,12 +139,12 @@ export class BarChartStrategy implements ChartLayoutStrategy {
           {
             id: 'flag-pin-stem',
             type: 'line',
-            attributes: { x1: maxBarX, y1: maxBarY, x2: maxBarX, y2: maxBarY - 12, stroke: COLOR_FLARE, 'stroke-width': 1 },
+            attributes: { x1: maxBarX, y1: maxBarY, x2: maxBarX, y2: maxBarY - 12, stroke: palette.flare, 'stroke-width': 1 },
           },
           {
             id: 'flag-pin-top',
             type: 'rect',
-            attributes: { x: maxBarX - 2, y: maxBarY - 16, width: 4, height: 4, fill: COLOR_FLARE },
+            attributes: { x: maxBarX - 2, y: maxBarY - 16, width: 4, height: 4, fill: palette.flare },
           }
         );
       }

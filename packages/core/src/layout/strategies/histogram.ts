@@ -2,7 +2,7 @@ import {
   ChartLayoutStrategy,
   LayoutContext,
   SceneNode,
-  COLOR_CONTOUR,
+  resolveThemeColors,
 } from '../types';
 import { createScaleBand } from '../../scales/band';
 import { createScaleLinear } from '../../scales/linear';
@@ -19,6 +19,7 @@ import {
 export class HistogramChartStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField, yField } = ctx;
+    const palette = resolveThemeColors(spec.config?.theme, spec.encoding.color?.field);
     const chartGroup: SceneNode = {
       id: 'chart-main-group',
       type: 'group',
@@ -58,7 +59,7 @@ export class HistogramChartStrategy implements ChartLayoutStrategy {
           y,
           width: bw,
           height: h,
-          fill: COLOR_CONTOUR,
+          fill: palette.contour,
           rx: 0,
         },
       });

@@ -15,7 +15,7 @@ export function renderSceneNodeToString(node: SceneNode): string {
   if (node.type === 'text') {
     const textContent = (node.attributes.text as string) ?? '';
     const childStr = (node.children || []).map((c) => renderSceneNodeToString(c)).join('');
-    const { text, ...restAttrs } = node.attributes;
+    const { text: _text, ...restAttrs } = node.attributes;
     const cleanAttrs = Object.entries(restAttrs)
       .map(([k, v]) => `${k}="${v}"`)
       .join(' ');

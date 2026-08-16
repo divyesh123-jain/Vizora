@@ -2,8 +2,7 @@ import {
   ChartLayoutStrategy,
   LayoutContext,
   SceneNode,
-  COLOR_CONTOUR,
-  COLOR_WAYPOINT,
+  resolveThemeColors,
 } from '../types';
 import { createScaleLinear } from '../../scales/linear';
 import { formatNumber } from '../../format/number';
@@ -19,6 +18,7 @@ import {
 export class ScatterChartStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField, yField } = ctx;
+    const palette = resolveThemeColors(spec.config?.theme, spec.encoding.color?.field);
     const chartGroup: SceneNode = {
       id: 'chart-main-group',
       type: 'group',
@@ -64,8 +64,8 @@ export class ScatterChartStrategy implements ChartLayoutStrategy {
           y: y - 3,
           width: 6,
           height: 6,
-          fill: COLOR_WAYPOINT,
-          stroke: COLOR_CONTOUR,
+          fill: palette.waypoint,
+          stroke: palette.contour,
           'stroke-width': 1,
         },
       });

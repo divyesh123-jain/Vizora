@@ -41,3 +41,25 @@ export const FONT_SERIF = 'var(--font-sans, system-ui, sans-serif)';
 export function COLOR_FIELD_BRIGHT(): string {
   return 'var(--background, #f7faf5)';
 }
+
+export interface ThemePalette {
+  contour: string;
+  datum: string;
+  waypoint: string;
+  flare: string;
+  depth: string;
+  gridLine: string;
+}
+
+export function resolveThemeColors(theme?: 'light' | 'dark', customColor?: string): ThemePalette {
+  const isDark = theme === 'dark';
+  return {
+    contour: isDark ? 'var(--foreground, #f4f7f3)' : COLOR_CONTOUR,
+    datum: isDark ? 'var(--muted-foreground, #9ba196)' : COLOR_DATUM,
+    waypoint: customColor || (isDark ? 'var(--chart-1, #e6a745)' : COLOR_WAYPOINT),
+    flare: isDark ? 'var(--chart-3, #e06c53)' : COLOR_FLARE,
+    depth: isDark ? 'var(--chart-2, #60685c)' : COLOR_DEPTH,
+    gridLine: isDark ? 'rgba(255, 255, 255, 0.12)' : COLOR_GRID_LINE,
+  };
+}
+

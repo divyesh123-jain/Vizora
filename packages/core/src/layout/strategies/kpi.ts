@@ -2,8 +2,7 @@ import {
   ChartLayoutStrategy,
   LayoutContext,
   SceneNode,
-  COLOR_CONTOUR,
-  COLOR_WAYPOINT,
+  resolveThemeColors,
   FONT_SERIF,
 } from '../types';
 import { createScaleLinear } from '../../scales/linear';
@@ -12,6 +11,7 @@ import { formatNumber } from '../../format/number';
 export class KpiSparklineStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField, yField, margin } = ctx;
+    const palette = resolveThemeColors(spec.config?.theme, spec.encoding.color?.field);
 
     const values = spec.data.map((d) => Number(d[yField] ?? d[xField] ?? 0)).filter((v) => !isNaN(v));
     const currentValue = values.length > 0 ? values[values.length - 1] : 0;
@@ -28,7 +28,7 @@ export class KpiSparklineStrategy implements ChartLayoutStrategy {
           attributes: {
             x: 0,
             y: 45,
-            fill: COLOR_CONTOUR,
+            fill: palette.contour,
             'font-size': 42,
             'font-weight': '600',
             'font-family': FONT_SERIF,
@@ -51,7 +51,7 @@ export class KpiSparklineStrategy implements ChartLayoutStrategy {
         attributes: {
           d: `M ${points}`,
           fill: 'none',
-          stroke: COLOR_WAYPOINT,
+          stroke: palette.waypoint,
           'stroke-width': 2,
           'stroke-linecap': 'square',
           'stroke-linejoin': 'miter',
@@ -69,8 +69,8 @@ export class KpiSparklineStrategy implements ChartLayoutStrategy {
           y: lastY - 4,
           width: 8,
           height: 8,
-          fill: COLOR_WAYPOINT,
-          stroke: COLOR_CONTOUR,
+          fill: palette.waypoint,
+          stroke: palette.contour,
           'stroke-width': 1,
         },
       });
