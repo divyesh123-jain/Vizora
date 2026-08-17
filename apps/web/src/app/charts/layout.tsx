@@ -4,13 +4,42 @@ import { Sidebar, SidebarSection } from '../../components/Sidebar';
 
 const chartSections: SidebarSection[] = [
   {
-    title: 'Chart Types Gallery',
+    title: 'Dashboard & Business',
     items: [
-      { label: 'Line Chart', href: '/charts/line', icon: '📈', badge: 'Temporal' },
-      { label: 'Bar Chart', href: '/charts/bar', icon: '📊', badge: 'Categorical' },
-      { label: 'Scatter Plot', href: '/charts/scatter', icon: '🟢', badge: 'Quantitative' },
-      { label: 'Histogram', href: '/charts/histogram', icon: '📶', badge: 'Distribution' },
-      { label: 'KPI + Sparkline', href: '/charts/kpi-sparkline', icon: '⚡', badge: 'Executive' },
+      { label: 'Overview', href: '/charts/dashboard', icon: '📊' },
+      { label: 'KPI + Sparkline', href: '/charts/kpi-sparkline' },
+      { label: 'Funnel', href: '/charts/funnel' },
+      { label: 'Donut / Pie', href: '/charts/donut' },
+    ],
+  },
+  {
+    title: 'Trading & Financial',
+    items: [
+      { label: 'Overview', href: '/charts/trading', icon: '📈' },
+      { label: 'Candlestick', href: '/charts/candlestick' },
+    ],
+  },
+  {
+    title: 'Statistical',
+    items: [
+      { label: 'Overview', href: '/charts/statistical', icon: '📉' },
+      { label: 'Histogram', href: '/charts/histogram' },
+    ],
+  },
+  {
+    title: 'Comparison & Ranking',
+    items: [
+      { label: 'Overview', href: '/charts/comparison', icon: '⚖️' },
+      { label: 'Bar Chart', href: '/charts/bar' },
+      { label: 'Scatter Plot', href: '/charts/scatter' },
+    ],
+  },
+  {
+    title: 'Composition & Flow',
+    items: [
+      { label: 'Overview', href: '/charts/composition', icon: '🌊' },
+      { label: 'Line Chart', href: '/charts/line' },
+      { label: 'Area Chart', href: '/charts/area' },
     ],
   },
   {

@@ -127,6 +127,83 @@ describe('Headless SceneGraph Resolution', () => {
     expect(scene).toBeDefined();
     expect(scene.children[0].id).toBe('chart-main-group');
   });
+
+  it('builds scene graph for candlestick chart', () => {
+    const spec = {
+      version: '0.1.0',
+      type: 'candlestick',
+      data: [
+        { date: '2026-01-01', open: 100, high: 110, low: 90, close: 105 },
+        { date: '2026-01-02', open: 105, high: 120, low: 100, close: 115 },
+      ],
+      encoding: {
+        x: { field: 'date' },
+        open: { field: 'open' },
+        high: { field: 'high' },
+        low: { field: 'low' },
+        close: { field: 'close' }
+      },
+    };
+
+    const scene = buildSceneGraph(spec);
+    expect(scene).toBeDefined();
+    const mainGroup = scene.children.find(c => c.id === 'chart-main-group');
+    expect(mainGroup).toBeDefined();
+    // 2 wicks and 2 bodies = 4 elements in the chart group (plus grid/axes)
+    const wicksAndCandles = mainGroup?.children?.filter(c => c.id.startsWith('wick-') || c.id.startsWith('candle-'));
+    expect(wicksAndCandles?.length).toBe(4);
+  });
+
+  it('builds scene graph for funnel chart', () => {
+    const spec = {
+      version: '0.1.0',
+      type: 'funnel',
+      data: [
+        { stage: 'Views', count: 1000 },
+        { stage: 'Clicks', count: 500 },
+      ],
+      encoding: {
+        x: { field: 'stage' },
+        y: { field: 'count' }
+      },
+    };
+
+    const scene = buildSceneGraph(spec);
+    expect(scene).toBeDefined();
+    const mainGroup = scene.children.find(c => c.id === 'chart-main-group');
+    expect(mainGroup).toBeDefined();
+    const stages = mainGroup?.children?.filter(c => c.id.startsWith('funnel-stage-'));
+    expect(stages?.length).toBe(2);
+  });
+
+  it('builds scene graph for donut and pie charts', () => {
+    const spec = {
+      version: '0.1.0',
+      type: 'donut',
+      data: [
+        { cat: 'A', val: 30 },
+        { cat: 'B', val: 70 },
+      ],
+      encoding: {
+        x: { field: 'cat' },
+        y: { field: 'val' }
+      },
+    };
+
+    const sceneDonut = buildSceneGraph(spec);
+    expect(sceneDonut).toBeDefined();
+    const mainGroupDonut = sceneDonut.children.find(c => c.id === 'chart-main-group');
+    const slicesDonut = mainGroupDonut?.children?.filter(c => c.id.startsWith('slice-'));
+    expect(slicesDonut?.length).toBe(2);
+    
+    // Check Pie
+    const pieSpec = { ...spec, type: 'pie' };
+    const scenePie = buildSceneGraph(pieSpec);
+    expect(scenePie).toBeDefined();
+    const mainGroupPie = scenePie.children.find(c => c.id === 'chart-main-group');
+    const slicesPie = mainGroupPie?.children?.filter(c => c.id.startsWith('slice-'));
+    expect(slicesPie?.length).toBe(2);
+  });
 });
 
 

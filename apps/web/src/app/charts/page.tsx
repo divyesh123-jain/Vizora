@@ -1,128 +1,43 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Chart } from '@vizora/react';
 import { ChartType } from '@vizora/core';
 
-interface ChartMetadata {
-  slug: ChartType;
-  category: 'trends' | 'comparison' | 'proportions' | 'kpis';
+interface CategoryMetadata {
+  slug: string;
   title: string;
   badge: string;
-  subtitle?: string;
   description: string;
-  heuristics: string;
-  data: Record<string, unknown>[];
+  heroChart: ChartType;
   x?: string;
   y?: string;
+  data: Record<string, unknown>[];
 }
 
-const CHARTS_METADATA: ChartMetadata[] = [
+const CATEGORIES: CategoryMetadata[] = [
   {
-    slug: 'line',
-    category: 'trends',
-    title: 'Temporal Line Chart',
-    badge: 'TEMPORAL TREND',
-    description: 'Optimal for displaying quantitative value progression across continuous temporal date or time scales.',
-    heuristics: 'Inferred when data contains ≥ 1 Temporal field and ≥ 1 Quantitative metric.',
-    x: 'date',
-    y: 'value',
-    data: [
-      { date: '2026-01-01', value: 340 },
-      { date: '2026-01-02', value: 410 },
-      { date: '2026-01-03', value: 390 },
-      { date: '2026-01-04', value: 520 },
-      { date: '2026-01-05', value: 680 },
-    ],
-  },
-  {
-    slug: 'area',
-    category: 'trends',
-    title: 'Gradient Area Chart',
-    badge: 'VOLUME TREND',
-    description: 'Displays cumulative quantitative metric progression with sleek gradient SVG vector fills.',
-    heuristics: 'Ideal for continuous growth, bandwidth, and cumulative volume trends.',
+    slug: 'dashboard',
+    title: 'Dashboard & Business',
+    badge: 'EXECUTIVE METRICS',
+    description: 'High-level business metrics, executive summaries, conversion funnels, and part-to-whole categorical breakdowns.',
+    heroChart: 'kpi-sparkline',
     x: 'month',
-    y: 'bandwidth',
+    y: 'metric',
     data: [
-      { month: 'Jan', bandwidth: 120 },
-      { month: 'Feb', bandwidth: 190 },
-      { month: 'Mar', bandwidth: 310 },
-      { month: 'Apr', bandwidth: 480 },
-      { month: 'May', bandwidth: 640 },
+      { month: 'Q1', metric: 1200 },
+      { month: 'Q2', metric: 1450 },
+      { month: 'Q3', metric: 1890 },
+      { month: 'Q4', metric: 2400 },
     ],
   },
   {
-    slug: 'bar',
-    category: 'comparison',
-    title: 'Categorical Bar Chart',
-    badge: 'CATEGORICAL BREAKDOWN',
-    description: 'Designed for comparing quantitative totals or aggregates across discrete categorical categories.',
-    heuristics: 'Inferred when data contains ≥ 1 Categorical field and ≥ 1 Quantitative metric.',
-    x: 'category',
-    y: 'amount',
-    data: [
-      { category: 'Design', amount: 8400 },
-      { category: 'Engineering', amount: 14200 },
-      { category: 'Product', amount: 9600 },
-      { category: 'Ops', amount: 5100 },
-    ],
-  },
-  {
-    slug: 'donut',
-    category: 'proportions',
-    title: 'Donut & Pie Chart',
-    badge: 'PROPORTIONAL SHARE',
-    description: 'Calculates radial slice angles to display market share, device breakdowns, and categorical proportions.',
-    heuristics: 'Recommended for discrete categorical shares (3-7 items) summing to 100%.',
-    x: 'channel',
-    y: 'users',
-    data: [
-      { channel: 'Direct', users: 4500 },
-      { channel: 'Organic Search', users: 3200 },
-      { channel: 'Referral', users: 1800 },
-      { channel: 'Social', users: 950 },
-    ],
-  },
-  {
-    slug: 'scatter',
-    category: 'comparison',
-    title: 'Bivariate Scatter Plot',
-    badge: 'QUANTITATIVE CORRELATION',
-    description: 'Visualizes numerical relationships and statistical distributions between two quantitative variables.',
-    heuristics: 'Inferred when data contains ≥ 2 Quantitative numeric fields.',
-    x: 'xVal',
-    y: 'yVal',
-    data: [
-      { xVal: 10, yVal: 25 },
-      { xVal: 20, yVal: 45 },
-      { xVal: 35, yVal: 60 },
-      { xVal: 50, yVal: 85 },
-      { xVal: 65, yVal: 95 },
-    ],
-  },
-  {
-    slug: 'histogram',
-    category: 'proportions',
-    title: 'Distribution Histogram',
-    badge: 'FREQUENCY DENSITY',
-    description: 'Auto-bins continuous single quantitative metrics into frequency distribution bars.',
-    heuristics: 'Inferred when dataset contains 1 Quantitative metric with no explicit temporal keys.',
-    x: 'score',
-    data: [
-      { score: 15 }, { score: 18 }, { score: 22 }, { score: 25 }, { score: 28 },
-      { score: 32 }, { score: 35 }, { score: 38 }, { score: 45 }, { score: 52 },
-    ],
-  },
-  {
-    slug: 'candlestick',
-    category: 'trends',
-    title: 'Candlestick Trading Chart',
-    badge: 'FINANCIAL OHLC',
-    subtitle: 'Financial trading candles with Open, High, Low, and Close prices.',
-    description: 'Visualizes stock, crypto, and commodity price action with green bullish and red bearish wicks.',
-    heuristics: 'Inferred when dataset contains Open, High, Low, and Close price keys.',
+    slug: 'trading',
+    title: 'Trading & Financial',
+    badge: 'MARKET DATA',
+    description: 'Dense time-series, financial OHLC candles, and volume overlays for market data and trading applications.',
+    heroChart: 'candlestick',
     x: 'date',
     data: [
       { date: 'Mon', open: 150, high: 162, low: 145, close: 158 },
@@ -133,55 +48,51 @@ const CHARTS_METADATA: ChartMetadata[] = [
     ],
   },
   {
-    slug: 'funnel',
-    category: 'proportions',
-    title: 'Funnel Conversion Chart',
-    badge: 'CONVERSION STAGES',
-    description: 'Displays user conversion retention and drop-off across sequential sales funnel stages.',
-    heuristics: 'Ideal for tracking signup, checkout, and onboarding drop-offs.',
-    x: 'stage',
-    y: 'count',
+    slug: 'statistical',
+    title: 'Statistical',
+    badge: 'DATA SCIENCE',
+    description: 'Distributions, probability densities, correlations, and variance across large statistical datasets.',
+    heroChart: 'histogram',
+    x: 'score',
     data: [
-      { stage: 'Site Visitors', count: 125000 },
-      { stage: 'Product Views', count: 68000 },
-      { stage: 'Added to Cart', count: 24000 },
-      { stage: 'Checkout Started', count: 14200 },
-      { stage: 'Purchase Complete', count: 9800 },
+      { score: 15 }, { score: 18 }, { score: 22 }, { score: 25 }, { score: 28 },
+      { score: 32 }, { score: 35 }, { score: 38 }, { score: 45 }, { score: 52 },
     ],
   },
   {
-    slug: 'kpi-sparkline',
-    category: 'kpis',
-    title: 'KPI + Sparkline Summary',
-    badge: 'EXECUTIVE SUMMARY',
-    description: 'Presents high-level headline metrics alongside condensed temporal trend sparklines.',
-    heuristics: 'Used for executive metrics and KPI dashboard widgets.',
-    x: 'month',
-    y: 'metric',
+    slug: 'comparison',
+    title: 'Comparison & Ranking',
+    badge: 'CATEGORICAL ANALYSIS',
+    description: 'Rankings, categorical magnitude comparisons, and bivariate scatter correlations.',
+    heroChart: 'bar',
+    x: 'category',
+    y: 'amount',
     data: [
-      { month: 'Q1', metric: 1200 },
-      { month: 'Q2', metric: 1450 },
-      { month: 'Q3', metric: 1890 },
-      { month: 'Q4', metric: 2400 },
+      { category: 'Design', amount: 8400 },
+      { category: 'Engineering', amount: 14200 },
+      { category: 'Product', amount: 9600 },
+      { category: 'Ops', amount: 5100 },
+    ],
+  },
+  {
+    slug: 'composition',
+    title: 'Composition & Flow',
+    badge: 'TRENDS & FLOW',
+    description: 'Temporal continuity, volume accumulation, and interconnected flow state changes over time.',
+    heroChart: 'line',
+    x: 'date',
+    y: 'value',
+    data: [
+      { date: 'Jan 01', value: 340 },
+      { date: 'Jan 02', value: 410 },
+      { date: 'Jan 03', value: 390 },
+      { date: 'Jan 04', value: 520 },
+      { date: 'Jan 05', value: 680 },
     ],
   },
 ];
 
-const CATEGORY_TABS: { id: string; label: string }[] = [
-  { id: 'all', label: 'All Primitives' },
-  { id: 'trends', label: 'Trends & Time-Series' },
-  { id: 'comparison', label: 'Categorical Comparison' },
-  { id: 'proportions', label: 'Proportions & Share' },
-  { id: 'kpis', label: 'Executive KPIs' },
-];
-
 export default function ChartsOverviewPage() {
-  const [activeTab, setActiveTab] = useState('all');
-
-  const filteredCharts = CHARTS_METADATA.filter(
-    (chart) => activeTab === 'all' || chart.category === activeTab
-  );
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -190,69 +101,49 @@ export default function ChartsOverviewPage() {
           VIZORA COMPONENT GALLERY
         </span>
         <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
-          Chart Primitives & Layouts
+          Use Case Categories
         </h1>
         <p className="font-body-doc text-[#404641] max-w-2xl text-base leading-relaxed">
-          Vizora implements deterministic visualization primitives with strict Zod schema validation, headless scene graph resolution, and built-in screen reader accessibility.
+          Explore Vizora\'s deterministic visualization primitives grouped by industry standard use-cases. 
+          Each category provides specialized layouts, tailored heuristics, and composed templates.
         </p>
-
-        {/* Category Tabs */}
-        <div className="pt-4 flex flex-wrap items-center gap-2">
-          {CATEGORY_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-xs font-semibold rounded-full border transition-all duration-200 ${
-                activeTab === tab.id
-                  ? 'bg-[#18241b] text-white border-[#18241b] shadow-md'
-                  : 'bg-white/80 text-[#404641] border-[#18241b]/15 hover:border-[#c2872e]'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* Grid of Chart Cards */}
+      {/* Grid of Category Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredCharts.map((chart) => (
+        {CATEGORIES.map((category) => (
           <div
-            key={chart.slug}
+            key={category.slug}
             className="bg-white/80 border border-[#18241b]/15 rounded-3xl p-6 space-y-4 shadow-xl backdrop-blur-xl hover:border-[#c2872e] transition-all flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-3">
                 <span className="font-sans text-xs font-bold text-[#c2872e] uppercase tracking-wider">
-                  {chart.badge}
+                  {category.badge}
                 </span>
                 <span className="font-mono text-[10px] bg-[#18241b]/8 px-2.5 py-0.5 rounded-full border border-[#18241b]/10 font-bold text-[#18241b]">
-                  /charts/{chart.slug}
+                  /charts/{category.slug}
                 </span>
               </div>
 
               <h2 className="font-headline-md text-xl text-[#18241b] font-bold">
-                {chart.title}
+                {category.title}
               </h2>
               <p className="font-body-ui text-xs text-[#404641] leading-relaxed">
-                {chart.description}
+                {category.description}
               </p>
-              <div className="p-3 bg-[#18241b]/5 rounded-xl border border-[#18241b]/10 font-sans text-[11px] text-[#60685c]">
-                <span className="font-bold text-[#18241b]">Inference Rule: </span>
-                {chart.heuristics}
-              </div>
             </div>
 
             <div className="space-y-4 pt-2">
               <div className="bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-3 h-48 flex items-center justify-center shadow-inner">
-                <Chart type={chart.slug} data={chart.data} x={chart.x} y={chart.y} />
+                <Chart type={category.heroChart} data={category.data} x={category.x} y={category.y} />
               </div>
 
               <Link
-                href={`/charts/${chart.slug}`}
+                href={`/charts/${category.slug}`}
                 className="w-full py-2.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
-                <span>OPEN DETAILED PAGE & PROPS</span>
+                <span>EXPLORE CATEGORY</span>
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>

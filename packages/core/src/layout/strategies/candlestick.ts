@@ -40,8 +40,13 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
     const rawDates = spec.data.map((d) => new Date(String(d[xField] ?? '')));
     const isTemporal = rawDates.every((dt) => !isNaN(dt.getTime()));
 
-    const highs = spec.data.map((d) => parseNum(d.high ?? d.open ?? d.close));
-    const lows = spec.data.map((d) => parseNum(d.low ?? d.open ?? d.close));
+    const openField = spec.encoding.open?.field || 'open';
+    const closeField = spec.encoding.close?.field || 'close';
+    const highField = spec.encoding.high?.field || 'high';
+    const lowField = spec.encoding.low?.field || 'low';
+
+    const highs = spec.data.map((d) => parseNum(d[highField] ?? d[openField] ?? d[closeField]));
+    const lows = spec.data.map((d) => parseNum(d[lowField] ?? d[openField] ?? d[closeField]));
     const minLow = Math.min(...lows) * 0.98 || 0;
     const maxHigh = Math.max(...highs) * 1.02 || 100;
 
@@ -89,10 +94,10 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
     const COLOR_BEARISH = '#ef4444'; // Red
 
     spec.data.forEach((d, i) => {
-      const open = parseNum(d.open ?? d.close);
-      const high = parseNum(d.high ?? Math.max(open, parseNum(d.close)));
-      const low = parseNum(d.low ?? Math.min(open, parseNum(d.close)));
-      const close = parseNum(d.close ?? open);
+      const open = parseNum(d[openField] ?? d[closeField]);
+      const high = parseNum(d[highField] ?? Math.max(open, parseNum(d[closeField])));
+      const low = parseNum(d[lowField] ?? Math.min(open, parseNum(d[closeField])));
+      const close = parseNum(d[closeField] ?? open);
 
       const isBullish = close >= open;
       const candleColor = isBullish ? COLOR_BULLISH : COLOR_BEARISH;

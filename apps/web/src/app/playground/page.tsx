@@ -7,7 +7,6 @@ import { recommendChartSpec } from '@vizora/intelligence';
 import { ChartType, buildSceneGraph } from '@vizora/core';
 import { CodeBlock } from '../../components/CodeBlock';
 import { VisualDataEditor } from '../../components/VisualDataEditor';
-import { PalettePicker, PALETTES, ThemePalette } from '../../components/PalettePicker';
 
 const PLAYGROUND_PRESETS: Record<string, {
   name: string;
@@ -30,7 +29,7 @@ const PLAYGROUND_PRESETS: Record<string, {
     ],
   },
   areaVolume: {
-    name: 'Monthly Bandwidth Consumption',
+    name: 'Monthly Bandwidth',
     type: 'area',
     x: 'month',
     y: 'gb',
@@ -43,7 +42,7 @@ const PLAYGROUND_PRESETS: Record<string, {
     ],
   },
   deviceShare: {
-    name: 'Device Traffic Distribution',
+    name: 'Device Traffic Share',
     type: 'donut',
     x: 'device',
     y: 'users',
@@ -67,7 +66,7 @@ const PLAYGROUND_PRESETS: Record<string, {
     ],
   },
   conversionFunnel: {
-    name: 'E-Commerce Conversion Funnel',
+    name: 'Conversion Funnel',
     type: 'funnel',
     x: 'stage',
     y: 'users',
@@ -130,15 +129,24 @@ const PLAYGROUND_PRESETS: Record<string, {
   },
 };
 
+const PRESET_LABELS: Record<string, string> = {
+  sales: 'Bar',
+  areaVolume: 'Area',
+  deviceShare: 'Donut',
+  trading: 'Candlestick',
+  conversionFunnel: 'Funnel',
+  financial: 'Line',
+  sensors: 'Scatter',
+  distribution: 'Histogram',
+  kpi: 'KPI',
+};
+
 export default function StudioPlaygroundPage() {
   const [presetKey, setPresetKey] = useState<string>('sales');
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [mode, setMode] = useState<'auto' | 'explicit'>('auto');
   const [editorMode, setEditorMode] = useState<'table' | 'json'>('table');
   const [inspectorTab, setInspectorTab] = useState<'jsx' | 'spec' | 'scenegraph' | 'table'>('jsx');
-  const [selectedPalette, setSelectedPalette] = useState<ThemePalette>(PALETTES[0]);
-
-  // Live streaming simulation state
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const [dataset, setDataset] = useState<Record<string, unknown>[]>(PLAYGROUND_PRESETS.sales.data);
   const [customJson, setCustomJson] = useState<string>('');
@@ -146,7 +154,6 @@ export default function StudioPlaygroundPage() {
 
   const currentPreset = PLAYGROUND_PRESETS[presetKey] || PLAYGROUND_PRESETS.sales;
 
-  // Sync dataset on preset change
   const handleSelectPreset = (key: string) => {
     setPresetKey(key);
     setChartType(PLAYGROUND_PRESETS[key].type);
@@ -156,7 +163,6 @@ export default function StudioPlaygroundPage() {
     setIsStreaming(false);
   };
 
-  // Handle JSON text change
   const handleJsonTextChange = (text: string) => {
     setCustomJson(text);
     if (!text.trim()) {
@@ -170,40 +176,32 @@ export default function StudioPlaygroundPage() {
         setJsonError(null);
         setDataset(parsed);
       } else {
-        setJsonError('Must be an array of objects');
+        setJsonError('Must be a JSON array of objects');
       }
     } catch {
-      setJsonError('Invalid JSON format');
+      setJsonError('Invalid JSON');
     }
   };
 
-  // Real-time streaming effect
   useEffect(() => {
     if (!isStreaming) return;
-
     const interval = setInterval(() => {
       setDataset((prev) => {
-        const _lastRow = prev[prev.length - 1] || { time: '00:00', value: 10 };
         const nextValue = Math.floor(Math.random() * 50) + 20;
         const nextTime = `T+${prev.length + 1}s`;
-        const updated = [...prev.slice(-9), { time: nextTime, value: nextValue }];
-        return updated;
+        return [...prev.slice(-9), { time: nextTime, value: nextValue }];
       });
     }, 1200);
-
     return () => clearInterval(interval);
   }, [isStreaming]);
 
-  // Resolved Spec
   const resolvedSpec = useMemo(() => {
     if (mode === 'auto') {
       try {
         const spec = recommendChartSpec(dataset);
         spec.title = currentPreset.name;
         return spec;
-      } catch {
-        // fallback
-      }
+      } catch { /* fallback */ }
     }
     return {
       version: '0.1.0' as const,
@@ -217,27 +215,14 @@ export default function StudioPlaygroundPage() {
     };
   }, [mode, chartType, dataset, currentPreset]);
 
-  // Scene graph resolution
   const sceneGraph = useMemo(() => {
-    try {
-      return buildSceneGraph(resolvedSpec);
-    } catch {
-      return null;
-    }
+    try { return buildSceneGraph(resolvedSpec); } catch { return null; }
   }, [resolvedSpec]);
 
   const reactCodeSnippet = mode === 'auto'
     ? `<AutoChart data={data} title="${currentPreset.name}" />`
-    : `<Chart
-  type="${chartType}"
-  data={data}
-  ${currentPreset.x ? `x="${currentPreset.x}"` : ''}
-  ${currentPreset.y ? `y="${currentPreset.y}"` : ''}
-  color="${selectedPalette.primary}"
-  title="${currentPreset.name}"
-/>`;
+    : `<Chart\n  type="${chartType}"\n  data={data}\n  ${currentPreset.x ? `x="${currentPreset.x}"` : ''}\n  ${currentPreset.y ? `y="${currentPreset.y}"` : ''}\n  title="${currentPreset.name}"\n/>`;
 
-  // SVG Export function
   const handleExportSvg = () => {
     const svgEl = document.querySelector('#playground-svg-container svg');
     if (!svgEl) return;
@@ -255,172 +240,161 @@ export default function StudioPlaygroundPage() {
     <div className="min-h-screen bg-[#f4f7f3] text-[#18241b] font-sans antialiased">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
-        {/* Studio Title Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#18241b]/10 pb-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
-                STUDIO PLAYGROUND
-              </span>
-              {isStreaming && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-600 text-white text-[10px] font-sans font-bold rounded-full animate-pulse shadow-sm">
-                  🔴 LIVE STREAMING
-                </span>
-              )}
-            </div>
-            <h1 className="font-headline-lg text-2xl sm:text-3xl text-[#18241b] font-bold">
-              Interactive Chart Customizer
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#18241b]/10 pb-6">
+          <div>
+            <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+              Studio Playground
+            </span>
+            <h1 className="font-headline-lg text-2xl sm:text-3xl text-[#18241b] font-bold mt-1">
+              Interactive Chart Builder
             </h1>
+            <p className="font-body-doc text-[#60685c] text-sm mt-1">
+              Edit data, switch chart types, and inspect the generated spec in real time.
+            </p>
           </div>
 
-          {/* Mode Switcher & Stream Button */}
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => setIsStreaming(!isStreaming)}
-              className={`px-3.5 py-2 font-sans text-xs font-bold rounded-xl transition-all shadow-sm active:scale-95 border ${
-                isStreaming
-                  ? 'bg-red-600 text-white border-red-700'
-                  : 'bg-[#0f1611] text-[#c2872e] border-slate-800 hover:bg-[#1a251d]'
-              }`}
-            >
-              {isStreaming ? 'STOP STREAMING' : '⚡ STREAM LIVE DATA'}
-            </button>
-
-            <div className="flex items-center gap-1 bg-[#18241b]/8 p-1 rounded-full border border-[#18241b]/10">
+          <div className="flex items-center gap-2">
+            {/* Auto / Explicit mode toggle */}
+            <div className="flex items-center gap-1 bg-white border border-[#18241b]/10 p-1 rounded-xl shadow-sm">
               <button
                 onClick={() => setMode('auto')}
-                className={`px-3.5 py-1.5 font-sans text-xs font-bold rounded-full transition-all duration-200 ${
-                  mode === 'auto'
-                    ? 'bg-[#18241b] text-white shadow-sm'
-                    : 'text-[#60685c] hover:text-[#18241b]'
+                className={`px-3.5 py-1.5 font-sans text-xs font-semibold rounded-lg transition-all duration-150 ${
+                  mode === 'auto' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
-                &lt;AutoChart /&gt;
+                AutoChart
               </button>
               <button
                 onClick={() => setMode('explicit')}
-                className={`px-3.5 py-1.5 font-sans text-xs font-bold rounded-full transition-all duration-200 ${
-                  mode === 'explicit'
-                    ? 'bg-[#18241b] text-white shadow-sm'
-                    : 'text-[#60685c] hover:text-[#18241b]'
+                className={`px-3.5 py-1.5 font-sans text-xs font-semibold rounded-lg transition-all duration-150 ${
+                  mode === 'explicit' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
-                &lt;Chart /&gt;
+                Explicit
               </button>
             </div>
+
+            <button
+              onClick={() => setIsStreaming(!isStreaming)}
+              className={`px-4 py-2 font-sans text-xs font-semibold rounded-xl transition-all shadow-sm border ${
+                isStreaming
+                  ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100'
+                  : 'bg-white text-[#18241b] border-[#18241b]/15 hover:border-[#18241b]/30'
+              }`}
+            >
+              {isStreaming ? '⏹ Stop' : '⚡ Stream Live'}
+            </button>
           </div>
         </div>
 
-        {/* Preset Selector Bar */}
-        <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin">
+        {/* Preset Selector */}
+        <div className="flex overflow-x-auto gap-1.5 scrollbar-thin">
           {Object.keys(PLAYGROUND_PRESETS).map((key) => (
             <button
               key={key}
               onClick={() => handleSelectPreset(key)}
-              className={`px-3.5 py-1.5 font-sans text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap active:scale-95 border ${
+              className={`px-4 py-2 font-sans text-xs font-semibold rounded-lg transition-all whitespace-nowrap border ${
                 presetKey === key
-                  ? 'bg-[#18241b] text-white border-[#18241b] shadow-md font-bold'
-                  : 'bg-white text-[#60685c] hover:text-[#18241b] hover:bg-[#18241b]/5 border-[#18241b]/15 shadow-sm'
+                  ? 'bg-[#18241b] text-white border-[#18241b]'
+                  : 'bg-white text-[#60685c] hover:text-[#18241b] border-[#18241b]/10 hover:border-[#18241b]/25'
               }`}
             >
-              Preset: {PLAYGROUND_PRESETS[key].name}
+              {PRESET_LABELS[key]}
             </button>
           ))}
         </div>
 
-        {/* Color Palette Switcher */}
-        <PalettePicker selectedId={selectedPalette.id} onSelect={(p) => setSelectedPalette(p)} />
+        {/* Main Studio Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-        {/* Studio Grid (Left: Visual Spreadsheet/JSON Data Editor, Right: SVG Live Canvas) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Data Editor */}
-          <div className="lg:col-span-5 bg-white/80 border border-[#18241b]/15 rounded-3xl p-5 space-y-4 shadow-xl backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-3">
-              <div className="flex items-center gap-1.5 font-mono text-xs bg-[#18241b]/8 p-1 rounded-full border border-[#18241b]/10">
+          {/* Left: Data Editor */}
+          <div className="lg:col-span-5 bg-white border border-[#18241b]/10 rounded-2xl overflow-hidden shadow-sm">
+            {/* Editor toolbar */}
+            <div className="flex items-center justify-between border-b border-[#18241b]/8 px-4 py-3 bg-[#f9fbf8]">
+              <div className="flex items-center gap-1 bg-[#f4f7f3] border border-[#18241b]/10 p-0.5 rounded-lg">
                 <button
                   onClick={() => setEditorMode('table')}
-                  className={`px-3 py-1 font-bold rounded-full transition-all duration-200 ${
-                    editorMode === 'table' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
+                  className={`px-3 py-1 font-sans text-xs font-semibold rounded-md transition-all ${
+                    editorMode === 'table' ? 'bg-white text-[#18241b] shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
                   }`}
                 >
-                  Spreadsheet Grid
+                  Spreadsheet
                 </button>
                 <button
                   onClick={() => setEditorMode('json')}
-                  className={`px-3 py-1 font-bold rounded-full transition-all duration-200 ${
-                    editorMode === 'json' ? 'bg-[#18241b] text-white shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
+                  className={`px-3 py-1 font-sans text-xs font-semibold rounded-md transition-all ${
+                    editorMode === 'json' ? 'bg-white text-[#18241b] shadow-sm' : 'text-[#60685c] hover:text-[#18241b]'
                   }`}
                 >
-                  Raw JSON
+                  JSON
                 </button>
               </div>
-
-              {jsonError && <span className="text-[#d6502b] font-mono text-xs font-bold">{jsonError}</span>}
+              {jsonError && <span className="text-red-500 font-mono text-xs">{jsonError}</span>}
             </div>
 
-            {editorMode === 'table' ? (
-              <VisualDataEditor data={dataset} onChange={(updated) => setDataset(updated)} />
-            ) : (
-              <textarea
-                value={customJson || JSON.stringify(dataset, null, 2)}
-                onChange={(e) => handleJsonTextChange(e.target.value)}
-                rows={14}
-                className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3.5 rounded-2xl border border-slate-800 focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 resize-y transition-all"
-                placeholder="Paste custom JSON array here..."
-              />
-            )}
-
-            <button
-              onClick={() => handleSelectPreset(presetKey)}
-              className="w-full py-2.5 bg-[#18241b]/5 hover:bg-[#18241b] hover:text-white text-[#18241b] font-mono text-xs font-bold uppercase rounded-xl border border-[#18241b]/15 transition-all shadow-sm active:scale-95"
-            >
-              RESET TO PRESET DATA
-            </button>
+            <div className="p-4 space-y-3">
+              {editorMode === 'table' ? (
+                <VisualDataEditor data={dataset} onChange={(updated) => setDataset(updated)} />
+              ) : (
+                <textarea
+                  value={customJson || JSON.stringify(dataset, null, 2)}
+                  onChange={(e) => handleJsonTextChange(e.target.value)}
+                  rows={14}
+                  className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-4 rounded-xl border border-[#18241b]/20 focus:outline-none focus:ring-2 focus:ring-[#c2872e]/20 resize-none"
+                  placeholder="Paste JSON array..."
+                />
+              )}
+              <button
+                onClick={() => handleSelectPreset(presetKey)}
+                className="w-full py-2 text-[#60685c] hover:text-[#18241b] font-sans text-xs font-semibold rounded-lg border border-[#18241b]/10 hover:border-[#18241b]/25 bg-[#f9fbf8] hover:bg-[#f4f7f3] transition-all"
+              >
+                Reset to preset data
+              </button>
+            </div>
           </div>
 
-          {/* Right Live SVG Canvas */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-[#18241b]/15 p-6 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-3">
-              <div className="space-y-0.5">
-                <span className="font-mono text-[10px] font-bold uppercase text-[#c2872e]">
-                  LIVE WORKBENCH PREVIEW
-                </span>
-                <h3 className="font-headline-md text-xl font-bold text-[#18241b]">
-                  {currentPreset.name}
-                </h3>
+          {/* Right: Chart Canvas */}
+          <div className="lg:col-span-7 bg-white border border-[#18241b]/10 rounded-2xl overflow-hidden shadow-sm">
+            {/* Canvas toolbar */}
+            <div className="flex items-center justify-between border-b border-[#18241b]/8 px-4 py-3 bg-[#f9fbf8]">
+              <div>
+                <p className="font-sans text-xs text-[#c2872e] font-semibold uppercase tracking-wider">Live Preview</p>
+                <h3 className="font-sans text-sm font-bold text-[#18241b] mt-0.5">{currentPreset.name}</h3>
               </div>
-
               <div className="flex items-center gap-2">
                 {mode === 'explicit' && (
                   <select
                     value={chartType}
                     onChange={(e) => setChartType(e.target.value as ChartType)}
-                    className="bg-[#f4f7f3] border border-[#18241b]/20 rounded-xl px-3 py-1.5 font-mono text-xs font-bold text-[#18241b] outline-none cursor-pointer shadow-sm"
+                    className="bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg px-3 py-1.5 font-sans text-xs text-[#18241b] outline-none cursor-pointer"
                   >
-                    <option value="line">line</option>
-                    <option value="bar">bar</option>
-                    <option value="area">area</option>
-                    <option value="donut">donut</option>
-                    <option value="pie">pie</option>
-                    <option value="candlestick">candlestick</option>
-                    <option value="funnel">funnel</option>
-                    <option value="scatter">scatter</option>
-                    <option value="histogram">histogram</option>
-                    <option value="kpi-sparkline">kpi-sparkline</option>
+                    <option value="line">Line</option>
+                    <option value="bar">Bar</option>
+                    <option value="area">Area</option>
+                    <option value="donut">Donut</option>
+                    <option value="pie">Pie</option>
+                    <option value="candlestick">Candlestick</option>
+                    <option value="funnel">Funnel</option>
+                    <option value="scatter">Scatter</option>
+                    <option value="histogram">Histogram</option>
+                    <option value="kpi-sparkline">KPI</option>
                   </select>
                 )}
-
                 <button
                   onClick={handleExportSvg}
-                  className="px-4 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase rounded-xl shadow-md hover:-translate-y-0.5 active:scale-95 transition-all"
+                  className="carto-btn-primary text-[10px] py-1.5 px-3"
                 >
-                  DOWNLOAD SVG
+                  Export SVG
                 </button>
               </div>
             </div>
 
-            <div id="playground-svg-container" className="bg-[#f4f7f3] rounded-2xl border border-[#18241b]/10 p-6 min-h-[320px] flex items-center justify-center shadow-inner">
+            <div
+              id="playground-svg-container"
+              className="bg-[#f9fbf8] h-80 w-full flex items-center justify-center"
+            >
               {mode === 'auto' ? (
                 <AutoChart data={dataset} title={currentPreset.name} />
               ) : (
@@ -429,7 +403,6 @@ export default function StudioPlaygroundPage() {
                   data={dataset}
                   x={currentPreset.x}
                   y={currentPreset.y}
-                  color={selectedPalette.primary}
                   title={currentPreset.name}
                 />
               )}
@@ -437,87 +410,58 @@ export default function StudioPlaygroundPage() {
           </div>
         </div>
 
-        {/* Multi-Tab Inspector Section */}
-        <div className="bg-[#0f1611] border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-md">
-          <div className="flex items-center bg-[#151f17] border-b border-slate-800/80 px-4 pt-3 pb-2 gap-1.5 overflow-x-auto scrollbar-thin">
-            <button
-              onClick={() => setInspectorTab('jsx')}
-              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
-                inspectorTab === 'jsx'
-                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
-                  : 'text-[#9ba196] hover:text-white'
-              }`}
-            >
-              React JSX Code
-            </button>
-            <button
-              onClick={() => setInspectorTab('spec')}
-              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
-                inspectorTab === 'spec'
-                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
-                  : 'text-[#9ba196] hover:text-white'
-              }`}
-            >
-              ChartSpec JSON
-            </button>
-            <button
-              onClick={() => setInspectorTab('scenegraph')}
-              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
-                inspectorTab === 'scenegraph'
-                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
-                  : 'text-[#9ba196] hover:text-white'
-              }`}
-            >
-              Scene Graph Tree
-            </button>
-            <button
-              onClick={() => setInspectorTab('table')}
-              className={`px-3.5 py-1.5 rounded-xl font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
-                inspectorTab === 'table'
-                  ? 'bg-[#0f1611] text-[#c2872e] shadow-sm font-bold border border-slate-700/60'
-                  : 'text-[#9ba196] hover:text-white'
-              }`}
-            >
-              Accessible Data Table
-            </button>
+        {/* Inspector Panel */}
+        <div className="bg-[#0f1611] border border-[#18241b]/30 rounded-2xl overflow-hidden">
+          {/* Tab bar */}
+          <div className="flex items-center border-b border-white/5 px-3 pt-3 gap-0.5 overflow-x-auto scrollbar-thin">
+            {(['jsx', 'spec', 'scenegraph', 'table'] as const).map((tab) => {
+              const labels = { jsx: 'React JSX', spec: 'ChartSpec JSON', scenegraph: 'Scene Graph', table: 'Data Table' };
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setInspectorTab(tab)}
+                  className={`px-4 py-2 font-mono text-xs font-medium rounded-t-lg transition-all whitespace-nowrap border-b-2 ${
+                    inspectorTab === tab
+                      ? 'bg-[#151f17] text-[#c2872e] border-[#c2872e]'
+                      : 'text-[#9ba196] hover:text-white border-transparent'
+                  }`}
+                >
+                  {labels[tab]}
+                </button>
+              );
+            })}
           </div>
 
           <div className="p-4 overflow-x-auto">
             {inspectorTab === 'jsx' && (
-              <CodeBlock code={reactCodeSnippet} language="typescript" title="Generated Component Code" />
+              <CodeBlock code={reactCodeSnippet} language="typescript" title="Generated Component" />
             )}
-
             {inspectorTab === 'spec' && (
-              <CodeBlock code={JSON.stringify(resolvedSpec, null, 2)} language="json" title="Resolved ChartSpec Contract" />
+              <CodeBlock code={JSON.stringify(resolvedSpec, null, 2)} language="json" title="ChartSpec Contract" />
             )}
-
             {inspectorTab === 'scenegraph' && (
-              <CodeBlock code={JSON.stringify(sceneGraph, null, 2)} language="json" title="Headless SceneGraph Structure" />
+              <CodeBlock code={JSON.stringify(sceneGraph, null, 2)} language="json" title="Scene Graph Tree" />
             )}
-
             {inspectorTab === 'table' && (
-              <div className="space-y-3 font-mono text-xs text-[#e0e4dc]">
-                <div className="text-[#c2872e] font-bold uppercase">Screen Reader Fallback Table</div>
-                <div className="overflow-x-auto rounded-xl border border-slate-800">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-[#151f17] text-[#c2872e] border-b border-slate-800">
-                        {dataset.length > 0 && Object.keys(dataset[0]).map((k) => (
-                          <th key={k} className="p-2.5 border-r border-slate-800 uppercase font-bold text-[11px]">{k}</th>
+              <div className="overflow-x-auto rounded-xl border border-white/5">
+                <table className="w-full text-left font-mono text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-[#151f17] text-[#c2872e] border-b border-white/5">
+                      {dataset.length > 0 && Object.keys(dataset[0]).map((k) => (
+                        <th key={k} className="px-4 py-2.5 font-bold uppercase border-r border-white/5 last:border-r-0">{k}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataset.map((row, idx) => (
+                      <tr key={idx} className="border-b border-white/5 hover:bg-[#1a251d]/60 transition-colors">
+                        {Object.values(row).map((v, j) => (
+                          <td key={j} className="px-4 py-2.5 text-[#a4c995] border-r border-white/5 last:border-r-0">{String(v)}</td>
                         ))}
                       </tr>
-                    </thead>
-                    <tbody>
-                      {dataset.map((row, idx) => (
-                        <tr key={idx} className="hover:bg-[#1a251d]/60 border-b border-slate-800/50 transition-colors">
-                          {Object.values(row).map((v, j) => (
-                            <td key={j} className="p-2.5 border-r border-slate-800/50 text-[#a4c995]">{String(v)}</td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
