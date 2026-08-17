@@ -29,6 +29,56 @@ const PLAYGROUND_PRESETS: Record<string, {
       { region: 'Middle East', revenue: 6400 },
     ],
   },
+  areaVolume: {
+    name: 'Monthly Bandwidth Consumption',
+    type: 'area',
+    x: 'month',
+    y: 'gb',
+    data: [
+      { month: 'Jan', gb: 120 },
+      { month: 'Feb', gb: 190 },
+      { month: 'Mar', gb: 310 },
+      { month: 'Apr', gb: 480 },
+      { month: 'May', gb: 640 },
+    ],
+  },
+  deviceShare: {
+    name: 'Device Traffic Distribution',
+    type: 'donut',
+    x: 'device',
+    y: 'users',
+    data: [
+      { device: 'Desktop', users: 14200 },
+      { device: 'Mobile Safari', users: 9800 },
+      { device: 'Mobile Chrome', users: 6100 },
+      { device: 'Tablet', users: 1500 },
+    ],
+  },
+  trading: {
+    name: 'Daily Asset Price Action',
+    type: 'candlestick',
+    x: 'date',
+    data: [
+      { date: 'Mon', open: 150, high: 162, low: 145, close: 158 },
+      { date: 'Tue', open: 158, high: 165, low: 152, close: 153 },
+      { date: 'Wed', open: 153, high: 170, low: 150, close: 168 },
+      { date: 'Thu', open: 168, high: 174, low: 160, close: 162 },
+      { date: 'Fri', open: 162, high: 180, low: 159, close: 176 },
+    ],
+  },
+  conversionFunnel: {
+    name: 'E-Commerce Conversion Funnel',
+    type: 'funnel',
+    x: 'stage',
+    y: 'users',
+    data: [
+      { stage: 'Visitors', users: 125000 },
+      { stage: 'Views', users: 68000 },
+      { stage: 'Cart', users: 24000 },
+      { stage: 'Checkout', users: 14200 },
+      { stage: 'Purchased', users: 9800 },
+    ],
+  },
   financial: {
     name: 'Stock Price Time Series',
     type: 'line',
@@ -350,6 +400,11 @@ export default function StudioPlaygroundPage() {
                   >
                     <option value="line">line</option>
                     <option value="bar">bar</option>
+                    <option value="area">area</option>
+                    <option value="donut">donut</option>
+                    <option value="pie">pie</option>
+                    <option value="candlestick">candlestick</option>
+                    <option value="funnel">funnel</option>
                     <option value="scatter">scatter</option>
                     <option value="histogram">histogram</option>
                     <option value="kpi-sparkline">kpi-sparkline</option>

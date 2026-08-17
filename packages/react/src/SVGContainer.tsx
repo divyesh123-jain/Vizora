@@ -224,14 +224,17 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
 
       {hoverState && hoverState.visible && (
         <>
-          <div
-            className="vizora-crosshair-line absolute pointer-events-none border-l border-dashed border-foreground/30 z-10 transition-all duration-75"
-            style={{
-              left: `${hoverState.itemX}px`,
-              top: '30px',
-              bottom: '40px',
-            }}
-          />
+          {/* Vertical Crosshair Line for Cartesian charts only */}
+          {hoverState.chartType !== 'donut' && hoverState.chartType !== 'pie' && hoverState.chartType !== 'funnel' && (
+            <div
+              className="vizora-crosshair-line absolute pointer-events-none border-l border-dashed border-foreground/30 z-10 transition-all duration-75"
+              style={{
+                left: `${hoverState.itemX}px`,
+                top: '30px',
+                bottom: '40px',
+              }}
+            />
+          )}
 
           {hoverState.chartType === 'bar' || hoverState.chartType === 'histogram' ? (
             hoverState.barBBox && (

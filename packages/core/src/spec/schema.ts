@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const ChartTypeSchema = z.enum(['line', 'bar', 'scatter', 'histogram', 'kpi-sparkline']);
+export const ChartTypeSchema = z.enum(['line', 'bar', 'scatter', 'histogram', 'kpi-sparkline', 'donut', 'pie', 'area', 'candlestick', 'funnel']);
 
 export const FieldDataTypeSchema = z.enum(['quantitative', 'temporal', 'categorical']);
 
