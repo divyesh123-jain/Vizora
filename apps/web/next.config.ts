@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: [
+    "@vizora/core",
+    "@vizora/intelligence",
+    "@vizora/react",
+    "@vizora/render-svg",
+  ],
   reactCompiler: true,
 };
 

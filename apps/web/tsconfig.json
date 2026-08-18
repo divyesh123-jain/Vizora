@@ -20,7 +20,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@vizora/core": ["../../packages/core/src/index.ts"],
+      "@vizora/intelligence": ["../../packages/intelligence/src/index.ts"],
+      "@vizora/react": ["../../packages/react/src/index.ts"],
+      "@vizora/render-svg": ["../../packages/render-svg/src/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
