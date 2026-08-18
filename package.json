@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "npm run dev --workspace=@vizora/web",
     "build": "npm run build --workspaces",
-    "test": "vitest run --workspaces",
-    "test:workspaces": "vitest run --workspaces",
+    "test": "vitest run",
+    "test:workspaces": "vitest run",
     "lint": "eslint packages/*/src apps/web/src"
   },
   "devDependencies": {

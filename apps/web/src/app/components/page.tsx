@@ -222,11 +222,11 @@ export default function ComponentsIndexPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by chart name, category, or field type (e.g. 'quantitative', 'temporal', 'candlestick')..."
-                className="w-full bg-white border border-[#18241b]/20 rounded-xl px-4 py-3 pl-10 font-mono text-xs text-[#18241b] placeholder:text-[#60685c]/60 focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 shadow-sm"
+                placeholder="Search by chart name, category, or field type..."
+                className="w-full bg-white border border-[#18241b]/20 rounded-[2px] px-3.5 py-2 pl-9 font-mono text-xs text-[#18241b] placeholder:text-[#60685c]/60 focus:outline-2 focus:outline-[#c2872e]"
               />
               <svg
-                className="w-4 h-4 text-[#60685c] absolute left-3.5 top-3.5"
+                className="w-4 h-4 text-[#60685c] absolute left-3 top-2.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -241,7 +241,7 @@ export default function ComponentsIndexPage() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-3 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
+                  className="absolute right-3 top-2.5 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
                 >
                   Clear
                 </button>
@@ -252,25 +252,25 @@ export default function ComponentsIndexPage() {
 
         {/* Search Results Display if Query present */}
         {searchQuery.trim() && (
-          <div className="space-y-4 bg-white/70 border border-[#18241b]/15 rounded-2xl p-6 shadow-sm">
+          <div className="space-y-3 bg-white border border-[#18241b]/15 rounded-[2px] p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-headline-md text-lg font-bold text-[#18241b]">
+              <h2 className="font-headline-md text-base font-bold text-[#18241b]">
                 Search Matches ({filteredCharts.length})
               </h2>
               <span className="font-mono text-xs text-[#60685c]">Query: &quot;{searchQuery}&quot;</span>
             </div>
 
             {filteredCharts.length === 0 ? (
-              <p className="font-mono text-xs text-[#60685c] py-4">
+              <p className="font-mono text-xs text-[#60685c] py-2">
                 No charts matched your search query. Try &quot;temporal&quot;, &quot;scatter&quot;, &quot;trading&quot;, or &quot;bar&quot;.
               </p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {filteredCharts.map((item) => (
                   <Link
                     key={item.type}
                     href={`/components/${item.type}`}
-                    className="p-4 bg-[#f4f7f3] border border-[#18241b]/10 rounded-xl hover:border-[#c2872e] transition-all space-y-2 group"
+                    className="p-3.5 bg-[#f4f7f3] border border-[#18241b]/10 rounded-[2px] hover:border-[#c2872e] transition-colors space-y-1.5 group"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-headline-md font-bold text-sm text-[#18241b] group-hover:text-[#c2872e]">
@@ -294,7 +294,7 @@ export default function ComponentsIndexPage() {
         {/* 5 Use-Case Category Cards */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-headline-md text-2xl font-bold text-[#18241b]">
+            <h2 className="font-headline-md text-xl font-bold text-[#18241b]">
               Use Case Categories
             </h2>
             <span className="font-mono text-xs text-[#60685c]">
@@ -302,7 +302,7 @@ export default function ComponentsIndexPage() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {CATEGORIES_DATA.map((cat) => (
               <CategoryCard key={cat.slug} category={cat} />
             ))}
@@ -310,39 +310,39 @@ export default function ComponentsIndexPage() {
         </div>
 
         {/* Pillar Navigation Callout Banner */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
-          <div className="bg-[#18241b] text-white rounded-2xl p-6 space-y-3 shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
+          <div className="bg-[#18241b] text-white rounded-[2px] p-5 space-y-2 border border-[#18241b]">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">
+              <span className="font-mono text-[10px] text-[#c2872e] font-bold uppercase">
                 Pillar 2 • Live Studio
               </span>
             </div>
-            <h3 className="font-headline-md text-xl font-bold">Live Playground</h3>
+            <h3 className="font-headline-md text-lg font-bold">Live Playground</h3>
             <p className="font-body-ui text-xs text-[#a4c995] leading-relaxed">
               Paste your own CSV or JSON, watch AutoChart infer the optimal bearing with the Compass Dial, and tweak styling live.
             </p>
             <Link
               href="/playground"
-              className="inline-flex items-center gap-2 text-xs font-bold text-[#c2872e] hover:text-white transition-colors pt-2"
+              className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#c2872e] hover:text-white transition-colors pt-1"
             >
               <span>Open Studio Playground</span>
               <span>&rarr;</span>
             </Link>
           </div>
 
-          <div className="bg-[#18241b] text-white rounded-2xl p-6 space-y-3 shadow-lg">
+          <div className="bg-[#18241b] text-white rounded-[2px] p-5 space-y-2 border border-[#18241b]">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">
+              <span className="font-mono text-[10px] text-[#c2872e] font-bold uppercase">
                 Pillar 3 • Guided Stepper
               </span>
             </div>
-            <h3 className="font-headline-md text-xl font-bold">Guided Chart Builder</h3>
+            <h3 className="font-headline-md text-lg font-bold">Guided Chart Builder</h3>
             <p className="font-body-ui text-xs text-[#a4c995] leading-relaxed">
               Step-by-step instrument workflow for selecting chart families, mapping field encodings with inline validation, and exporting code.
             </p>
             <Link
               href="/builder"
-              className="inline-flex items-center gap-2 text-xs font-bold text-[#c2872e] hover:text-white transition-colors pt-2"
+              className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#c2872e] hover:text-white transition-colors pt-1"
             >
               <span>Launch Chart Builder</span>
               <span>&rarr;</span>

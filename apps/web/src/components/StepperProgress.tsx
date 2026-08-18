@@ -20,9 +20,9 @@ export const StepperProgress: React.FC<StepperProgressProps> = ({
   onSelectStep,
 }) => {
   return (
-    <div className="w-full space-y-3 font-mono">
+    <div className="w-full space-y-2.5 font-mono">
       {/* Progress Line Strip */}
-      <div className="grid grid-cols-6 gap-1.5 h-2">
+      <div className="grid grid-cols-6 gap-1.5 h-1.5">
         {steps.map((step) => {
           const isComplete = step.number < currentStep;
           const isCurrent = step.number === currentStep;
@@ -35,12 +35,14 @@ export const StepperProgress: React.FC<StepperProgressProps> = ({
                   onSelectStep(step.number);
                 }
               }}
-              className={`h-full transition-all duration-200 cursor-pointer ${
+              className={`h-full rounded-[1px] transition-colors ${
+                step.number <= currentStep ? 'cursor-pointer' : 'cursor-default'
+              } ${
                 isComplete
                   ? 'bg-[#c2872e]' // waypoint filled
                   : isCurrent
-                  ? 'bg-[#18241b]' // active
-                  : 'bg-[#18241b]/10 border border-[#18241b]/20' // datum outline
+                  ? 'bg-[#18241b] dark:bg-[#e0e4dc]' // active
+                  : 'bg-[#18241b]/10 dark:bg-white/10' // datum outline
               }`}
               title={`Step ${step.number}: ${step.label}`}
             />
@@ -63,12 +65,12 @@ export const StepperProgress: React.FC<StepperProgressProps> = ({
                 }
               }}
               disabled={step.number > currentStep}
-              className={`text-left truncate transition-colors ${
+              className={`text-left truncate transition-colors focus-visible:outline-2 focus-visible:outline-[#c2872e] ${
                 isCurrent
-                  ? 'text-[#18241b] font-bold'
+                  ? 'text-[#18241b] dark:text-[#f1f5ee] font-bold'
                   : isComplete
-                  ? 'text-[#c2872e] hover:text-[#18241b]'
-                  : 'text-[#60685c]/60 cursor-not-allowed'
+                  ? 'text-[#c2872e] hover:text-[#18241b] dark:hover:text-[#f1f5ee]'
+                  : 'text-[#60685c]/50 cursor-not-allowed'
               }`}
             >
               <span className="font-bold mr-1">0{step.number}</span>

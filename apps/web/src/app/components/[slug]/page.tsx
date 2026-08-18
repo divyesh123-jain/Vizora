@@ -8,6 +8,7 @@ import { Chart } from '@vizora/react';
 import { ChartType } from '@vizora/core';
 import { LegendBand } from '../../../components/LegendBand';
 import { CodeBlock } from '../../../components/CodeBlock';
+import { ChartPreviewBlock } from '../../../components/ChartPreviewBlock';
 import {
   PropControlRow,
   SelectControl,
@@ -643,24 +644,24 @@ export default function DynamicComponentOrCategoryPage() {
               {category.charts.map((chartItem, idx) => (
                 <div
                   key={idx}
-                  className={`rounded-2xl border p-6 space-y-6 transition-all ${
+                  className={`rounded-[2px] border p-5 space-y-4 transition-colors ${
                     isDark
-                      ? 'bg-[#151f17] border-[#2d3a30] hover:border-[#c2872e]/50'
-                      : 'bg-white border-[#18241b]/15 shadow-sm hover:border-[#c2872e]'
+                      ? 'bg-[#151f17] border-[#2d3a30] hover:border-[#9ba196]/30'
+                      : 'bg-white border-[#18241b]/15 hover:border-[#18241b]/30'
                   }`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 border-inherit">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3 border-inherit">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] uppercase font-bold text-[#c2872e] px-2 py-0.5 rounded bg-[#c2872e]/10 border border-[#c2872e]/20">
+                        <span className="font-mono text-[10px] uppercase font-bold text-[#c2872e] px-1.5 py-0.2 rounded-[2px] bg-[#c2872e]/10 border border-[#c2872e]/20">
                           {chartItem.type}
                         </span>
-                        <h3 className="font-headline-md text-xl font-bold">
+                        <h3 className="font-headline-md text-lg font-bold">
                           {chartItem.name}
                         </h3>
                       </div>
                       <p
-                        className={`text-xs mt-1 ${
+                        className={`text-xs mt-0.5 ${
                           isDark ? 'text-[#9ba196]' : 'text-[#60685c]'
                         }`}
                       >
@@ -668,11 +669,10 @@ export default function DynamicComponentOrCategoryPage() {
                       </p>
                     </div>
 
-                    {/* 3 Action Buttons */}
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/components/${chartItem.type}`}
-                        className={`px-3 py-1.5 rounded-lg font-sans text-xs font-semibold border transition-all ${
+                        className={`px-2.5 py-1 rounded-[2px] font-mono text-xs font-semibold border transition-colors ${
                           isDark
                             ? 'bg-[#18221b] border-[#2d3a30] text-[#e0e4dc] hover:bg-[#253329]'
                             : 'bg-[#f4f7f3] border-[#18241b]/15 text-[#18241b] hover:bg-[#e7eee1]'
@@ -685,35 +685,28 @@ export default function DynamicComponentOrCategoryPage() {
                         onClick={() => {
                           router.push(`/playground?type=${chartItem.type}`);
                         }}
-                        className="px-3 py-1.5 rounded-lg bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-sans text-xs font-bold transition-all shadow-sm"
+                        className="px-2.5 py-1 rounded-[2px] bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold transition-colors"
                       >
                         Open in Playground
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(chartItem.snippet);
-                          alert('Copied snippet to clipboard!');
-                        }}
-                        className={`px-3 py-1.5 rounded-lg font-mono text-xs border transition-all ${
-                          isDark
-                            ? 'bg-[#0f1611] border-[#2d3a30] text-[#a4c995] hover:text-white'
-                            : 'bg-white border-[#18241b]/15 text-[#18241b] hover:bg-[#f4f7f3]'
-                        }`}
-                        title="Copy minimal JSX snippet"
-                      >
-                        Copy code
                       </button>
                     </div>
                   </div>
 
-                  {/* Live Rendered Chart Viewport with LegendBand */}
-                  <div
-                    className={`rounded-xl border overflow-hidden ${
-                      isDark ? 'border-[#2d3a30] bg-[#0b100d]' : 'border-[#18241b]/10 bg-[#f9fbf8]'
-                    }`}
+                  {/* Standardized Preview / Code Block */}
+                  <ChartPreviewBlock
+                    codeSnippet={chartItem.snippet}
+                    dark={isDark}
+                    dataCount={chartItem.data.length}
+                    spec={{
+                      type: chartItem.type,
+                      encoding: {
+                        x: chartItem.x ? { field: chartItem.x } : undefined,
+                        y: chartItem.y ? { field: chartItem.y } : undefined,
+                      },
+                      data: chartItem.data,
+                    }}
                   >
-                    <div className="h-64 p-4 flex items-center justify-center">
+                    <div className="h-60 flex items-center justify-center">
                       <Chart
                         type={chartItem.type}
                         data={chartItem.data}
@@ -722,19 +715,7 @@ export default function DynamicComponentOrCategoryPage() {
                         theme={isDark ? 'zinc' : undefined}
                       />
                     </div>
-                    <LegendBand
-                      spec={{
-                        type: chartItem.type,
-                        encoding: {
-                          x: chartItem.x ? { field: chartItem.x } : undefined,
-                          y: chartItem.y ? { field: chartItem.y } : undefined,
-                        },
-                        data: chartItem.data,
-                      }}
-                      dataCount={chartItem.data.length}
-                      dark={isDark}
-                    />
-                  </div>
+                  </ChartPreviewBlock>
                 </div>
               ))}
             </div>
@@ -813,36 +794,36 @@ export default function DynamicComponentOrCategoryPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-[#c2872e] bg-[#c2872e]/10 px-2.5 py-0.5 rounded-full border border-[#c2872e]/20 uppercase">
+                <span className="font-mono text-[10px] font-bold text-[#c2872e] bg-[#c2872e]/10 px-2 py-0.5 rounded-[2px] border border-[#c2872e]/20 uppercase">
                   {config.badge}
                 </span>
-                <h1 className="font-headline-lg text-3xl sm:text-4xl font-bold">
+                <h1 className="font-headline-lg text-2xl sm:text-3xl font-bold">
                   {config.title}
                 </h1>
               </div>
-              <p className="font-body-doc text-sm text-[#404641] max-w-3xl mt-2 leading-relaxed">
+              <p className="font-body-doc text-xs text-[#404641] max-w-3xl mt-1.5 leading-relaxed">
                 {config.description}
               </p>
             </div>
 
             <button
               onClick={() => router.push(`/playground?type=${config.type}`)}
-              className="px-5 py-2.5 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-sans text-xs font-bold uppercase tracking-wider shadow-md hover:-translate-y-0.5 active:scale-95 transition-all whitespace-nowrap"
+              className="px-4 py-2 rounded-[2px] bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold uppercase tracking-wider transition-colors whitespace-nowrap"
             >
               Try it in Playground &rarr;
             </button>
           </div>
         </div>
 
-        {/* Live Chart Sandbox + LegendBand */}
-        <div className="bg-white border border-[#18241b]/15 rounded-2xl overflow-hidden shadow-sm space-y-4">
-          <div className="flex items-center justify-between px-6 pt-5 border-b border-[#18241b]/8 pb-4">
+        {/* Live Chart Sandbox with Preview / Code and Preset Switcher */}
+        <div className="space-y-3">
+          {/* Preset Datasets Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-2 px-1">
             <div className="flex items-center gap-2">
-              <span className="font-sans text-xs font-bold text-[#c2872e] uppercase">
-                Interactive Preview
+              <span className="font-mono text-[11px] font-bold text-[#18241b] uppercase">
+                Presets:
               </span>
-              <span className="font-mono text-xs text-[#60685c]">| Preset Datasets:</span>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {config.presets.map((p, i) => (
                   <button
                     key={i}
@@ -850,10 +831,10 @@ export default function DynamicComponentOrCategoryPage() {
                       setActivePresetIdx(i);
                       setChartTitle(p.name);
                     }}
-                    className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors ${
+                    className={`px-2 py-0.5 rounded-[2px] text-[11px] font-mono transition-colors ${
                       activePresetIdx === i
                         ? 'bg-[#18241b] text-white font-bold'
-                        : 'bg-[#f4f7f3] text-[#60685c] hover:text-[#18241b]'
+                        : 'bg-white text-[#60685c] hover:text-[#18241b] border border-[#18241b]/15'
                     }`}
                   >
                     {p.name}
@@ -862,48 +843,45 @@ export default function DynamicComponentOrCategoryPage() {
               </div>
             </div>
             <span className="font-mono text-[10px] text-[#60685c] uppercase">
-              SVG Render Engine
+              SVG Render Engine • SSR Safe
             </span>
           </div>
 
-          <div className="h-80 px-6 flex items-center justify-center">
-            <Chart
-              type={config.type}
-              data={currentData}
-              x={xKey}
-              y={yKey}
-              orientation={orientation}
-              color={color}
-              title={chartTitle}
-            />
-          </div>
-
-          {/* Legend Band (Spec Ledger) */}
-          <LegendBand spec={currentSpec} dataCount={currentData.length} />
-        </div>
-
-        {/* Dynamic Live Code Snippet */}
-        <div className="space-y-3">
-          <h2 className="font-headline-md text-xl font-bold">Copyable React Component Snippet</h2>
-          <CodeBlock code={liveJsxSnippet} language="typescript" title="React Component Usage" />
+          <ChartPreviewBlock
+            spec={currentSpec}
+            codeSnippet={liveJsxSnippet}
+            dataCount={currentData.length}
+          >
+            <div className="h-72 p-2 flex items-center justify-center">
+              <Chart
+                type={config.type}
+                data={currentData}
+                x={xKey}
+                y={yKey}
+                orientation={orientation}
+                color={color}
+                title={chartTitle}
+              />
+            </div>
+          </ChartPreviewBlock>
         </div>
 
         {/* Full Interactive Prop Table */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-headline-md text-xl font-bold">Component Props Reference</h2>
-            <span className="font-mono text-xs text-[#60685c]">
+            <h2 className="font-headline-md text-lg font-bold">Component Props Reference</h2>
+            <span className="font-mono text-[11px] text-[#60685c]">
               Interactive controls update preview live
             </span>
           </div>
 
-          <div className="bg-white border border-[#18241b]/15 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-white border border-[#18241b]/15 rounded-[2px] overflow-hidden">
             <table className="w-full text-left font-mono text-xs border-collapse">
               <thead>
                 <tr className="bg-[#18241b] text-white border-b border-[#18241b]">
-                  <th className="p-3.5 w-1/4">Name</th>
-                  <th className="p-3.5 w-1/2">Description & Type</th>
-                  <th className="p-3.5 w-1/4">Live Control</th>
+                  <th className="p-3 w-1/4">Name</th>
+                  <th className="p-3 w-1/2">Description & Type</th>
+                  <th className="p-3 w-1/4">Live Control</th>
                 </tr>
               </thead>
               <tbody>
@@ -965,13 +943,13 @@ export default function DynamicComponentOrCategoryPage() {
         </div>
 
         {/* Accessibility Ledger Section (NFR-5 Compliance) */}
-        <div className="space-y-4 bg-white border border-[#18241b]/15 rounded-2xl p-6 shadow-sm">
+        <div className="space-y-3 bg-white border border-[#18241b]/15 rounded-[2px] p-5">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold text-[#c2872e] uppercase">
+            <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase px-1.5 py-0.2 rounded-[2px] bg-[#c2872e]/10 border border-[#c2872e]/20">
               A11Y Specification
             </span>
-            <span className="font-headline-md text-lg font-bold">
-              Screen Reader & Keyboard Fallback
+            <span className="font-headline-md text-base font-bold">
+              Screen Reader & Keyboard Accessible Data Table
             </span>
           </div>
 
@@ -979,15 +957,15 @@ export default function DynamicComponentOrCategoryPage() {
             {config.a11yNotes}
           </p>
 
-          <div className="p-3 bg-[#f4f7f3] border border-[#18241b]/10 rounded-xl overflow-x-auto">
-            <span className="font-mono text-[10px] text-[#60685c] uppercase block mb-2 font-bold">
+          <div className="p-2.5 bg-[#f4f7f3] border border-[#18241b]/10 rounded-[2px] overflow-x-auto">
+            <span className="font-mono text-[10px] text-[#60685c] uppercase block mb-1.5 font-bold">
               Rendered Semantic HTML Data Table:
             </span>
             <table className="w-full text-left font-mono text-[11px] border-collapse">
               <thead>
                 <tr className="border-b border-[#18241b]/20 text-[#18241b]">
                   {Object.keys(currentData[0] || {}).map((k) => (
-                    <th key={k} className="p-2 uppercase font-bold">
+                    <th key={k} className="p-1.5 uppercase font-bold">
                       {k}
                     </th>
                   ))}
@@ -997,7 +975,7 @@ export default function DynamicComponentOrCategoryPage() {
                 {currentData.map((row, i) => (
                   <tr key={i} className="border-b border-[#18241b]/10 hover:bg-white/80">
                     {Object.values(row).map((v, j) => (
-                      <td key={j} className="p-2 text-[#404641]">
+                      <td key={j} className="p-1.5 text-[#404641]">
                         {String(v)}
                       </td>
                     ))}
@@ -1011,39 +989,44 @@ export default function DynamicComponentOrCategoryPage() {
         {/* Variants Preview Section */}
         {config.variants && config.variants.length > 0 && (
           <div className="space-y-4">
-            <h2 className="font-headline-md text-xl font-bold">Layout Variants</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {config.variants.map((variant, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white border border-[#18241b]/15 rounded-2xl p-5 space-y-3 shadow-sm"
-                >
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-headline-md font-bold text-base">{variant.name}</h3>
-                    <span className="font-mono text-[10px] text-[#c2872e] font-bold">
-                      {variant.orientation || variant.type}
-                    </span>
+            <h2 className="font-headline-md text-lg font-bold">Layout Variants</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {config.variants.map((variant, idx) => {
+                const variantSnippet = `<Chart\n  type="${variant.type || config.type}"\n  data={data}\n  x="${xKey}"\n  y="${yKey}"\n  orientation="${variant.orientation || 'vertical'}"\n/>`;
+                return (
+                  <div
+                    key={idx}
+                    className="bg-white border border-[#18241b]/15 rounded-[2px] p-4 space-y-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-headline-md font-bold text-sm">{variant.name}</h3>
+                      <span className="font-mono text-[10px] text-[#c2872e] font-bold uppercase">
+                        {variant.orientation || variant.type}
+                      </span>
+                    </div>
+                    <p className="font-body-ui text-xs text-[#60685c]">{variant.description}</p>
+                    <ChartPreviewBlock
+                      codeSnippet={variantSnippet}
+                      dataCount={currentData.length}
+                      spec={{
+                        type: variant.type || config.type,
+                        encoding: { x: { field: xKey }, y: { field: yKey } },
+                        data: currentData,
+                      }}
+                    >
+                      <div className="h-44 flex items-center justify-center">
+                        <Chart
+                          type={variant.type || config.type}
+                          data={currentData}
+                          x={xKey}
+                          y={yKey}
+                          orientation={variant.orientation}
+                        />
+                      </div>
+                    </ChartPreviewBlock>
                   </div>
-                  <p className="font-body-ui text-xs text-[#60685c]">{variant.description}</p>
-                  <div className="h-44 bg-[#f9fbf8] rounded-xl border border-[#18241b]/10 p-2 flex items-center justify-center">
-                    <Chart
-                      type={variant.type || config.type}
-                      data={currentData}
-                      x={xKey}
-                      y={yKey}
-                      orientation={variant.orientation}
-                    />
-                  </div>
-                  <LegendBand
-                    spec={{
-                      type: variant.type || config.type,
-                      encoding: { x: { field: xKey }, y: { field: yKey } },
-                      data: currentData,
-                    }}
-                    dataCount={currentData.length}
-                  />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

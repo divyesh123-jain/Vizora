@@ -125,30 +125,42 @@ body {
   text-transform: uppercase;
 }
 
-/* Instrumental Minimalism Smooth Panels & Glass Cards */
+/* Instrumental Minimalism Panels & Cards - Restrained 2px Borders */
 .carto-panel {
-  background-color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(24, 36, 27, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
-  backdrop-filter: blur(12px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: var(--field-bright);
+  border: 1px solid rgba(24, 36, 27, 0.15);
+  border-radius: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.carto-panel:hover {
+  border-color: rgba(24, 36, 27, 0.3);
+}
+
+.dark .carto-panel {
+  background-color: #151f17;
+  border-color: rgba(155, 161, 150, 0.15);
+}
+
+.dark .carto-panel:hover {
+  border-color: rgba(155, 161, 150, 0.3);
 }
 
 .carto-panel-recessed {
   background-color: var(--depth-light);
-  border: 1px solid rgba(24, 36, 27, 0.1);
-  border-radius: 14px;
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(24, 36, 27, 0.15);
+  border-radius: 2px;
+}
+
+.dark .carto-panel-recessed {
+  background-color: #0b100d;
+  border-color: rgba(155, 161, 150, 0.15);
 }
 
 .carto-panel-subtle {
   background-color: rgba(232, 235, 229, 0.7);
   border: 1px solid rgba(96, 104, 92, 0.15);
-  border-radius: 14px;
-  backdrop-filter: blur(8px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 2px;
 }
 
 /* Drafting Paper Background Grid (Softened for Smooth Clean Look) */
@@ -170,20 +182,19 @@ body {
   opacity: 0.8;
 }
 
-/* Smooth Clean Buttons */
+/* Precision Buttons */
 .carto-btn-primary {
   background-color: var(--waypoint);
-  color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
+  color: #18241b;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
   font-family: var(--font-jakarta), sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 10px 18px;
-  box-shadow: 0 4px 12px rgba(194, 135, 46, 0.25);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 8px 16px;
+  transition: all 0.15s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -192,25 +203,22 @@ body {
 
 .carto-btn-primary:hover {
   background-color: #d99a38;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(194, 135, 46, 0.35);
 }
 
 .carto-btn-primary:active {
-  transform: translateY(0px) scale(0.98);
+  transform: translateY(0px);
 }
 
 .carto-btn-secondary {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: transparent;
   color: var(--contour);
-  border: 1px solid rgba(24, 36, 27, 0.15);
-  border-radius: 12px;
+  border: 1px solid rgba(24, 36, 27, 0.2);
+  border-radius: 2px;
   font-family: var(--font-jakarta), sans-serif;
   font-size: 12px;
   font-weight: 600;
-  padding: 9px 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 7px 14px;
+  transition: all 0.15s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -218,34 +226,38 @@ body {
 }
 
 .carto-btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 1);
-  border-color: rgba(24, 36, 27, 0.3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-color: var(--contour);
+  background-color: rgba(24, 36, 27, 0.03);
 }
 
-.carto-btn-secondary:active {
-  transform: translateY(0px) scale(0.98);
-}
-
-/* Smooth Input Fields */
+/* Inputs & Form Controls */
 .carto-input {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--field-bright);
   border: 1px solid rgba(24, 36, 27, 0.15);
-  border-radius: 10px;
+  border-radius: 2px;
   color: var(--contour);
   font-family: var(--font-plex-mono), monospace;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 7px 10px;
   outline: none;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
-  transition: all 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 
-.carto-input:focus {
+.carto-input:focus, .carto-input:focus-visible {
   border-color: var(--waypoint);
-  box-shadow: 0 0 0 3px rgba(194, 135, 46, 0.2);
-  background: #ffffff;
+  outline: 2px solid var(--waypoint);
+  outline-offset: 1px;
+}
+
+.dark .carto-input {
+  background: #0f1611;
+  border-color: rgba(155, 161, 150, 0.2);
+  color: #f1f5ee;
+}
+
+.dark .carto-input:focus, .dark .carto-input:focus-visible {
+  border-color: #e5a43b;
+  outline-color: #e5a43b;
 }
 
 html {
@@ -254,38 +266,50 @@ html {
 
 /* Smooth Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(96, 104, 92, 0.3);
-  border-radius: 10px;
+  background: rgba(96, 104, 92, 0.25);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(24, 36, 27, 0.5);
+  background: rgba(24, 36, 27, 0.45);
 }
 
-/* Syntax & Tab Utility Helpers */
-.tab-active {
-  background-color: #ffffff !important;
-  color: var(--contour) !important;
-  border-bottom: 2px solid var(--waypoint) !important;
-  border-radius: 8px 8px 0 0 !important;
+/* Code Scroll shadow */
+.code-scroll-container {
+  position: relative;
 }
 
-.scrollbar-thin::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+.code-scroll-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  background: linear-gradient(to right, transparent, rgba(15, 22, 17, 0.8));
+  pointer-events: none;
 }
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: #0f1611;
+
+/* Step page transitions */
+@keyframes stepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #28382c;
-  border-radius: 10px;
+
+.step-page-transition {
+  animation: stepFadeIn 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 

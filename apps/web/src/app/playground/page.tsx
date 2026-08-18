@@ -8,9 +8,9 @@ import { AutoChart, Chart } from '@vizora/react';
 import { recommendChartSpec, profileField } from '@vizora/intelligence';
 import { ChartType, ChartSpec } from '@vizora/core';
 import { CompassDial } from '../../components/CompassDial';
-import { LegendBand } from '../../components/LegendBand';
 import { PalettePicker } from '../../components/PalettePicker';
 import { CodeBlock } from '../../components/CodeBlock';
+import { ChartPreviewBlock } from '../../components/ChartPreviewBlock';
 
 // ==========================================
 // Bundled Sample Datasets
@@ -137,8 +137,8 @@ function LivePlaygroundContent() {
   const searchParams = useSearchParams();
   const initialTypeParam = searchParams.get('type') as ChartType | null;
 
-  // Data Input Tabs: 'paste' | 'upload' | 'sample'
-  const [dataTab, setDataTab] = useState<'paste' | 'upload' | 'sample'>('sample');
+  // Data Input Tabs: 'sample' | 'paste' | 'upload'
+  const [dataTab, setDataTab] = useState<'sample' | 'paste' | 'upload'>('sample');
   const [selectedSampleId, setSelectedSampleId] = useState<string>('revenue-by-month');
   const [rawText, setRawText] = useState<string>('');
   const [rawFormat, setRawFormat] = useState<'json' | 'csv'>('json');
@@ -159,54 +159,32 @@ function LivePlaygroundContent() {
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [chartTitle, setChartTitle] = useState<string>('SaaS Monthly Revenue');
 
-  // Live Spec Editor State (2-way sync)
+  // 2-Way ChartSpec JSON & Bottom Tabs
+  const [activeBottomTab, setActiveBottomTab] = useState<'jsx' | 'spec' | 'profile'>('jsx');
   const [specJsonText, setSpecJsonText] = useState<string>('');
   const [specJsonError, setSpecJsonError] = useState<string | null>(null);
-  const [activeBottomTab, setActiveBottomTab] = useState<'spec' | 'jsx' | 'profile'>('jsx');
 
-  // Detected fields from current dataset
+  // Auto recommendation
+  const recommendedSpec = useMemo(() => {
+    try {
+      if (!dataset || dataset.length === 0) return null;
+      const rec = recommendChartSpec(dataset);
+      return { ...rec, title: chartTitle };
+    } catch {
+      return null;
+    }
+  }, [dataset, chartTitle]);
+
+  const recommendedBearing: ChartType = recommendedSpec?.type || 'bar';
+  const activeType: ChartType = mode === 'auto' ? recommendedBearing : selectedType;
+
+  // Field names in dataset
   const availableFields = useMemo(() => {
     if (!dataset || dataset.length === 0) return [];
     return Object.keys(dataset[0]);
   }, [dataset]);
 
-  // Profile data for AutoChart heuristic detection
-  const profiledFields = useMemo(() => {
-    if (!dataset || dataset.length === 0) return [];
-    try {
-      return Object.keys(dataset[0]).map((f) => profileField(dataset, f));
-    } catch {
-      return [];
-    }
-  }, [dataset]);
-
-  // AutoChart recommendation spec
-  const autoSpec = useMemo(() => {
-    try {
-      return recommendChartSpec(dataset);
-    } catch {
-      return null;
-    }
-  }, [dataset]);
-
-  const recommendedBearing: ChartType = autoSpec?.type || 'bar';
-
-  // Effective chart type
-  const activeType: ChartType = mode === 'auto' ? recommendedBearing : selectedType;
-
-  // Ensure field pickers default sensibly when dataset changes
-  useEffect(() => {
-    if (availableFields.length > 0) {
-      if (!availableFields.includes(xField)) {
-        setXField(availableFields[0]);
-      }
-      if (availableFields.length > 1 && !availableFields.includes(yField)) {
-        setYField(availableFields[1]);
-      }
-    }
-  }, [availableFields, xField, yField]);
-
-  // Handle Preset Switching
+  // When sample changes
   const handleSelectSample = (sample: SampleDataset) => {
     setSelectedSampleId(sample.id);
     setDataset(sample.data);
@@ -216,127 +194,172 @@ function LivePlaygroundContent() {
     }
     if (sample.x) setXField(sample.x);
     if (sample.y) setYField(sample.y);
+    setRawText(JSON.stringify(sample.data, null, 2));
     setDataError(null);
   };
 
-  // Handle Raw Text Change
-  const handleRawTextChange = useCallback((text: string, format: 'json' | 'csv') => {
+  // When raw text changes
+  const handleRawTextChange = (text: string, format: 'json' | 'csv') => {
     setRawText(text);
-    if (!text.trim()) {
-      setDataError(null);
-      return;
-    }
+    setDataError(null);
+    if (!text.trim()) return;
+
     try {
       if (format === 'json') {
         const parsed = JSON.parse(text);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setDataError(null);
-          setDataset(parsed);
-        } else {
-          setDataError('JSON must be a non-empty array of objects.');
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          setDataError('Input must be a non-empty array of JSON objects.');
+          return;
         }
+        setDataset(parsed);
+        const keys = Object.keys(parsed[0]);
+        if (keys.length > 0) setXField(keys[0]);
+        if (keys.length > 1) setYField(keys[1]);
       } else {
         const parsed = parseCsv(text);
-        if (parsed.length > 0) {
-          setDataError(null);
-          setDataset(parsed);
-        } else {
-          setDataError('CSV must have a header line and at least one data row.');
+        if (parsed.length === 0) {
+          setDataError('CSV parsing failed. Ensure valid header row.');
+          return;
         }
+        setDataset(parsed);
+        const keys = Object.keys(parsed[0]);
+        if (keys.length > 0) setXField(keys[0]);
+        if (keys.length > 1) setYField(keys[1]);
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Syntax error in data';
-      setDataError(message);
+      setDataError(err instanceof Error ? err.message : 'Invalid data format');
     }
-  }, []);
+  };
 
-  // Handle File Upload
+  // When file is uploaded
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = (evt) => {
       const content = evt.target?.result as string;
-      const isCsv = file.name.endsWith('.csv');
-      setRawFormat(isCsv ? 'csv' : 'json');
-      setRawText(content);
-      handleRawTextChange(content, isCsv ? 'csv' : 'json');
+      if (file.name.endsWith('.csv')) {
+        setRawFormat('csv');
+        handleRawTextChange(content, 'csv');
+      } else {
+        setRawFormat('json');
+        handleRawTextChange(content, 'json');
+      }
     };
     reader.readAsText(file);
   };
 
-  // Constructed live ChartSpec object
-  const currentSpec: ChartSpec = useMemo(() => {
+  // Resolved Current Spec
+  const currentSpec: Partial<ChartSpec> & { type: ChartType } = useMemo(() => {
+    if (mode === 'auto' && recommendedSpec) {
+      return recommendedSpec;
+    }
     return {
       version: '0.1.0' as const,
       type: activeType,
       title: chartTitle,
       data: dataset,
       encoding: {
-        x: xField ? { field: xField } : undefined,
-        y: yField ? { field: yField } : undefined,
-      },
-      config: {
-        showGrid,
-        theme: themeMode === 'dark' ? 'zinc' : palette === 'default' ? undefined : (palette as any),
+        x: { field: xField },
+        y: { field: yField },
       },
     };
-  }, [activeType, chartTitle, dataset, xField, yField, showGrid, themeMode, palette]);
+  }, [mode, recommendedSpec, activeType, chartTitle, dataset, xField, yField]);
 
-  // Keep spec editor text in sync with state
+  // Keep spec JSON text synced
   useEffect(() => {
     setSpecJsonText(JSON.stringify(currentSpec, null, 2));
-    setSpecJsonError(null);
   }, [currentSpec]);
 
-  // Handle manual edits to the live ChartSpec JSON (2-way sync)
-  const handleSpecJsonChange = (text: string) => {
-    setSpecJsonText(text);
+  // Handle 2-Way Spec JSON edits
+  const handleSpecJsonChange = (newJson: string) => {
+    setSpecJsonText(newJson);
+    setSpecJsonError(null);
     try {
-      const parsed = JSON.parse(text);
-      setSpecJsonError(null);
-      if (parsed.type) setSelectedType(parsed.type);
+      const parsed = JSON.parse(newJson);
+      if (parsed.type) {
+        setMode('manual');
+        setSelectedType(parsed.type);
+      }
       if (parsed.title) setChartTitle(parsed.title);
       if (parsed.encoding?.x?.field) setXField(parsed.encoding.x.field);
       if (parsed.encoding?.y?.field) setYField(parsed.encoding.y.field);
-      if (Array.isArray(parsed.data) && parsed.data.length > 0) setDataset(parsed.data);
+      if (Array.isArray(parsed.data) && parsed.data.length > 0) {
+        setDataset(parsed.data);
+      }
     } catch {
       setSpecJsonError('Invalid JSON format');
     }
   };
 
-  // Generated React JSX snippet
-  const reactSnippet = mode === 'auto'
-    ? `<AutoChart\n  data={data}\n  title="${chartTitle}"\n  theme="${themeMode === 'dark' ? 'zinc' : palette}"\n/>`
-    : `<Chart\n  type="${activeType}"\n  data={data}\n  x="${xField}"\n  y="${yField}"\n  title="${chartTitle}"\n  showGrid={${showGrid}}\n  theme="${themeMode === 'dark' ? 'zinc' : palette}"\n/>`;
+  // Generate Copyable React JSX snippet
+  const reactSnippet = useMemo(() => {
+    if (mode === 'auto') {
+      return `<AutoChart
+  data={data}
+  title="${chartTitle}"
+/>`;
+    }
+    return `<Chart
+  type="${activeType}"
+  data={data}
+  x="${xField}"
+  y="${yField}"
+  title="${chartTitle}"
+  showGrid={${showGrid}}
+  theme="${themeMode === 'dark' ? 'zinc' : palette}"
+/>`;
+  }, [mode, activeType, chartTitle, xField, yField, showGrid, themeMode, palette]);
 
   // Export SVG handler
-  const handleExportSvg = () => {
+  const handleExportSvg = useCallback(() => {
     const svgEl = document.querySelector('#playground-svg-viewport svg');
     if (!svgEl) {
-      alert('Could not locate SVG element to export.');
+      alert('No rendered SVG found in the active viewport.');
       return;
     }
-    const svgData = new XMLSerializer().serializeToString(svgEl);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(svgEl);
+    const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${activeType}-chart.svg`;
+    link.download = `vizora-${activeType}-export.svg`;
     link.click();
     URL.revokeObjectURL(url);
-  };
+  }, [activeType]);
+
+  // Profiled fields list for Profiling tab
+  const profiledFields = useMemo(() => {
+    if (!dataset || dataset.length === 0) return [];
+    try {
+      return Object.keys(dataset[0]).map((f) => {
+        const p = profileField(dataset, f);
+        return {
+          field: f,
+          type: p.type,
+          distinctCount: p.distinctCount,
+        };
+      });
+    } catch {
+      return [];
+    }
+  }, [dataset]);
+
+  // Soft cap indicator for large datasets (§5)
+  const isLargeDataset = dataset.length > 5000;
 
   return (
     <div className="min-h-screen bg-[#f4f7f3] text-[#18241b] font-sans antialiased">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-        {/* Top Header & Pillar Bridge */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#18241b]/10 pb-5">
-          <div className="space-y-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+        {/* Playground Top Title & Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#18241b]/10 pb-5 gap-4">
+          <div>
             <div className="flex items-center gap-2">
-              <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#c2872e]">
                 PILLAR 2 • LIVE STUDIO
               </span>
               <span className="font-mono text-xs text-[#60685c]">
@@ -352,19 +375,19 @@ function LivePlaygroundContent() {
           <div className="flex items-center gap-3">
             <Link
               href="/builder"
-              className="px-3.5 py-1.5 rounded-xl border border-[#18241b]/20 bg-white hover:bg-[#18241b] hover:text-white font-sans text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-[2px] border border-[#18241b]/20 bg-white hover:bg-[#18241b] hover:text-white font-mono text-xs font-semibold transition-colors flex items-center gap-1.5"
             >
               <span>Guided Stepper instead?</span>
               <span>&rarr;</span>
             </Link>
 
             {/* Mode Switch: AutoChart vs Manual */}
-            <div className="flex items-center p-1 bg-white border border-[#18241b]/15 rounded-xl shadow-sm">
+            <div className="flex items-center p-0.5 bg-white border border-[#18241b]/15 rounded-[2px]">
               <button
                 onClick={() => setMode('auto')}
-                className={`px-3 py-1 text-xs font-sans font-bold rounded-lg transition-all ${
+                className={`px-3 py-1 text-xs font-mono font-bold rounded-[2px] transition-colors ${
                   mode === 'auto'
-                    ? 'bg-[#18241b] text-white shadow-sm'
+                    ? 'bg-[#18241b] text-white'
                     : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
@@ -372,9 +395,9 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setMode('manual')}
-                className={`px-3 py-1 text-xs font-sans font-bold rounded-lg transition-all ${
+                className={`px-3 py-1 text-xs font-mono font-bold rounded-[2px] transition-colors ${
                   mode === 'manual'
-                    ? 'bg-[#18241b] text-white shadow-sm'
+                    ? 'bg-[#18241b] text-white'
                     : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
@@ -384,50 +407,57 @@ function LivePlaygroundContent() {
           </div>
         </div>
 
-        {/* 3-Band Main Layered Studio Panel */}
+        {/* Large Dataset Soft Cap Warning (§5) */}
+        {isLargeDataset && (
+          <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-[2px] font-mono text-xs">
+            Showing first 5,000 rows — large datasets get a faster renderer in a future release.
+          </div>
+        )}
+
+        {/* Main Layered Studio Panel */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* ========================================================= */}
           {/* Left Pane (40%): Data Input Studio */}
           {/* ========================================================= */}
-          <div className="lg:col-span-5 bg-white border border-[#18241b]/15 rounded-2xl overflow-hidden shadow-sm flex flex-col">
+          <div className="lg:col-span-5 bg-white border border-[#18241b]/15 rounded-[2px] overflow-hidden flex flex-col">
             {/* Data Input Tabs */}
-            <div className="flex items-center justify-between border-b border-[#18241b]/10 bg-[#f9fbf8] px-4 pt-3">
-              <div className="flex gap-1">
+            <div className="flex items-center justify-between border-b border-[#18241b]/10 bg-[#f9fbf8] px-3.5 pt-2.5">
+              <div className="flex gap-1 font-mono text-xs">
                 {(['sample', 'paste', 'upload'] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => setDataTab(t)}
-                    className={`px-3.5 py-1.5 font-sans text-xs font-bold rounded-t-lg transition-all capitalize border-t border-x ${
+                    className={`px-3 py-1 font-mono text-xs font-bold rounded-t-[2px] transition-colors capitalize border-b-2 ${
                       dataTab === t
-                        ? 'bg-white text-[#18241b] border-[#18241b]/15 -mb-px'
+                        ? 'border-[#c2872e] text-[#c2872e]'
                         : 'border-transparent text-[#60685c] hover:text-[#18241b]'
                     }`}
                   >
-                    {t === 'sample' && '1. Bundled Samples'}
-                    {t === 'paste' && '2. Paste JSON/CSV'}
-                    {t === 'upload' && '3. Upload File'}
+                    {t === 'sample' && '1. Samples'}
+                    {t === 'paste' && '2. Paste'}
+                    {t === 'upload' && '3. Upload'}
                   </button>
                 ))}
               </div>
               <span className="font-mono text-[10px] text-[#60685c]">{dataset.length} rows</span>
             </div>
 
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-3.5">
               {/* Tab 1: Bundled Samples */}
               {dataTab === 'sample' && (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <span className="font-mono text-[11px] text-[#60685c] block">
-                    Choose a curated dataset to instantly test heuristic profiling:
+                    Choose a curated dataset to test heuristic profiling:
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {BUNDLED_DATASETS.map((sample) => (
                       <button
                         key={sample.id}
                         onClick={() => handleSelectSample(sample)}
-                        className={`p-2.5 rounded-xl border text-left font-mono text-xs transition-all flex flex-col justify-between gap-1 ${
+                        className={`p-2.5 rounded-[2px] border text-left font-mono text-xs transition-colors flex flex-col justify-between gap-1 ${
                           selectedSampleId === sample.id
-                            ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
+                            ? 'bg-[#18241b] text-white border-[#18241b]'
                             : 'bg-[#f4f7f3] border-[#18241b]/10 text-[#18241b] hover:border-[#c2872e]'
                         }`}
                       >
@@ -444,10 +474,10 @@ function LivePlaygroundContent() {
 
               {/* Tab 2: Paste JSON or CSV */}
               {dataTab === 'paste' && (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[11px] text-[#60685c]">
-                      Paste raw JSON objects array or CSV text:
+                      Paste raw JSON objects or CSV text:
                     </span>
                     <div className="flex items-center gap-1 font-mono text-xs">
                       <button
@@ -455,7 +485,7 @@ function LivePlaygroundContent() {
                           setRawFormat('json');
                           handleRawTextChange(rawText, 'json');
                         }}
-                        className={`px-2 py-0.5 rounded ${
+                        className={`px-2 py-0.5 rounded-[2px] ${
                           rawFormat === 'json' ? 'bg-[#18241b] text-white font-bold' : 'text-[#60685c]'
                         }`}
                       >
@@ -466,7 +496,7 @@ function LivePlaygroundContent() {
                           setRawFormat('csv');
                           handleRawTextChange(rawText, 'csv');
                         }}
-                        className={`px-2 py-0.5 rounded ${
+                        className={`px-2 py-0.5 rounded-[2px] ${
                           rawFormat === 'csv' ? 'bg-[#18241b] text-white font-bold' : 'text-[#60685c]'
                         }`}
                       >
@@ -478,17 +508,17 @@ function LivePlaygroundContent() {
                   <textarea
                     value={rawText || JSON.stringify(dataset, null, 2)}
                     onChange={(e) => handleRawTextChange(e.target.value, rawFormat)}
-                    rows={12}
+                    rows={10}
                     placeholder={
                       rawFormat === 'json'
                         ? '[{ "date": "2026-01-01", "value": 100 }, ...]'
                         : 'date,value\n2026-01-01,100\n2026-01-02,150'
                     }
-                    className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3.5 rounded-xl border border-[#18241b]/20 focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 resize-none"
+                    className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3 rounded-[2px] border border-[#18241b]/20 focus:outline-none focus:border-[#c2872e] resize-none"
                   />
 
                   {dataError && (
-                    <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-600 font-mono text-xs">
+                    <div className="p-2 rounded-[2px] bg-red-50 border border-red-200 text-[#d6502b] font-mono text-xs">
                       {dataError}
                     </div>
                   )}
@@ -497,23 +527,10 @@ function LivePlaygroundContent() {
 
               {/* Tab 3: Upload File */}
               {dataTab === 'upload' && (
-                <div className="space-y-4">
-                  <div className="border-2 border-dashed border-[#18241b]/20 rounded-2xl p-6 text-center space-y-3 bg-[#f9fbf8] hover:border-[#c2872e] transition-colors">
-                    <svg
-                      className="w-8 h-8 mx-auto text-[#c2872e]"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
+                <div className="space-y-3">
+                  <div className="border border-dashed border-[#18241b]/20 rounded-[2px] p-6 text-center space-y-2 bg-[#f9fbf8] hover:border-[#c2872e] transition-colors">
                     <div>
-                      <label className="cursor-pointer font-sans text-xs font-bold text-[#c2872e] hover:underline">
+                      <label className="cursor-pointer font-mono text-xs font-bold text-[#c2872e] hover:underline">
                         <span>Click to browse files</span>
                         <input
                           type="file"
@@ -532,17 +549,17 @@ function LivePlaygroundContent() {
             </div>
 
             {/* Bottom Encodings & Profiling Summary */}
-            <div className="border-t border-[#18241b]/10 p-4 bg-[#f9fbf8] space-y-3">
-              <span className="font-mono text-[11px] font-bold text-[#c2872e] uppercase block">
+            <div className="border-t border-[#18241b]/10 p-3.5 bg-[#f9fbf8] space-y-2.5">
+              <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase block">
                 Detected Field Encodings
               </span>
-              <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+              <div className="grid grid-cols-2 gap-2.5 font-mono text-xs">
                 <div>
                   <label className="text-[10px] text-[#60685c] block mb-1">X AXIS FIELD</label>
                   <select
                     value={xField}
                     onChange={(e) => setXField(e.target.value)}
-                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none"
+                    className="w-full bg-white border border-[#18241b]/15 rounded-[2px] p-1.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
                   >
                     {availableFields.map((f) => (
                       <option key={f} value={f}>
@@ -557,7 +574,7 @@ function LivePlaygroundContent() {
                   <select
                     value={yField}
                     onChange={(e) => setYField(e.target.value)}
-                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none"
+                    className="w-full bg-white border border-[#18241b]/15 rounded-[2px] p-1.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
                   >
                     {availableFields.map((f) => (
                       <option key={f} value={f}>
@@ -571,21 +588,23 @@ function LivePlaygroundContent() {
           </div>
 
           {/* ========================================================= */}
-          {/* Right Pane (60%): Live Chart & Compass Dial */}
+          {/* Right Pane (60%): Live Chart Preview & Compass Dial */}
           {/* ========================================================= */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-5">
             
-            {/* Chart Canvas Card */}
-            <div className="bg-white border border-[#18241b]/15 rounded-2xl overflow-hidden shadow-sm flex flex-col">
-              
-              {/* Canvas Controls Header */}
-              <div className="flex flex-wrap items-center justify-between border-b border-[#18241b]/10 px-5 py-3.5 bg-[#f9fbf8] gap-2">
+            {/* Standardized Chart Viewport Card with Preview / Code */}
+            <ChartPreviewBlock
+              title={chartTitle}
+              codeSnippet={reactSnippet}
+              dataCount={dataset.length}
+              dark={themeMode === 'dark'}
+              spec={currentSpec}
+            >
+              {/* Canvas Controls Sub-header */}
+              <div className="flex flex-wrap items-center justify-between border-b border-[#18241b]/10 dark:border-[#2d3a30] pb-2.5 mb-2.5 gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-sans text-xs font-bold text-[#c2872e] uppercase">
-                    Live Viewport
-                  </span>
                   <span className="font-mono text-xs text-[#60685c]">
-                    • Bearing: <strong className="text-[#18241b]">{activeType}</strong>
+                    Bearing: <strong className="text-[#18241b] dark:text-[#f1f5ee] uppercase">{activeType}</strong>
                   </span>
                 </div>
 
@@ -593,7 +612,7 @@ function LivePlaygroundContent() {
                   {/* Theme Mode Toggle */}
                   <button
                     onClick={() => setThemeMode(themeMode === 'light' ? 'dark' : 'light')}
-                    className="px-2.5 py-1 text-xs font-mono rounded-lg border border-[#18241b]/15 bg-white hover:bg-[#18241b] hover:text-white transition-all"
+                    className="px-2 py-0.5 text-xs font-mono rounded-[2px] border border-[#18241b]/15 dark:border-[#2d3a30] bg-white dark:bg-[#0f1611] text-[#18241b] dark:text-[#f1f5ee] hover:bg-[#18241b] hover:text-white transition-colors"
                   >
                     {themeMode === 'light' ? '☀️ Light' : '🌙 Dark'}
                   </button>
@@ -601,10 +620,10 @@ function LivePlaygroundContent() {
                   {/* Grid Toggle */}
                   <button
                     onClick={() => setShowGrid(!showGrid)}
-                    className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all ${
+                    className={`px-2 py-0.5 text-xs font-mono rounded-[2px] border transition-colors ${
                       showGrid
-                        ? 'bg-[#18241b] text-white border-[#18241b]'
-                        : 'bg-white text-[#60685c] border-[#18241b]/15'
+                        ? 'bg-[#18241b] text-white border-[#18241b] dark:bg-white dark:text-[#18241b]'
+                        : 'bg-white text-[#60685c] border-[#18241b]/15 dark:bg-[#0f1611]'
                     }`}
                   >
                     Grid: {showGrid ? 'ON' : 'OFF'}
@@ -615,7 +634,7 @@ function LivePlaygroundContent() {
                     <select
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value as ChartType)}
-                      className="bg-white border border-[#18241b]/20 rounded-lg px-2.5 py-1 font-mono text-xs text-[#18241b] outline-none"
+                      className="bg-white dark:bg-[#0f1611] border border-[#18241b]/20 dark:border-[#2d3a30] rounded-[2px] px-2 py-0.5 font-mono text-xs text-[#18241b] dark:text-[#f1f5ee] outline-none"
                     >
                       <option value="line">line</option>
                       <option value="bar">bar</option>
@@ -632,10 +651,9 @@ function LivePlaygroundContent() {
                 </div>
               </div>
 
-              {/* Chart Viewport Canvas */}
               <div
                 id="playground-svg-viewport"
-                className={`h-80 p-6 flex items-center justify-center transition-colors ${
+                className={`h-72 p-4 flex items-center justify-center transition-colors ${
                   themeMode === 'dark' ? 'bg-[#0f1611]' : 'bg-[#f7faf5]'
                 }`}
               >
@@ -656,20 +674,13 @@ function LivePlaygroundContent() {
                   />
                 )}
               </div>
-
-              {/* Spec Ledger Band */}
-              <LegendBand
-                spec={currentSpec}
-                dataCount={dataset.length}
-                dark={themeMode === 'dark'}
-              />
-            </div>
+            </ChartPreviewBlock>
 
             {/* Compass Dial & Palette Picker Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Compass Dial (Auto Bearing or Direct Waypoint Selection) */}
-              <div className="bg-white border border-[#18241b]/15 rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm">
-                <span className="font-mono text-[10px] text-[#c2872e] uppercase font-bold mb-2">
+              <div className="bg-white border border-[#18241b]/15 rounded-[2px] p-4 flex flex-col items-center justify-center">
+                <span className="font-mono text-[10px] text-[#c2872e] uppercase font-bold mb-1">
                   Compass Bearing Instrument
                 </span>
                 <CompassDial
@@ -683,7 +694,7 @@ function LivePlaygroundContent() {
               </div>
 
               {/* Palette & Theme Controls */}
-              <div className="bg-white border border-[#18241b]/15 rounded-2xl p-5 shadow-sm space-y-4">
+              <div className="bg-white border border-[#18241b]/15 rounded-[2px] p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[10px] text-[#c2872e] uppercase font-bold">
                     Theme Tokens & Palette
@@ -693,13 +704,13 @@ function LivePlaygroundContent() {
 
                 <PalettePicker selectedId={palette} onSelect={(p) => setPalette(p.id)} />
 
-                <div className="space-y-2 pt-2 border-t border-[#18241b]/10 font-mono text-xs">
+                <div className="space-y-1.5 pt-2 border-t border-[#18241b]/10 font-mono text-xs">
                   <label className="text-[10px] text-[#60685c] block">CHART TITLE</label>
                   <input
                     type="text"
                     value={chartTitle}
                     onChange={(e) => setChartTitle(e.target.value)}
-                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none"
+                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-[2px] p-1.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
                   />
                 </div>
               </div>
@@ -710,15 +721,15 @@ function LivePlaygroundContent() {
         {/* ========================================================= */}
         {/* Bottom Panel: Live 2-Way Spec Editor & Code Export */}
         {/* ========================================================= */}
-        <div className="bg-[#0f1611] border border-[#18241b]/30 rounded-2xl overflow-hidden shadow-xl text-[#a4c995]">
+        <div className="bg-[#0f1611] border border-[#18241b]/30 rounded-[2px] overflow-hidden text-[#a4c995]">
           {/* Tab Header & Action Bar */}
-          <div className="flex flex-wrap items-center justify-between border-b border-[#2d3a30] bg-[#18221b] px-4 pt-3">
-            <div className="flex gap-1">
+          <div className="flex flex-wrap items-center justify-between border-b border-[#2d3a30] bg-[#141d16] px-3 pt-2">
+            <div className="flex gap-1 font-mono text-xs">
               <button
                 onClick={() => setActiveBottomTab('jsx')}
-                className={`px-4 py-2 font-mono text-xs font-bold rounded-t-lg transition-all border-b-2 ${
+                className={`px-3 py-1.5 font-mono text-xs font-bold transition-colors border-b-2 ${
                   activeBottomTab === 'jsx'
-                    ? 'bg-[#0f1611] text-[#c2872e] border-[#c2872e]'
+                    ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
                 }`}
               >
@@ -726,9 +737,9 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setActiveBottomTab('spec')}
-                className={`px-4 py-2 font-mono text-xs font-bold rounded-t-lg transition-all border-b-2 ${
+                className={`px-3 py-1.5 font-mono text-xs font-bold transition-colors border-b-2 ${
                   activeBottomTab === 'spec'
-                    ? 'bg-[#0f1611] text-[#c2872e] border-[#c2872e]'
+                    ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
                 }`}
               >
@@ -736,9 +747,9 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setActiveBottomTab('profile')}
-                className={`px-4 py-2 font-mono text-xs font-bold rounded-t-lg transition-all border-b-2 ${
+                className={`px-3 py-1.5 font-mono text-xs font-bold transition-colors border-b-2 ${
                   activeBottomTab === 'profile'
-                    ? 'bg-[#0f1611] text-[#c2872e] border-[#c2872e]'
+                    ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
                 }`}
               >
@@ -747,10 +758,10 @@ function LivePlaygroundContent() {
             </div>
 
             {/* Persistent Export Actions */}
-            <div className="flex items-center gap-2 py-2">
+            <div className="flex items-center gap-2 py-1.5">
               <button
                 onClick={handleExportSvg}
-                className="px-3 py-1 rounded-lg bg-[#253329] hover:bg-[#34473a] text-white font-mono text-xs transition-colors"
+                className="px-2.5 py-1 rounded-[2px] bg-[#1f2c22] hover:bg-[#2e4032] text-white font-mono text-xs transition-colors border border-[#2d3a30]"
               >
                 Export SVG
               </button>
@@ -760,27 +771,30 @@ function LivePlaygroundContent() {
                   navigator.clipboard.writeText(reactSnippet);
                   alert('Copied React code snippet!');
                 }}
-                className="px-3 py-1 rounded-lg bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold transition-colors"
+                className="px-2.5 py-1 rounded-[2px] bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold transition-colors"
               >
                 Copy JSX
               </button>
 
-              {/* Disabled / V1 Share Link Button */}
-              <button
-                disabled
-                title="Cloud spec sharing requires backend service (Scheduled for V1)"
-                className="px-3 py-1 rounded-lg bg-[#18221b] border border-[#2d3a30] text-[#60685c] font-mono text-xs cursor-not-allowed opacity-75 flex items-center gap-1"
-              >
-                <span>Share Link</span>
-                <span className="text-[9px] bg-[#c2872e]/20 text-[#c2872e] px-1.5 py-0.2 rounded font-bold">
-                  V1
-                </span>
-              </button>
+              {/* Disabled / V1 Share Link Button (§3.5 honest disabled state) */}
+              <div className="flex flex-col items-center">
+                <button
+                  disabled
+                  title="Cloud spec sharing requires backend service (Scheduled for V1)"
+                  className="px-2.5 py-1 rounded-[2px] bg-[#141d16] border border-[#2d3a30] text-[#60685c] font-mono text-xs cursor-not-allowed flex items-center gap-1"
+                >
+                  <span>Share Link</span>
+                  <span className="text-[9px] bg-[#c2872e]/20 text-[#c2872e] px-1 py-0.2 rounded font-bold">
+                    V1
+                  </span>
+                </button>
+                <span className="text-[9px] text-[#60685c] font-mono mt-0.5">(coming soon)</span>
+              </div>
             </div>
           </div>
 
           {/* Bottom Tab Content */}
-          <div className="p-5">
+          <div className="p-4">
             {activeBottomTab === 'jsx' && (
               <CodeBlock
                 code={reactSnippet}
@@ -790,30 +804,30 @@ function LivePlaygroundContent() {
             )}
 
             {activeBottomTab === 'spec' && (
-              <div className="space-y-3 font-mono">
+              <div className="space-y-2.5 font-mono">
                 <div className="flex items-center justify-between text-xs text-[#9ba196]">
                   <span>Edit the JSON below directly — changes immediately sync to the chart:</span>
-                  {specJsonError && <span className="text-red-400 font-bold">{specJsonError}</span>}
+                  {specJsonError && <span className="text-[#d6502b] font-bold">{specJsonError}</span>}
                 </div>
                 <textarea
                   value={specJsonText}
                   onChange={(e) => handleSpecJsonChange(e.target.value)}
-                  rows={10}
-                  className="w-full bg-[#0b100d] text-[#a4c995] font-mono text-xs p-4 rounded-xl border border-[#2d3a30] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 resize-none leading-relaxed"
+                  rows={9}
+                  className="w-full bg-[#0b100d] text-[#a4c995] font-mono text-xs p-3 rounded-[2px] border border-[#2d3a30] focus:outline-none focus:border-[#c2872e] resize-none leading-relaxed"
                 />
               </div>
             )}
 
             {activeBottomTab === 'profile' && (
-              <div className="space-y-3 font-mono text-xs">
-                <span className="text-[#c2872e] font-bold uppercase block">
+              <div className="space-y-2.5 font-mono text-xs">
+                <span className="text-[#c2872e] font-bold uppercase block text-[10px]">
                   Deterministic Field Profiler Output
                 </span>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
                   {profiledFields.map((p) => (
                     <div
                       key={p.field}
-                      className="p-3 bg-[#151f17] border border-[#2d3a30] rounded-xl space-y-1"
+                      className="p-2.5 bg-[#141d16] border border-[#2d3a30] rounded-[2px] space-y-0.5"
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-white">{p.field}</span>

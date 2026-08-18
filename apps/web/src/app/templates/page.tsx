@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Chart } from '@vizora/react';
 import { Navbar } from '../../components/Navbar';
-import { LegendBand } from '../../components/LegendBand';
+import { ChartPreviewBlock } from '../../components/ChartPreviewBlock';
 
 export interface DashboardTemplate {
   slug: string;
@@ -13,7 +13,7 @@ export interface DashboardTemplate {
   category: string;
   theme: 'default' | 'zinc' | 'emerald' | 'amber';
   description: string;
-  metrics: { label: string; value: string; change: string; isPositive: boolean }[];
+  metrics: { label: string; value: string; sparkline: number[] }[];
   charts: {
     title: string;
     type: 'line' | 'bar' | 'scatter' | 'histogram' | 'kpi-sparkline' | 'donut' | 'area' | 'candlestick' | 'funnel';
@@ -34,9 +34,9 @@ export const TEMPLATES_LIST: DashboardTemplate[] = [
     description:
       'High-level SaaS recurring revenue progression, net MRR added, and gross retention metrics composed into an executive summary board.',
     metrics: [
-      { label: 'ARR (Annual Recurring)', value: '$145,000', change: '+31.8% vs last month', isPositive: true },
-      { label: 'Net MRR Added', value: '$12,100', change: '+18.2% new subs', isPositive: true },
-      { label: 'Gross Retention', value: '97.4%', change: 'Enterprise Tier', isPositive: true },
+      { label: 'ARR (Annual Recurring)', value: '$145,000', sparkline: [42, 58, 84, 110, 145] },
+      { label: 'Net MRR Added', value: '$12,100', sparkline: [7.8, 9.2, 10.4, 11.1, 12.1] },
+      { label: 'Gross Retention', value: '97.4%', sparkline: [95.8, 96.2, 96.9, 97.1, 97.4] },
     ],
     charts: [
       {
@@ -78,9 +78,9 @@ export const TEMPLATES_LIST: DashboardTemplate[] = [
     description:
       'Daily visitor acquisition tracking paired with device market share breakdowns and signup funnel conversions.',
     metrics: [
-      { label: 'Daily Active Visitors', value: '38,420', change: '+12.4% vs 7d avg', isPositive: true },
-      { label: 'Mobile Share', value: '62.8%', change: 'Dominant platform', isPositive: true },
-      { label: 'Avg Session Duration', value: '4m 12s', change: '+24s engagement', isPositive: true },
+      { label: 'Daily Active Visitors', value: '38,420', sparkline: [24, 38, 42, 39, 51, 28, 31] },
+      { label: 'Mobile Share', value: '62.8%', sparkline: [58, 59, 61, 60, 62.8] },
+      { label: 'Avg Session Duration', value: '4m 12s', sparkline: [3.8, 3.9, 4.0, 4.1, 4.2] },
     ],
     charts: [
       {
@@ -123,9 +123,9 @@ export const TEMPLATES_LIST: DashboardTemplate[] = [
     description:
       'High-frequency trading terminal with OHLC candlestick price action wicks, volume profile bars, and multi-symbol watchlists.',
     metrics: [
-      { label: 'VIZ / USD Last Price', value: '$176.40', change: '+8.4% today', isPositive: true },
-      { label: '24h Volume', value: '$1.42B', change: '+14.2% liquidity', isPositive: true },
-      { label: 'Market Cap', value: '$48.6B', change: 'Rank #4', isPositive: true },
+      { label: 'VIZ / USD Last Price', value: '$176.40', sparkline: [150, 158, 153, 168, 176.4] },
+      { label: '24h Volume', value: '$1.42B', sparkline: [1.1, 1.2, 1.35, 1.28, 1.42] },
+      { label: 'Market Cap', value: '$48.6B', sparkline: [42, 44, 46, 45, 48.6] },
     ],
     charts: [
       {
@@ -166,9 +166,9 @@ export const TEMPLATES_LIST: DashboardTemplate[] = [
     description:
       'Continuous latency distribution histogram, server CPU load sparklines, and cluster memory scatter correlations.',
     metrics: [
-      { label: 'P99 Latency', value: '42ms', change: '-8ms improvement', isPositive: true },
-      { label: 'Cluster CPU Average', value: '44.8%', change: 'Optimal zone', isPositive: true },
-      { label: 'Active Pods', value: '128 / 128', change: '100% healthy', isPositive: true },
+      { label: 'P99 Latency', value: '42ms', sparkline: [58, 52, 48, 45, 42] },
+      { label: 'Cluster CPU Average', value: '44.8%', sparkline: [38, 42, 51, 48, 44.8] },
+      { label: 'Active Pods', value: '128 / 128', sparkline: [120, 124, 128, 128, 128] },
     ],
     charts: [
       {
@@ -199,16 +199,49 @@ export const TEMPLATES_LIST: DashboardTemplate[] = [
   },
 ];
 
+// Pure 3-element KPI Card: Numeral, Label, Waypoint Sparkline
+function MicroKpiCard({ label, value, sparkline }: { label: string; value: string; sparkline: number[] }) {
+  const min = Math.min(...sparkline);
+  const max = Math.max(...sparkline);
+  const range = max - min || 1;
+  const points = sparkline
+    .map((v, i) => {
+      const x = (i / (sparkline.length - 1)) * 60;
+      const y = 20 - ((v - min) / range) * 16;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+
+  return (
+    <div className="bg-[#f4f7f3] dark:bg-[#151f17] border border-[#18241b]/10 dark:border-[#2d3a30] rounded-[2px] p-3.5 flex items-center justify-between">
+      <div className="space-y-1">
+        <span className="font-mono text-xs text-[#60685c] block">{label}</span>
+        <div className="text-xl font-bold font-mono text-[#18241b] dark:text-[#f1f5ee]">{value}</div>
+      </div>
+      <svg className="w-16 h-6 shrink-0 overflow-visible" viewBox="0 0 60 20">
+        <polyline
+          fill="none"
+          stroke="#c2872e"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          points={points}
+        />
+      </svg>
+    </div>
+  );
+}
+
 export default function TemplatesGalleryPage() {
   return (
     <div className="min-h-screen bg-[#f4f7f3] text-[#18241b] font-sans antialiased">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-10">
         {/* Header */}
-        <div className="space-y-3 border-b border-[#18241b]/10 pb-8">
+        <div className="space-y-2.5 border-b border-[#18241b]/10 pb-6">
           <div className="flex items-center gap-2">
-            <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#c2872e]">
               COMPOSED TEMPLATES GALLERY
             </span>
             <span className="font-mono text-xs text-[#60685c]">
@@ -220,28 +253,28 @@ export default function TemplatesGalleryPage() {
             Real-World Analytics Dashboards
           </h1>
 
-          <p className="font-body-doc text-[#404641] max-w-3xl text-base leading-relaxed">
+          <p className="font-body-doc text-[#404641] max-w-3xl text-xs sm:text-sm leading-relaxed">
             Pre-assembled, production-grade dashboard compositions combining Vizora&apos;s deterministic visualization primitives with responsive layouts, KPI summaries, and spec ledger bands.
           </p>
         </div>
 
         {/* Templates List */}
-        <div className="space-y-12">
+        <div className="space-y-10">
           {TEMPLATES_LIST.map((tpl) => (
             <section
               key={tpl.slug}
-              className="bg-white/90 border border-[#18241b]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl backdrop-blur-xl hover:border-[#c2872e]/50 transition-all"
+              className="bg-white border border-[#18241b]/15 rounded-[2px] p-5 sm:p-6 space-y-5 transition-colors hover:border-[#18241b]/30"
             >
               {/* Template Title & Action Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#18241b]/10 pb-4 gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#18241b]/10 pb-3.5 gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase bg-[#c2872e]/15 text-[#c2872e] px-2.5 py-0.5 rounded-full font-bold">
+                    <span className="text-[10px] font-mono uppercase bg-[#c2872e]/10 text-[#c2872e] px-2 py-0.2 rounded-[2px] font-bold border border-[#c2872e]/20">
                       {tpl.badge}
                     </span>
                     <span className="font-mono text-xs text-[#60685c]">{tpl.category}</span>
                   </div>
-                  <h2 className="font-headline-md text-2xl text-[#18241b] font-bold mt-1">
+                  <h2 className="font-headline-md text-xl text-[#18241b] font-bold mt-1">
                     {tpl.title}
                   </h2>
                   <p className="font-body-ui text-xs text-[#60685c] mt-0.5 max-w-2xl">
@@ -252,7 +285,7 @@ export default function TemplatesGalleryPage() {
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/templates/${tpl.slug}`}
-                    className="px-4 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                    className="px-3 py-1.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold rounded-[2px] transition-colors flex items-center gap-1.5"
                   >
                     <span>View Dashboard Code</span>
                     <span>&rarr;</span>
@@ -260,67 +293,50 @@ export default function TemplatesGalleryPage() {
                 </div>
               </div>
 
-              {/* KPI Summary Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* 3-Element KPI Summary Cards (§3.6) */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                 {tpl.metrics.map((m, idx) => (
-                  <div
+                  <MicroKpiCard
                     key={idx}
-                    className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-4 space-y-1"
-                  >
-                    <span className="text-xs text-[#60685c] font-medium">{m.label}</span>
-                    <div className="text-2xl font-bold font-mono text-[#18241b]">{m.value}</div>
-                    <span
-                      className={`text-[11px] font-bold font-mono ${
-                        m.isPositive ? 'text-[#059669]' : 'text-red-500'
-                      }`}
-                    >
-                      {m.change}
-                    </span>
-                  </div>
+                    label={m.label}
+                    value={m.value}
+                    sparkline={m.sparkline}
+                  />
                 ))}
               </div>
 
-              {/* Composed Chart Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {tpl.charts.map((chart, cIdx) => (
-                  <div
-                    key={cIdx}
-                    className={`bg-[#f9fbf8] rounded-2xl border border-[#18241b]/10 overflow-hidden flex flex-col justify-between ${
-                      chart.widthClass || 'lg:col-span-1'
-                    }`}
-                  >
-                    <div className="p-4 border-b border-[#18241b]/8 flex items-center justify-between">
-                      <h4 className="font-headline-md font-bold text-sm text-[#18241b]">
-                        {chart.title}
-                      </h4>
-                      <span className="font-mono text-[10px] text-[#c2872e] uppercase font-bold">
-                        {chart.type}
-                      </span>
+              {/* Composed Chart Grid with Standardized Preview / Code Block */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                {tpl.charts.map((chart, cIdx) => {
+                  const snippet = `<Chart\n  type="${chart.type}"\n  data={data}\n  ${chart.x ? `x="${chart.x}"\n  ` : ''}${chart.y ? `y="${chart.y}"\n  ` : ''}title="${chart.title}"\n  theme="${tpl.theme}"\n/>`;
+                  return (
+                    <div key={cIdx} className={chart.widthClass || 'lg:col-span-1'}>
+                      <ChartPreviewBlock
+                        title={chart.title}
+                        codeSnippet={snippet}
+                        dataCount={chart.data.length}
+                        spec={{
+                          type: chart.type,
+                          encoding: {
+                            x: chart.x ? { field: chart.x } : undefined,
+                            y: chart.y ? { field: chart.y } : undefined,
+                          },
+                          data: chart.data,
+                        }}
+                      >
+                        <div className="h-60 p-2 flex items-center justify-center">
+                          <Chart
+                            type={chart.type}
+                            data={chart.data}
+                            x={chart.x}
+                            y={chart.y}
+                            theme={tpl.theme}
+                          />
+                        </div>
+                      </ChartPreviewBlock>
                     </div>
-
-                    <div className="h-64 p-4 flex items-center justify-center">
-                      <Chart
-                        type={chart.type}
-                        data={chart.data}
-                        x={chart.x}
-                        y={chart.y}
-                        theme={tpl.theme}
-                      />
-                    </div>
-
-                    <LegendBand
-                      spec={{
-                        type: chart.type,
-                        encoding: {
-                          x: chart.x ? { field: chart.x } : undefined,
-                          y: chart.y ? { field: chart.y } : undefined,
-                        },
-                        data: chart.data,
-                      }}
-                      dataCount={chart.data.length}
-                    />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           ))}

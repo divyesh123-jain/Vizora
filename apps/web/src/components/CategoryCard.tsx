@@ -27,30 +27,30 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
     <Link
       href={`/components/${category.slug}`}
-      className={`group flex flex-col justify-between p-6 rounded-2xl transition-all duration-200 border ${
+      className={`group flex flex-col justify-between p-5 rounded-[2px] transition-colors border focus-visible:outline-2 focus-visible:outline-[#c2872e] focus-visible:outline-offset-2 ${
         category.dark
-          ? 'bg-[#111813] border-[#2d3a30] text-[#e0e4dc] hover:border-[#c2872e]'
-          : 'bg-[#f4f7f3] border-[#18241b]/15 text-[#18241b] hover:border-[#c2872e] hover:shadow-md'
+          ? 'bg-[#151f17] border-[#2d3a30] text-[#e0e4dc] hover:border-[#9ba196]/40'
+          : 'bg-white border-[#18241b]/15 text-[#18241b] hover:border-[#18241b]/30'
       }`}
     >
       {/* Top: Header metadata */}
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="font-sans text-[11px] font-bold text-[#c2872e] uppercase tracking-wider">
+          <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase tracking-wider">
             {category.badge}
           </span>
           <span
-            className={`font-mono text-[10px] px-2 py-0.5 rounded-full border ${
+            className={`font-mono text-[10px] px-1.5 py-0.2 rounded-[2px] border ${
               category.dark
-                ? 'bg-[#18221b] border-[#2d3a30] text-[#a4c995]'
-                : 'bg-white/80 border-[#18241b]/10 text-[#60685c]'
+                ? 'bg-[#18221b] border-[#2d3a30] text-[#9ba196]'
+                : 'bg-[#f4f7f3] border-[#18241b]/15 text-[#60685c]'
             }`}
           >
             {category.count} charts
           </span>
         </div>
 
-        <h3 className="font-headline-md text-xl font-bold group-hover:text-[#c2872e] transition-colors">
+        <h3 className="font-headline-md text-lg font-bold group-hover:text-[#c2872e] transition-colors">
           {category.title}
         </h3>
 
@@ -60,10 +60,10 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       </div>
 
       {/* Center: Live Mini-Chart Preview with LegendBand */}
-      <div className="my-4 rounded-xl overflow-hidden border border-[#18241b]/10">
+      <div className="my-3.5 rounded-[2px] overflow-hidden border border-[#18241b]/10 dark:border-[#2d3a30]">
         <div
-          className={`h-40 p-2 flex items-center justify-center pointer-events-none ${
-            category.dark ? 'bg-[#0b100d]' : 'bg-white'
+          className={`h-36 p-2 flex items-center justify-center pointer-events-none ${
+            category.dark ? 'bg-[#0b100d]' : 'bg-[#f9fbf8]'
           }`}
         >
           <Chart
@@ -89,9 +89,9 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       </div>
 
       {/* Bottom: Action bar */}
-      <div className="flex items-center justify-between pt-2 text-xs font-semibold">
+      <div className="flex items-center justify-between pt-1 text-xs font-semibold">
         <span className="font-mono text-[11px] text-[#c2872e]">/components/{category.slug}</span>
-        <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform text-[#c2872e]">
+        <span className="font-mono text-[11px] text-[#60685c] group-hover:text-[#c2872e] transition-colors">
           Browse &rarr;
         </span>
       </div>
