@@ -14,8 +14,17 @@ export const Navbar: React.FC = () => {
     setTimeout(() => setCopiedInstall(false), 2000);
   };
 
+  const navItems = [
+    { label: 'Overview', href: '/' },
+    { label: 'Components', href: '/components', match: (p: string) => p.startsWith('/components') || p.startsWith('/charts') },
+    { label: 'Playground', href: '/playground', match: (p: string) => p === '/playground' },
+    { label: 'Builder', href: '/builder', match: (p: string) => p === '/builder' },
+    { label: 'Templates', href: '/templates', match: (p: string) => p.startsWith('/templates') },
+    { label: 'Docs', href: '/docs/getting-started', match: (p: string) => p.startsWith('/docs') },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#f4f7f3]/85 backdrop-blur-md border-b border-[#18241b]/10 transition-all">
+    <header className="sticky top-0 z-50 w-full bg-[#f4f7f3]/90 backdrop-blur-md border-b border-[#18241b]/10 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo & Version Badge */}
         <div className="flex items-center gap-3">
@@ -27,70 +36,36 @@ export const Navbar: React.FC = () => {
               Vizora
             </span>
           </Link>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-[#c2872e]/20 text-[10px] font-mono font-semibold text-[#c2872e] bg-[#c2872e]/10 uppercase tracking-wider">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full border border-[#c2872e]/20 text-[10px] font-mono font-semibold text-[#c2872e] bg-[#c2872e]/10 uppercase tracking-wider">
             v0.1.0 MVP
           </span>
         </div>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1.5 text-xs font-sans font-semibold text-[#404641]">
-          <Link
-            href="/"
-            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
-              pathname === '/'
-                ? 'bg-[#18241b] text-white font-bold shadow-sm'
-                : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
-            }`}
-          >
-            Overview
-          </Link>
-          <Link
-            href="/charts/line"
-            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
-              pathname.startsWith('/charts')
-                ? 'bg-[#18241b] text-white font-bold shadow-sm'
-                : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
-            }`}
-          >
-            Charts Gallery
-          </Link>
-          <Link
-            href="/templates"
-            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
-              pathname === '/templates'
-                ? 'bg-[#18241b] text-white font-bold shadow-sm'
-                : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
-            }`}
-          >
-            Dashboard Blocks
-          </Link>
-          <Link
-            href="/playground"
-            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
-              pathname === '/playground'
-                ? 'bg-[#18241b] text-white font-bold shadow-sm'
-                : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
-            }`}
-          >
-            Playground Studio
-          </Link>
-          <Link
-            href="/docs/getting-started"
-            className={`px-3.5 py-1.5 rounded-full transition-all duration-200 ${
-              pathname.startsWith('/docs')
-                ? 'bg-[#18241b] text-white font-bold shadow-sm'
-                : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
-            }`}
-          >
-            Docs & API
-          </Link>
+        <nav className="hidden md:flex items-center gap-1 text-xs font-sans font-semibold text-[#404641]">
+          {navItems.map((item) => {
+            const isActive = item.match ? item.match(pathname) : pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`px-3 py-1.5 rounded-full transition-all duration-200 ${
+                  isActive
+                    ? 'bg-[#18241b] text-white font-bold shadow-sm'
+                    : 'hover:bg-[#18241b]/8 hover:text-[#18241b]'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right CTA Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={handleCopyInstall}
-            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0f1611] text-[#e0e4dc] hover:text-white border border-[#18241b]/40 text-[11px] font-mono shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0f1611] text-[#e0e4dc] hover:text-white border border-[#18241b]/40 text-[11px] font-mono shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
             title="Click to copy npm install command"
           >
             <span className="text-[#c2872e] font-bold">$</span>
@@ -105,14 +80,20 @@ export const Navbar: React.FC = () => {
           </button>
 
           <Link
-            href="/playground"
-            className="px-4 py-2 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-[11px] font-bold uppercase tracking-wider shadow-md shadow-amber-600/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+            href="/builder"
+            className="px-3.5 py-1.5 rounded-xl bg-[#18241b] hover:bg-[#2a3c2e] text-white font-sans text-xs font-semibold shadow-sm hover:-translate-y-0.5 active:scale-[0.98] transition-all"
           >
-            STUDIO PLAYGROUND
+            Chart Builder
+          </Link>
+
+          <Link
+            href="/playground"
+            className="px-3.5 py-1.5 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-xs font-bold uppercase tracking-wider shadow-md shadow-amber-600/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+          >
+            Playground
           </Link>
         </div>
       </div>
     </header>
   );
 };
-

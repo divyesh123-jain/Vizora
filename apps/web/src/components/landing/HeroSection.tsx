@@ -56,10 +56,10 @@ export const HeroSection: React.FC = () => {
             <div className="space-y-3 pt-2">
               <div className="flex flex-wrap items-center gap-3">
                 <Link
-                  href="/docs/getting-started"
+                  href="/components"
                   className="px-6 py-3.5 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-xs font-bold uppercase tracking-wider shadow-md shadow-amber-600/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
                 >
-                  <span>GET STARTED →</span>
+                  <span>EXPLORE COMPONENTS →</span>
                 </Link>
 
                 <Link
@@ -70,10 +70,10 @@ export const HeroSection: React.FC = () => {
                 </Link>
 
                 <Link
-                  href="/charts/line"
+                  href="/builder"
                   className="px-6 py-3.5 rounded-xl bg-white hover:bg-[#18241b]/5 text-[#18241b] font-sans text-xs font-bold uppercase tracking-wider border border-[#18241b]/15 shadow-sm hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center gap-2"
                 >
-                  <span>VIEW GALLERY</span>
+                  <span>CHART BUILDER</span>
                 </Link>
               </div>
 

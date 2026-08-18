@@ -4,7 +4,7 @@ import React from 'react';
 import { ChartType } from '@vizora/core';
 
 interface CompassDialProps {
-  recommendedType: ChartType;
+  recommendedType?: ChartType;
   selectedType: ChartType;
   onSelectType: (type: ChartType) => void;
   confidence?: number;
@@ -14,14 +14,17 @@ interface CompassDialProps {
 
 const CHART_WAYPOINTS: { type: ChartType; label: string; angle: number }[] = [
   { type: 'bar', label: 'BAR', angle: 0 },
-  { type: 'line', label: 'LINE', angle: 90 },
-  { type: 'scatter', label: 'DIST', angle: 270 },
-  { type: 'histogram', label: 'AREA', angle: 180 },
   { type: 'kpi-sparkline', label: 'KPI', angle: 45 },
+  { type: 'line', label: 'LINE', angle: 90 },
+  { type: 'area', label: 'AREA', angle: 135 },
+  { type: 'histogram', label: 'HIST', angle: 180 },
+  { type: 'donut', label: 'DONUT', angle: 225 },
+  { type: 'scatter', label: 'SCAT', angle: 270 },
+  { type: 'candlestick', label: 'OHLC', angle: 315 },
 ];
 
 export const CompassDial: React.FC<CompassDialProps> = ({
-  recommendedType,
+  recommendedType = 'bar',
   selectedType,
   onSelectType,
   className = '',
@@ -30,26 +33,26 @@ export const CompassDial: React.FC<CompassDialProps> = ({
   const bearingAngle = activeWaypoint.angle;
 
   return (
-    <div className={`relative w-full aspect-square max-w-[340px] mx-auto bg-white/80 border border-[#18241b]/15 rounded-3xl shadow-xl backdrop-blur-md carto-grid-bg p-6 flex items-center justify-center transition-all ${className}`}>
+    <div className={`relative w-full aspect-square max-w-[280px] sm:max-w-[320px] mx-auto bg-white/80 border border-[#18241b]/15 rounded-3xl shadow-lg backdrop-blur-md carto-grid-bg p-5 flex flex-col items-center justify-center transition-all ${className}`}>
       {/* Corner Crosshairs ┌ ┐ └ ┘ */}
-      <span className="absolute top-2 left-2 font-mono text-xs text-[#1e2a22]/40 select-none">┌</span>
-      <span className="absolute top-2 right-2 font-mono text-xs text-[#1e2a22]/40 select-none">┐</span>
-      <span className="absolute bottom-2 left-2 font-mono text-xs text-[#1e2a22]/40 select-none">└</span>
-      <span className="absolute bottom-2 right-2 font-mono text-xs text-[#1e2a22]/40 select-none">┘</span>
+      <span className="absolute top-2.5 left-2.5 font-mono text-[10px] text-[#1e2a22]/30 select-none">┌</span>
+      <span className="absolute top-2.5 right-2.5 font-mono text-[10px] text-[#1e2a22]/30 select-none">┐</span>
+      <span className="absolute bottom-2.5 left-2.5 font-mono text-[10px] text-[#1e2a22]/30 select-none">└</span>
+      <span className="absolute bottom-2.5 right-2.5 font-mono text-[10px] text-[#1e2a22]/30 select-none">┘</span>
 
       {/* SVG Radial Instrument Dial */}
-      <div className="relative w-full h-full max-w-[280px] max-h-[280px]">
-        <svg viewBox="0 0 240 240" className="w-full h-full">
+      <div className="relative w-full h-full max-w-[240px] max-h-[240px]">
+        <svg viewBox="0 0 240 240" className="w-full h-full select-none">
           {/* Outer Geodetic Border */}
           <circle cx="120" cy="120" r="105" fill="#f7faf5" stroke="#1e2a22" strokeWidth="1" />
           <circle cx="120" cy="120" r="96" fill="none" stroke="#6e756a" strokeWidth="0.75" strokeDasharray="2 3" />
           <circle cx="120" cy="120" r="50" fill="none" stroke="rgba(110, 117, 106, 0.15)" strokeWidth="1" />
 
-          {/* Cardinal Ticks & Label Marks (72 total ticks around ring) */}
+          {/* Cardinal Ticks & Label Marks */}
           {Array.from({ length: 36 }).map((_, i) => {
             const deg = i * 10;
             const rad = (deg - 90) * (Math.PI / 180);
-            const isMajor = deg % 90 === 0;
+            const isMajor = deg % 45 === 0;
             const len = isMajor ? 8 : 4;
             const x1 = 120 + (96 - len) * Math.cos(rad);
             const y1 = 120 + (96 - len) * Math.sin(rad);
@@ -68,7 +71,7 @@ export const CompassDial: React.FC<CompassDialProps> = ({
             );
           })}
 
-          {/* Waypoint Labels around Circle (BAR, LINE, AREA, DIST) */}
+          {/* Waypoint Labels around Circle */}
           {CHART_WAYPOINTS.map((wp) => {
             const rad = (wp.angle - 90) * (Math.PI / 180);
             const tx = 120 + 72 * Math.cos(rad);
@@ -87,17 +90,17 @@ export const CompassDial: React.FC<CompassDialProps> = ({
                   y={ty + 4}
                   textAnchor="middle"
                   fill={isSelected ? '#c2872e' : '#1e2a22'}
-                  fontSize="11"
+                  fontSize="10"
                   fontFamily="IBM Plex Mono, monospace"
                   fontWeight={isSelected ? 'bold' : '500'}
-                  className="transition-colors group-hover:fill-[#c2872e]"
+                  className="transition-colors hover:fill-[#c2872e]"
                 >
                   {wp.label}
                 </text>
 
-                {/* Small indicator dot if recommended */}
+                {/* Indicator dot if recommended */}
                 {isRecommended && !isSelected && (
-                  <circle cx={tx} cy={ty - 10} r="2" fill="#d6502b" />
+                  <circle cx={tx} cy={ty - 9} r="2" fill="#d6502b" />
                 )}
               </g>
             );
@@ -119,11 +122,22 @@ export const CompassDial: React.FC<CompassDialProps> = ({
             <line x1="120" y1="120" x2="120" y2="175" stroke="#1e2a22" strokeWidth="1" />
             <circle cx="120" cy="175" r="3" fill="#1e2a22" />
 
-            {/* Brass Center Pivot Pin */}
+            {/* Center Pivot Pin */}
             <circle cx="120" cy="120" r="7" fill="#1e2a22" />
             <circle cx="120" cy="120" r="3" fill="#c2872e" />
           </g>
         </svg>
+      </div>
+
+      {/* Bearing readout caption */}
+      <div className="mt-2 font-mono text-[11px] text-[#60685c] flex items-center gap-2">
+        <span>BEARING:</span>
+        <span className="text-[#18241b] font-bold uppercase">{selectedType}</span>
+        {recommendedType === selectedType && (
+          <span className="text-[#c2872e] text-[10px] font-bold px-1.5 py-0.2 bg-[#c2872e]/10 rounded border border-[#c2872e]/20">
+            AUTO-DETECTED
+          </span>
+        )}
       </div>
     </div>
   );
