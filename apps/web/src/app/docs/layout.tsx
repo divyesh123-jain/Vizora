@@ -7,6 +7,7 @@ const docsSections: SidebarSection[] = [
     title: 'Guides & Concepts',
     items: [
       { label: 'Getting Started', href: '/docs/getting-started' },
+      { label: 'Packages Architecture', href: '/docs/packages', badge: 'Ecosystem' },
       { label: 'Build with Vizora', href: '/docs/build-with-vizora', badge: 'Guide' },
       { label: 'ChartSpec Schema', href: '/docs/chart-spec' },
       { label: 'Data Profiling Rules', href: '/docs/data-profiling' },
