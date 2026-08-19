@@ -187,7 +187,7 @@ export const Navbar: React.FC = () => {
           {/* Copy Install Command */}
           <button
             onClick={handleCopyInstall}
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f1611] text-[#e0e4dc] hover:text-white border border-[#2d3a30] text-[11px] font-mono shadow-sm transition-all duration-150 hover:border-[#c2872e]/50"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f1611] text-[#e0e4dc] hover:text-white border border-[#2d3a30] text-[11px] font-mono shadow-sm transition-all duration-150 hover:border-[#c2872e]/50"
             title="Click to copy npm install command"
           >
             <span className="text-[#c2872e] font-bold">$</span>
@@ -200,13 +200,6 @@ export const Navbar: React.FC = () => {
               </svg>
             )}
           </button>
-
-          <Link
-            href="/playground"
-            className="hidden sm:inline-flex px-3.5 py-1.5 rounded-lg bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold uppercase tracking-wider shadow-xs transition-all duration-150 hover:-translate-y-0.5"
-          >
-            Playground
-          </Link>
 
           {/* Mobile Hamburger Button */}
           <button
