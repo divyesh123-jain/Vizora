@@ -43,7 +43,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen bg-[#f4f7f3] text-[#18241b] font-sans antialiased">
       <Navbar />
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start">
         <Sidebar sections={docsSections} />
         <main className="flex-1 p-6 md:p-10 min-w-0 max-w-4xl">{children}</main>
       </div>
