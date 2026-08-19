@@ -300,7 +300,99 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. Footer */}
+      {/* 7. Modular Package Architecture Section */}
+      <section className="py-16 lg:py-24 border-b border-[#18241b]/10 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
+              ECOSYSTEM & MONOREPO
+            </span>
+            <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
+              4 Specialized Packages. Zero Bloat.
+            </h2>
+            <p className="font-body-doc text-[#404641] text-base leading-relaxed">
+              Vizora is composed of modular, decoupled packages so you only install what your application needs.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-5 space-y-3 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[#c2872e]">@vizora/react</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#18241b] text-white">&lt; 8kb</span>
+                </div>
+                <h3 className="font-headline-md font-bold text-base text-[#18241b]">React Components</h3>
+                <p className="font-body-ui text-xs text-[#60685c] leading-relaxed">
+                  Declarative React components: &lt;Chart /&gt;, &lt;AutoChart /&gt;, &lt;ResponsiveContainer /&gt;, tooltips, and legends.
+                </p>
+              </div>
+              <code className="text-[11px] font-mono bg-white p-2 rounded-lg border border-[#18241b]/10 text-[#18241b]">
+                npm i @vizora/react
+              </code>
+            </div>
+
+            <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-5 space-y-3 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[#c2872e]">@vizora/core</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#18241b] text-white">&lt; 12kb</span>
+                </div>
+                <h3 className="font-headline-md font-bold text-base text-[#18241b]">Pure Core Engine</h3>
+                <p className="font-body-ui text-xs text-[#60685c] leading-relaxed">
+                  Zero-dependency ChartSpec schema validator, coordinate scales math, and SceneGraph AST builder.
+                </p>
+              </div>
+              <code className="text-[11px] font-mono bg-white p-2 rounded-lg border border-[#18241b]/10 text-[#18241b]">
+                npm i @vizora/core
+              </code>
+            </div>
+
+            <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-5 space-y-3 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[#c2872e]">@vizora/intelligence</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#18241b] text-white">&lt; 3kb</span>
+                </div>
+                <h3 className="font-headline-md font-bold text-base text-[#18241b]">Data Profiler</h3>
+                <p className="font-body-ui text-xs text-[#60685c] leading-relaxed">
+                  Deterministic column profiling and heuristic recommendation without external LLM dependencies.
+                </p>
+              </div>
+              <code className="text-[11px] font-mono bg-white p-2 rounded-lg border border-[#18241b]/10 text-[#18241b]">
+                npm i @vizora/intelligence
+              </code>
+            </div>
+
+            <div className="bg-[#f4f7f3] border border-[#18241b]/10 rounded-2xl p-5 space-y-3 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[#c2872e]">@vizora/render-svg</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#18241b] text-white">&lt; 5kb</span>
+                </div>
+                <h3 className="font-headline-md font-bold text-base text-[#18241b]">SVG & A11Y Renderer</h3>
+                <p className="font-body-ui text-xs text-[#60685c] leading-relaxed">
+                  SSR string markup compiler and semantic HTML data table fallback for WCAG 2.1 AA screen readers.
+                </p>
+              </div>
+              <code className="text-[11px] font-mono bg-white p-2 rounded-lg border border-[#18241b]/10 text-[#18241b]">
+                npm i @vizora/render-svg
+              </code>
+            </div>
+          </div>
+
+          <div className="text-center pt-2">
+            <Link
+              href="/docs/packages"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md"
+            >
+              <span>Explore Complete Packages Guide →</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. Footer */}
       <footer className="py-12 border-t border-[#18241b]/10 bg-[#f4f7f3] text-xs font-sans text-[#60685c]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
@@ -312,6 +404,7 @@ export default function Home() {
             <Link href="/playground" className="hover:text-[#18241b]">Playground</Link>
             <Link href="/builder" className="hover:text-[#18241b]">Builder</Link>
             <Link href="/templates" className="hover:text-[#18241b]">Templates</Link>
+            <Link href="/docs/packages" className="hover:text-[#18241b]">Packages</Link>
             <Link href="/docs/getting-started" className="hover:text-[#18241b]">Docs</Link>
           </div>
         </div>
