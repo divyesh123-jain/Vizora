@@ -12,7 +12,42 @@ interface CompassDialProps {
   className?: string;
 }
 
-const CHART_WAYPOINTS: { type: ChartType; label: string; angle: number }[] = [
+const round2 = (num: number): number => Math.round(num * 100) / 100;
+
+interface DialTick {
+  deg: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  isMajor: boolean;
+}
+
+// Precompute static dial tick marks rounded to 2 decimal places to guarantee 100% SSR/Client hydration parity
+const DIAL_TICKS: DialTick[] = Array.from({ length: 36 }).map((_, i) => {
+  const deg = i * 10;
+  const rad = (deg - 90) * (Math.PI / 180);
+  const isMajor = deg % 45 === 0;
+  const len = isMajor ? 7 : 3.5;
+  return {
+    deg,
+    isMajor,
+    x1: round2(120 + (96 - len) * Math.cos(rad)),
+    y1: round2(120 + (96 - len) * Math.sin(rad)),
+    x2: round2(120 + 96 * Math.cos(rad)),
+    y2: round2(120 + 96 * Math.sin(rad)),
+  };
+});
+
+interface WaypointDef {
+  type: ChartType;
+  label: string;
+  angle: number;
+  tx: number;
+  ty: number;
+}
+
+const RAW_WAYPOINTS: { type: ChartType; label: string; angle: number }[] = [
   { type: 'bar', label: 'BAR', angle: 0 },
   { type: 'kpi-sparkline', label: 'KPI', angle: 45 },
   { type: 'line', label: 'LINE', angle: 90 },
@@ -22,6 +57,16 @@ const CHART_WAYPOINTS: { type: ChartType; label: string; angle: number }[] = [
   { type: 'scatter', label: 'SCAT', angle: 270 },
   { type: 'candlestick', label: 'OHLC', angle: 315 },
 ];
+
+// Precompute static waypoint coordinates rounded to 2 decimal places
+const CHART_WAYPOINTS: WaypointDef[] = RAW_WAYPOINTS.map((wp) => {
+  const rad = (wp.angle - 90) * (Math.PI / 180);
+  return {
+    ...wp,
+    tx: round2(120 + 72 * Math.cos(rad)),
+    ty: round2(120 + 72 * Math.sin(rad)),
+  };
+});
 
 export const CompassDial: React.FC<CompassDialProps> = ({
   recommendedType = 'bar',
@@ -45,34 +90,21 @@ export const CompassDial: React.FC<CompassDialProps> = ({
           <circle cx="120" cy="120" r="50" fill="none" stroke="currentColor" className="text-[#60685c]/15 dark:text-[#9ba196]/15" strokeWidth="1" />
 
           {/* Cardinal Ticks & Label Marks */}
-          {Array.from({ length: 36 }).map((_, i) => {
-            const deg = i * 10;
-            const rad = (deg - 90) * (Math.PI / 180);
-            const isMajor = deg % 45 === 0;
-            const len = isMajor ? 7 : 3.5;
-            const x1 = 120 + (96 - len) * Math.cos(rad);
-            const y1 = 120 + (96 - len) * Math.sin(rad);
-            const x2 = 120 + 96 * Math.cos(rad);
-            const y2 = 120 + 96 * Math.sin(rad);
-            return (
-              <line
-                key={deg}
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
-                stroke="currentColor"
-                className="text-[#18241b]/60 dark:text-[#9ba196]/60"
-                strokeWidth={isMajor ? 1.2 : 0.6}
-              />
-            );
-          })}
+          {DIAL_TICKS.map((t) => (
+            <line
+              key={t.deg}
+              x1={t.x1}
+              y1={t.y1}
+              x2={t.x2}
+              y2={t.y2}
+              stroke="currentColor"
+              className="text-[#18241b]/60 dark:text-[#9ba196]/60"
+              strokeWidth={t.isMajor ? 1.2 : 0.6}
+            />
+          ))}
 
           {/* Waypoint Labels around Circle with 44px touch targets */}
           {CHART_WAYPOINTS.map((wp) => {
-            const rad = (wp.angle - 90) * (Math.PI / 180);
-            const tx = 120 + 72 * Math.cos(rad);
-            const ty = 120 + 72 * Math.sin(rad);
             const isSelected = selectedType === wp.type;
             const isRecommended = recommendedType === wp.type;
 
@@ -92,11 +124,11 @@ export const CompassDial: React.FC<CompassDialProps> = ({
                 aria-label={`Select ${wp.label} chart type`}
               >
                 {/* 44px min invisible touch target circle */}
-                <circle cx={tx} cy={ty} r="22" fill="transparent" />
+                <circle cx={wp.tx} cy={wp.ty} r="22" fill="transparent" />
 
                 <text
-                  x={tx}
-                  y={ty + 4}
+                  x={wp.tx}
+                  y={wp.ty + 4}
                   textAnchor="middle"
                   fill={isSelected ? '#c2872e' : 'currentColor'}
                   fontSize="10"
@@ -111,7 +143,7 @@ export const CompassDial: React.FC<CompassDialProps> = ({
 
                 {/* Indicator dot if recommended and not selected */}
                 {isRecommended && !isSelected && (
-                  <circle cx={tx} cy={ty - 9} r="2" fill="#d6502b" />
+                  <circle cx={wp.tx} cy={wp.ty - 9} r="2" fill="#d6502b" />
                 )}
               </g>
             );

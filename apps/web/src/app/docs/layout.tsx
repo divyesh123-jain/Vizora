@@ -4,35 +4,37 @@ import { Sidebar, SidebarSection } from '../../components/Sidebar';
 
 const docsSections: SidebarSection[] = [
   {
-    title: 'Documentation',
+    title: 'Guides & Concepts',
     items: [
       { label: 'Getting Started', href: '/docs/getting-started', icon: '🚀' },
-      { label: 'Data Profiling Rules', href: '/docs/data-profiling', icon: '🔍' },
+      { label: 'Build with Vizora', href: '/docs/build-with-vizora', icon: '🛠️', badge: 'Core Guide' },
       { label: 'ChartSpec Schema', href: '/docs/chart-spec', icon: '📜' },
+      { label: 'Data Profiling Rules', href: '/docs/data-profiling', icon: '🔍' },
+      { label: 'Theming & Tokens', href: '/docs/theming', icon: '🎨' },
       { label: 'API Reference', href: '/docs/api', icon: '📖' },
     ],
   },
   {
-    title: 'Component Library',
+    title: 'Component Primitives',
     items: [
       { label: 'All Components', href: '/components', icon: '📦' },
       { label: 'Line Chart', href: '/components/line', icon: '📈' },
-      { label: 'Bar Chart', href: '/components/bar', icon: '📊' },
+      { label: 'Bar / Ranking Chart', href: '/components/bar', icon: '📊' },
       { label: 'Scatter Plot', href: '/components/scatter', icon: '🟢' },
       { label: 'Histogram', href: '/components/histogram', icon: '📶' },
       { label: 'KPI + Sparkline', href: '/components/kpi-sparkline', icon: '⚡' },
-      { label: 'Candlestick', href: '/components/candlestick', icon: '🕯️' },
+      { label: 'Candlestick (OHLC)', href: '/components/candlestick', icon: '🕯️' },
       { label: 'Donut Chart', href: '/components/donut', icon: '🍩' },
       { label: 'Area Chart', href: '/components/area', icon: '🌊' },
       { label: 'Funnel Chart', href: '/components/funnel', icon: '🎯' },
     ],
   },
   {
-    title: 'Interactive Studio',
+    title: 'Interactive Tools',
     items: [
-      { label: 'Live Playground', href: '/playground', icon: '🛠️' },
-      { label: 'Guided Chart Builder', href: '/builder', icon: '🧭' },
-      { label: 'Dashboard Templates', href: '/templates', icon: '📑' },
+      { label: 'Live Playground', href: '/playground', icon: '🧭' },
+      { label: 'Guided Chart Builder', href: '/builder', icon: '📐' },
+      { label: 'Composed Templates', href: '/templates', icon: '📑' },
     ],
   },
 ];
