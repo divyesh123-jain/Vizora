@@ -214,11 +214,11 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={cn('vizora-chart-container relative inline-block w-full group select-none overflow-visible', className)}
-      style={{ position: 'relative', display: 'inline-block', overflow: 'visible', ...style }}
+      className={cn('vizora-chart-container relative w-full h-full group select-none overflow-hidden', className)}
+      style={{ position: 'relative', overflow: 'hidden', ...style }}
     >
       <div
-        className="vizora-svg-wrapper w-full flex justify-center [&_svg]:max-w-full [&_svg]:h-auto [&_[data-vizora-item]]:transition-all [&_[data-vizora-item]]:duration-150 [&_[data-vizora-item]:hover]:opacity-100 [&_[data-vizora-item]:hover]:cursor-pointer"
+        className="vizora-svg-wrapper w-full h-full [&_svg]:w-full [&_svg]:h-full [&_svg]:display-block [&_[data-vizora-item]]:transition-all [&_[data-vizora-item]]:duration-150 [&_[data-vizora-item]:hover]:opacity-100 [&_[data-vizora-item]:hover]:cursor-pointer"
         dangerouslySetInnerHTML={{ __html: svgMarkup }}
       />
 

@@ -18,17 +18,17 @@ export const PropControlRow: React.FC<PropControlRowProps> = ({
   children,
 }) => {
   return (
-    <tr className="border-b border-[#18241b]/10 hover:bg-[#18241b]/5 transition-colors">
+    <tr className="border-b border-[#18241b]/10 hover:bg-[#18241b]/4 transition-colors">
       <td className="p-3.5 align-top">
-        <div className="font-mono text-xs font-bold text-[#18241b]">{name}</div>
+        <div className="font-mono text-xs font-bold text-[#18241b] dark:text-[#f1f5ee]">{name}</div>
         <div className="font-mono text-[10px] text-[#c2872e] mt-0.5">{type}</div>
         {defaultVal && (
           <div className="font-mono text-[10px] text-[#60685c] mt-0.5">
-            Default: <code className="bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">{defaultVal}</code>
+            Default: <code className="bg-[#18241b]/8 dark:bg-white/10 px-1.5 py-0.5 rounded-md">{defaultVal}</code>
           </div>
         )}
       </td>
-      <td className="p-3.5 align-top font-body-doc text-xs text-[#404641] max-w-xs leading-relaxed">
+      <td className="p-3.5 align-top font-body-doc text-xs text-[#404641] dark:text-[#9ba196] max-w-xs leading-relaxed">
         {description}
       </td>
       <td className="p-3.5 align-top font-mono text-xs">
@@ -44,19 +44,19 @@ export const ColorControl: React.FC<{
 }> = ({ value, onChange }) => {
   return (
     <div className="flex items-center gap-2">
-      <div className="relative w-8 h-8 rounded-xl overflow-hidden border border-[#18241b]/20 shadow-sm shrink-0">
+      <div className="relative w-6 h-6 rounded-md overflow-hidden border border-[#18241b]/20 dark:border-[#2d3a30] shrink-0 shadow-sm">
         <input
           type="color"
           value={value.startsWith('#') ? value : '#c2872e'}
           onChange={(e) => onChange(e.target.value)}
-          className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer border-none bg-transparent"
+          className="absolute -top-2 -left-2 w-10 h-10 cursor-pointer border-none bg-transparent"
         />
       </div>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-24 px-3 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-mono text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm"
+        className="w-24 px-2.5 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-mono text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all"
       />
     </div>
   );
@@ -71,7 +71,7 @@ export const SelectControl: React.FC<{
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="px-3 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-sans font-medium text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm cursor-pointer"
+      className="px-3 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-sans font-medium text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 cursor-pointer transition-all shadow-sm"
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>
@@ -91,12 +91,22 @@ export const ToggleControl: React.FC<{
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className="flex items-center gap-2 cursor-pointer select-none font-sans text-xs text-[#18241b] group"
+      className="flex items-center gap-2 cursor-pointer select-none font-sans text-xs text-[#18241b] dark:text-[#f1f5ee]"
     >
-      <div className={`w-9 h-5 rounded-full transition-colors duration-200 ease-in-out relative p-0.5 border border-black/10 ${value ? 'bg-[#c2872e]' : 'bg-[#18241b]/20'}`}>
-        <div className={`w-3.5 h-3.5 rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out ${value ? 'translate-x-4' : 'translate-x-0'}`} />
+      <div
+        className={`w-8 h-4.5 rounded-full transition-colors duration-200 relative p-0.5 border border-[#18241b]/15 ${
+          value ? 'bg-[#c2872e]' : 'bg-[#18241b]/15 dark:bg-white/15'
+        }`}
+      >
+        <div
+          className={`w-3.5 h-3.5 rounded-full bg-white dark:bg-[#18241b] shadow-sm transform transition-transform duration-200 ${
+            value ? 'translate-x-3.5' : 'translate-x-0'
+          }`}
+        />
       </div>
-      <span className="font-semibold text-xs text-[#404641] font-sans">{label || (value ? 'true' : 'false')}</span>
+      <span className="font-semibold text-xs text-[#404641] dark:text-[#9ba196] font-sans">
+        {label || (value ? 'true' : 'false')}
+      </span>
     </button>
   );
 };
@@ -109,7 +119,7 @@ export const NumberControl: React.FC<{
   onChange: (val: number) => void;
 }> = ({ value, min = 0, max = 100, step = 1, onChange }) => {
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-2">
       <input
         type="range"
         min={min}
@@ -117,7 +127,7 @@ export const NumberControl: React.FC<{
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-24 accent-[#c2872e] cursor-pointer"
+        className="w-20 accent-[#c2872e] cursor-pointer"
       />
       <input
         type="number"
@@ -125,7 +135,7 @@ export const NumberControl: React.FC<{
         max={max}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-16 px-2.5 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-mono text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm"
+        className="w-14 px-2 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-mono text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-sm"
       />
     </div>
   );
@@ -142,7 +152,7 @@ export const TextControl: React.FC<{
       value={value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
-      className="w-36 px-3 py-1.5 bg-white rounded-xl border border-[#18241b]/20 text-xs font-sans font-medium text-[#18241b] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/30 focus:border-[#c2872e] transition-all shadow-sm"
+      className="w-36 px-2.5 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-sans font-medium text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-sm"
     />
   );
 };

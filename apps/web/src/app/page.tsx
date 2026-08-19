@@ -30,10 +30,10 @@ export default function Home() {
               SUPPORTED MVP PRIMITIVES
             </span>
             <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
-              5 Core Primitives, Zero Boilerplate
+              Core Primitives, Zero Boilerplate
             </h2>
             <p className="font-body-doc text-[#404641] text-base leading-relaxed">
-              Vizora MVP strictly focuses on perfected core chart primitives. Each primitive features explicit Zod validation, headless scene-graph resolution, and built-in screen reader accessibility.
+              Vizora MVP strictly focuses on perfected core chart primitives. Each primitive features explicit runtime validation, headless scene-graph resolution, and built-in screen reader accessibility.
             </p>
           </div>
 
@@ -62,7 +62,7 @@ export default function Home() {
               </div>
               <div className="pt-2">
                 <Link
-                  href="/charts/line"
+                  href="/components/line"
                   className="w-full py-2.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
                   <span>VIEW SPECS & PROPS →</span>
@@ -94,7 +94,7 @@ export default function Home() {
               </div>
               <div className="pt-2">
                 <Link
-                  href="/charts/bar"
+                  href="/components/bar"
                   className="w-full py-2.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
                   <span>VIEW SPECS & PROPS →</span>
@@ -107,7 +107,7 @@ export default function Home() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-2">
                   <span className="font-sans text-xs font-bold text-[#c2872e] uppercase tracking-wider">
-                    BIVARIATE SCATTER
+                    BIVARIATE CORRELATION
                   </span>
                   <span className="font-mono text-[10px] bg-[#18241b]/8 px-2 py-0.5 rounded font-bold text-[#18241b]">
                     type="scatter"
@@ -117,16 +117,16 @@ export default function Home() {
                   Scatter Plot
                 </h3>
                 <p className="font-body-ui text-xs text-[#404641] leading-relaxed">
-                  Positions data points along a Cartesian plane to reveal statistical clusters and correlation patterns.
+                  Positions points on Cartesian coordinates to reveal clustering, non-linear relationships, and bivariate correlations.
                 </p>
                 <div className="p-3 bg-[#18241b]/5 rounded-xl border border-[#18241b]/10 font-mono text-[11px] text-[#404641]">
                   <span className="font-bold font-sans text-[#18241b]">Heuristics: </span>
-                  ≥ 2 Quantitative numeric fields
+                  ≥ 2 Quantitative numeric metrics
                 </div>
               </div>
               <div className="pt-2">
                 <Link
-                  href="/charts/scatter"
+                  href="/components/scatter"
                   className="w-full py-2.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
                   <span>VIEW SPECS & PROPS →</span>
@@ -139,7 +139,7 @@ export default function Home() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-2">
                   <span className="font-sans text-xs font-bold text-[#c2872e] uppercase tracking-wider">
-                    FREQUENCY HISTOGRAM
+                    DISTRIBUTION DENSITY
                   </span>
                   <span className="font-mono text-[10px] bg-[#18241b]/8 px-2 py-0.5 rounded font-bold text-[#18241b]">
                     type="histogram"
@@ -149,16 +149,16 @@ export default function Home() {
                   Histogram
                 </h3>
                 <p className="font-body-ui text-xs text-[#404641] leading-relaxed">
-                  Auto-bins continuous single quantitative metrics into frequency distribution bars.
+                  Automatically computes density bins and frequencies from continuous single-variable datasets.
                 </p>
                 <div className="p-3 bg-[#18241b]/5 rounded-xl border border-[#18241b]/10 font-mono text-[11px] text-[#404641]">
                   <span className="font-bold font-sans text-[#18241b]">Heuristics: </span>
-                  1 Quantitative metric (no dates)
+                  1 Quantitative (Auto-binned)
                 </div>
               </div>
               <div className="pt-2">
                 <Link
-                  href="/charts/histogram"
+                  href="/components/histogram"
                   className="w-full py-2.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
                   <span>VIEW SPECS & PROPS →</span>
@@ -166,7 +166,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Card 5: KPI Sparkline */}
+            {/* Card 5: KPI + Sparkline */}
             <div className="bg-white/80 border border-[#18241b]/10 rounded-2xl p-6 space-y-4 shadow-sm hover:shadow-xl hover:border-[#c2872e] hover:-translate-y-1 transition-all duration-300 backdrop-blur-md flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-2">
@@ -181,17 +181,49 @@ export default function Home() {
                   KPI + Sparkline
                 </h3>
                 <p className="font-body-ui text-xs text-[#404641] leading-relaxed">
-                  Combines headline KPI metric displays with inline trend sparkline vector paths.
+                  Condensed headline metric display with inline trend vector sparklines. Designed for executive dashboards.
                 </p>
                 <div className="p-3 bg-[#18241b]/5 rounded-xl border border-[#18241b]/10 font-mono text-[11px] text-[#404641]">
                   <span className="font-bold font-sans text-[#18241b]">Heuristics: </span>
-                  Dashboard KPI summary metrics
+                  Dashboard Metric Cards
                 </div>
               </div>
               <div className="pt-2">
                 <Link
-                  href="/charts/kpi-sparkline"
+                  href="/components/kpi-sparkline"
                   className="w-full py-2.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                >
+                  <span>VIEW SPECS & PROPS →</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 6: Trading / Candlestick */}
+            <div className="bg-[#111813] border border-[#2d3a30] text-[#e0e4dc] rounded-2xl p-6 space-y-4 shadow-sm hover:shadow-xl hover:border-[#c2872e] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between border-b border-[#2d3a30] pb-2">
+                  <span className="font-sans text-xs font-bold text-[#c2872e] uppercase tracking-wider">
+                    FINANCIAL OHLC
+                  </span>
+                  <span className="font-mono text-[10px] bg-[#18221b] border border-[#2d3a30] text-[#a4c995] px-2 py-0.5 rounded font-bold">
+                    type="candlestick"
+                  </span>
+                </div>
+                <h3 className="font-headline-md text-xl font-bold text-white">
+                  Candlestick Chart
+                </h3>
+                <p className="font-body-ui text-xs text-[#9ba196] leading-relaxed">
+                  Financial market data with bullish/bearish candle wicks and volume profiles.
+                </p>
+                <div className="p-3 bg-[#18221b] rounded-xl border border-[#2d3a30] font-mono text-[11px] text-[#a4c995]">
+                  <span className="font-bold font-sans text-white">Heuristics: </span>
+                  OHLC Trading sessions
+                </div>
+              </div>
+              <div className="pt-2">
+                <Link
+                  href="/components/candlestick"
+                  className="w-full py-2.5 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-sans text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
                   <span>VIEW SPECS & PROPS →</span>
                 </Link>
@@ -201,117 +233,86 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Monorepo Architecture Package Cards */}
-      <section id="architecture" className="py-16 lg:py-24 border-b border-[#18241b]/10 bg-white/50">
+      {/* 6. Three Pillars Callout Section */}
+      <section className="py-16 bg-[#0f1611] text-[#e0e4dc] border-b border-[#2d3a30]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
-              MONOREPO ARCHITECTURE
+              THREE PILLARS • THE VIZORA SYSTEM
             </span>
-            <h2 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
-              Modular, Decoupled Package Ecosystem
+            <h2 className="font-headline-lg text-3xl sm:text-4xl text-white font-bold">
+              Browse, Play, or Build Visually
             </h2>
-            <p className="font-body-doc text-[#404641] text-base leading-relaxed">
-              Vizora is structured as an npm workspace monorepo where responsibilities are strictly separated between pure spec generation, intelligence profiling, and React rendering.
+            <p className="font-body-doc text-[#9ba196] text-base leading-relaxed">
+              Every chart across all three pillars is natively paired with its live <code className="text-[#c2872e] font-mono">ChartSpec</code> ledger.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white border border-[#18241b]/10 rounded-2xl p-6 space-y-3 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-2.5">
-                <span className="font-mono text-sm font-bold text-[#18241b]">@vizora/core</span>
-                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-[#c2872e]/10 text-[#c2872e] border border-[#c2872e]/20 font-bold uppercase tracking-wider">
-                  FRAMEWORK AGNOSTIC
-                </span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-[#151f17] border border-[#2d3a30] rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-2">
+                <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">Pillar 1</span>
+                <h3 className="font-headline-md text-xl font-bold text-white">Component Library</h3>
+                <p className="font-body-ui text-xs text-[#9ba196] leading-relaxed">
+                  Browse by dashboard use-case category: Business, Trading, Statistical, Comparison, and Composition.
+                </p>
               </div>
-              <p className="font-body-ui text-sm text-[#404641]">
-                Contains the Zod schema for <code className="font-mono text-xs bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">ChartSpec</code>, mathematical scales, binned data transforms, and pure scene-graph data definitions.
-              </p>
+              <Link
+                href="/components"
+                className="px-4 py-2.5 bg-[#18221b] hover:bg-[#253329] text-white font-sans text-xs font-bold rounded-xl border border-[#2d3a30] transition-colors text-center"
+              >
+                Explore Components &rarr;
+              </Link>
             </div>
 
-            <div className="bg-white border border-[#18241b]/10 rounded-2xl p-6 space-y-3 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-2.5">
-                <span className="font-mono text-sm font-bold text-[#18241b]">@vizora/intelligence</span>
-                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-[#c2872e]/10 text-[#c2872e] border border-[#c2872e]/20 font-bold uppercase tracking-wider">
-                  PROFILING ENGINE
-                </span>
+            <div className="bg-[#151f17] border border-[#2d3a30] rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-2">
+                <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">Pillar 2</span>
+                <h3 className="font-headline-md text-xl font-bold text-white">Live Playground</h3>
+                <p className="font-body-ui text-xs text-[#9ba196] leading-relaxed">
+                  Paste raw JSON/CSV, upload datasets, inspect Compass bearing recommendations, and sync specs in 2 directions.
+                </p>
               </div>
-              <p className="font-body-ui text-sm text-[#404641]">
-                Deterministic data profiler and chart recommendation engine that maps temporal, categorical, and quantitative field combinations.
-              </p>
+              <Link
+                href="/playground"
+                className="px-4 py-2.5 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-sans text-xs font-bold rounded-xl transition-colors text-center"
+              >
+                Launch Studio &rarr;
+              </Link>
             </div>
 
-            <div className="bg-white border border-[#18241b]/10 rounded-2xl p-6 space-y-3 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-2.5">
-                <span className="font-mono text-sm font-bold text-[#18241b]">@vizora/react</span>
-                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-[#c2872e]/10 text-[#c2872e] border border-[#c2872e]/20 font-bold uppercase tracking-wider">
-                  REACT ADAPTER
-                </span>
+            <div className="bg-[#151f17] border border-[#2d3a30] rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-2">
+                <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">Pillar 3</span>
+                <h3 className="font-headline-md text-xl font-bold text-white">Guided Builder</h3>
+                <p className="font-body-ui text-xs text-[#9ba196] leading-relaxed">
+                  A 6-step instrument stepper with field validation, palette customization, and immediate TypeScript component export.
+                </p>
               </div>
-              <p className="font-body-ui text-sm text-[#404641]">
-                Thin React wrapper components providing <code className="font-mono text-xs bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">&lt;AutoChart /&gt;</code> and <code className="font-mono text-xs bg-[#18241b]/8 px-1.5 py-0.5 rounded-md">&lt;Chart /&gt;</code> with responsive containers.
-              </p>
-            </div>
-
-            <div className="bg-white border border-[#18241b]/10 rounded-2xl p-6 space-y-3 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between border-b border-[#18241b]/10 pb-2.5">
-                <span className="font-mono text-sm font-bold text-[#18241b]">@vizora/render-svg</span>
-                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-[#c2872e]/10 text-[#c2872e] border border-[#c2872e]/20 font-bold uppercase tracking-wider">
-                  SVG RUNTIME
-                </span>
-              </div>
-              <p className="font-body-ui text-sm text-[#404641]">
-                Converts scene graph nodes into pure, accessible SVG strings. Completely SSR-safe and runnable in Node or Edge environments.
-              </p>
+              <Link
+                href="/builder"
+                className="px-4 py-2.5 bg-[#18221b] hover:bg-[#253329] text-white font-sans text-xs font-bold rounded-xl border border-[#2d3a30] transition-colors text-center"
+              >
+                Open Builder &rarr;
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 7. Call to Action Banner & Developer Footer */}
-      <section className="py-16 bg-[#18241b] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-6">
-          <h2 className="font-headline-lg text-3xl sm:text-4xl font-bold text-white">
-            Ready to build data visualizations with zero boilerplate?
-          </h2>
-          <p className="font-body-doc text-[#e0e4dc] max-w-xl mx-auto text-base">
-            Start using Vizora today with React, Next.js, or pure Node.js.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <Link
-              href="/docs/getting-started"
-              className="px-6 py-3.5 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-white font-sans text-xs font-bold uppercase tracking-wider shadow-lg transition-all"
-            >
-              GETTING STARTED GUIDE →
-            </Link>
-            <Link
-              href="/playground"
-              className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-sans text-xs font-bold uppercase tracking-wider border border-white/20 transition-all"
-            >
-              STUDIO PLAYGROUND
-            </Link>
+      {/* 7. Footer */}
+      <footer className="py-12 border-t border-[#18241b]/10 bg-[#f4f7f3] text-xs font-sans text-[#60685c]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-headline-md font-bold text-sm text-[#18241b]">Vizora</span>
+            <span>• Spec-Native Cartographic Data Visualization</span>
           </div>
-        </div>
-      </section>
-
-      <footer className="w-full bg-[#0f1611] text-[#e0e4dc] border-t border-slate-800/80 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6 font-sans text-xs">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#c2872e] to-[#d99a38] text-[#18241b] font-bold flex items-center justify-center shadow-md text-xs">
-              VZ
-            </div>
-            <span className="font-bold text-white text-sm">Vizora Engine</span>
-            <span className="text-[#9ba196]">• Framework-Agnostic Chart Runtime</span>
-          </div>
-
-          <div className="flex items-center gap-6 text-[#9ba196] font-medium">
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#showcase" className="hover:text-white transition-colors">API Showcase</a>
-            <a href="#chart-types" className="hover:text-white transition-colors">Chart Types</a>
-          </div>
-
-          <div className="text-[#60685c] text-[11px]">
-            © {new Date().getFullYear()} Vizora. Open source software under MVP spec.
+          <div className="flex items-center gap-4 font-mono text-[11px]">
+            <Link href="/components" className="hover:text-[#18241b]">Components</Link>
+            <Link href="/playground" className="hover:text-[#18241b]">Playground</Link>
+            <Link href="/builder" className="hover:text-[#18241b]">Builder</Link>
+            <Link href="/templates" className="hover:text-[#18241b]">Templates</Link>
+            <Link href="/docs/getting-started" className="hover:text-[#18241b]">Docs</Link>
           </div>
         </div>
       </footer>

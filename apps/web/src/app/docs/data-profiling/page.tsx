@@ -1,121 +1,138 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { CodeBlock } from '../../../components/CodeBlock';
 
 export default function DataProfilingPage() {
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       {/* Header */}
-      <div className="border-b border-[#18241b]/10 pb-6 space-y-2">
-        <span className="font-sans text-xs font-bold uppercase tracking-widest text-[#c2872e]">
-          INTELLIGENCE MODULE
-        </span>
-        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#1e2a22] font-bold">
-          Data Profiling & Heuristic Recommender
-        </h1>
-        <p className="font-body-doc text-[#434844] text-base leading-relaxed">
-          How <code className="font-mono text-xs bg-[#f7faf5] px-1 py-0.5 border border-[#1e2a22]/20">@vizora/intelligence</code> inspects field data types and recommends optimal chart specs without AI hallucinations.
-        </p>
-      </div>
-
-      {/* Overview Section */}
-      <div className="space-y-4">
-        <h2 className="font-headline-md text-2xl text-[#1e2a22] font-bold">
-          1. Field Type Detection (`profileField`)
-        </h2>
-        <p className="font-body-ui text-sm text-[#434844] leading-relaxed">
-          When an array of data objects is passed to <code className="font-mono text-xs bg-[#f7faf5] px-1 font-bold">recommendChartSpec(data)</code>, Vizora evaluates sample values for every key in the first record. Fields are classified into one of three primitive types:
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-          <div className="bg-[#f7faf5] border border-[#1e2a22] p-4 space-y-2">
-            <span className="font-bold text-[#c2872e] uppercase">📅 Temporal</span>
-            <p className="text-[#434844] font-sans text-xs">
-              JavaScript <code className="font-mono text-xs">Date</code> instances or ISO-compliant date strings (e.g. <code className="font-mono text-xs">"2026-01-01"</code>).
-            </p>
-          </div>
-          <div className="bg-[#f7faf5] border border-[#1e2a22] p-4 space-y-2">
-            <span className="font-bold text-[#c2872e] uppercase">📊 Categorical</span>
-            <p className="text-[#434844] font-sans text-xs">
-              Discrete, non-date string values representing labels, names, territories, or statuses.
-            </p>
-          </div>
-          <div className="bg-[#f7faf5] border border-[#1e2a22] p-4 space-y-2">
-            <span className="font-bold text-[#c2872e] uppercase">🔢 Quantitative</span>
-            <p className="text-[#434844] font-sans text-xs">
-              Continuous or discrete numerical metrics, floats, integers, or amounts.
-            </p>
-          </div>
+      <div className="border-b border-[#18241b]/10 pb-6 space-y-2.5">
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#c2872e]">
+            DATA INTELLIGENCE
+          </span>
+          <span className="font-mono text-xs text-[#60685c]">
+            Deterministic Heuristics Engine
+          </span>
         </div>
+        <h1 className="font-headline-lg text-3xl sm:text-4xl text-[#18241b] font-bold">
+          Data Profiling & Heuristic Rules
+        </h1>
+        <p className="font-body-doc text-sm text-[#404641] max-w-3xl leading-relaxed">
+          Vizora does not require complex configuration files. Its deterministic data profiling engine scans your dataset and chooses the mathematically appropriate chart representation.
+        </p>
       </div>
 
-      {/* Heuristic Rules Matrix */}
-      <div className="space-y-4">
-        <h2 className="font-headline-md text-2xl text-[#1e2a22] font-bold">
-          2. Heuristic Recommendation Table
+      {/* Inference Rules */}
+      <section className="space-y-4">
+        <h2 className="font-headline-md text-xl font-bold text-[#18241b]">
+          Deterministic Type Inference Rules
         </h2>
 
-        <div className="bg-[#f7faf5] border border-[#1e2a22] overflow-hidden shadow-sm">
+        <div className="bg-white border border-[#18241b]/15 rounded-[2px] overflow-hidden">
           <table className="w-full text-left font-mono text-xs border-collapse">
             <thead>
-              <tr className="border-b border-[#1e2a22]/20 bg-[#1e2a22] text-[#ecefea]">
-                <th className="p-3">Detected Field Profile</th>
-                <th className="p-3">Recommended Chart</th>
-                <th className="p-3">Inferred Encodings</th>
+              <tr className="bg-[#18241b] text-white">
+                <th className="p-3">Detected Pattern</th>
+                <th className="p-3">Inferred Type</th>
+                <th className="p-3">Recommended Bearing</th>
+                <th className="p-3">Layout Strategy</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1e2a22]/10 text-[#434844]">
+            <tbody className="divide-y divide-[#18241b]/10 text-[#404641]">
               <tr>
-                <td className="p-3 font-bold text-[#1e2a22]">≥ 1 Temporal + ≥ 1 Quantitative</td>
-                <td className="p-3 text-[#c2872e] font-bold">Line Chart</td>
-                <td className="p-3">X = Temporal, Y = Quantitative</td>
+                <td className="p-3 font-bold text-[#18241b]">ISO-8601 Date / Timestamp + Numeric Metric</td>
+                <td className="p-3 text-[#c2872e]">temporal + quantitative</td>
+                <td className="p-3 font-bold">Line / Area</td>
+                <td className="p-3 text-[11px]">Time-scale linear interpolation with gradient volume fill.</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#1e2a22]">≥ 1 Categorical + ≥ 1 Quantitative</td>
-                <td className="p-3 text-[#c2872e] font-bold">Bar Chart</td>
-                <td className="p-3">X = Categorical, Y = Quantitative</td>
+                <td className="p-3 font-bold text-[#18241b]">Discrete Strings + Numeric Metric (&le; 12 items)</td>
+                <td className="p-3 text-[#c2872e]">categorical + quantitative</td>
+                <td className="p-3 font-bold">Vertical Bar</td>
+                <td className="p-3 text-[11px]">Band-scale categorical discrete columns with uniform padding.</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#1e2a22]">≥ 2 Quantitative Fields</td>
-                <td className="p-3 text-[#c2872e] font-bold">Scatter Plot</td>
-                <td className="p-3">X = Quant 1, Y = Quant 2</td>
+                <td className="p-3 font-bold text-[#18241b]">Discrete Strings + Numeric Metric (&gt; 12 items)</td>
+                <td className="p-3 text-[#c2872e]">categorical + quantitative</td>
+                <td className="p-3 font-bold">Horizontal Bar</td>
+                <td className="p-3 text-[11px]">High-cardinality ranking bars for readability of long labels.</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#1e2a22]">1 Quantitative (No Cat/Temp)</td>
-                <td className="p-3 text-[#c2872e] font-bold">Histogram</td>
-                <td className="p-3">X = Quant (Auto-Binned)</td>
+                <td className="p-3 font-bold text-[#18241b]">Two Continuous Numeric Metrics</td>
+                <td className="p-3 text-[#c2872e]">quantitative + quantitative</td>
+                <td className="p-3 font-bold">Scatter Plot</td>
+                <td className="p-3 text-[11px]">Dual linear scales mapping bivariate correlation dots.</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold text-[#18241b]">Single Continuous Numeric Metric</td>
+                <td className="p-3 text-[#c2872e]">quantitative</td>
+                <td className="p-3 font-bold">Histogram</td>
+                <td className="p-3 text-[11px]">Statistical Sturges binning frequency distribution.</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-      {/* Code Snippet */}
-      <div className="space-y-4">
-        <h2 className="font-headline-md text-xl text-[#1e2a22] font-bold">
-          3. Standalone Intelligence API Usage
+      {/* Programmatic Profiling API */}
+      <section className="space-y-4">
+        <h2 className="font-headline-md text-xl font-bold text-[#18241b]">
+          Using the Profiler in Your Own Code
         </h2>
 
+        <p className="font-body-ui text-xs text-[#404641]">
+          You can use <code className="font-mono text-xs bg-[#18241b]/8 px-1 py-0.5 rounded-[2px]">profileField()</code> and <code className="font-mono text-xs bg-[#18241b]/8 px-1 py-0.5 rounded-[2px]">recommendChartSpec()</code> from <code className="font-mono text-xs bg-[#18241b]/8 px-1 py-0.5 rounded-[2px]">@vizora/intelligence</code> directly:
+        </p>
+
         <CodeBlock
-          code={`import { profileField, recommendChartSpec } from '@vizora/intelligence';
+          code={`import { profileField, recommendChartSpec, scoreChartRecommendations } from '@vizora/intelligence';
 
 const rawData = [
-  { timestamp: '2026-01-01T00:00:00Z', cpuLoad: 42.5 },
-  { timestamp: '2026-01-01T01:00:00Z', cpuLoad: 58.1 },
+  { timestamp: '2026-01-01', revenue: 45000, region: 'US' },
+  { timestamp: '2026-02-01', revenue: 62000, region: 'EU' },
 ];
 
-// Profile individual field
+// 1. Profile an individual field
 const profile = profileField(rawData, 'timestamp');
-console.log(profile); 
-// Output: { field: 'timestamp', type: 'temporal', distinctCount: 2 }
+console.log(profile);
+// -> { field: 'timestamp', type: 'temporal', distinctCount: 2 }
 
-// Generate full recommended spec
+// 2. Recommend complete ChartSpec automatically
 const spec = recommendChartSpec(rawData);
-console.log(spec.type); // 'line'`}
+console.log(spec.type);
+// -> 'line'
+
+// 3. Inspect ranked candidate scores
+const scores = scoreChartRecommendations(rawData);
+console.log(scores);
+// -> [
+//   { type: 'line', score: 95, reason: "Temporal field 'timestamp' ..." },
+//   { type: 'bar', score: 88, ... }
+// ]`}
           language="typescript"
-          title="IntelligenceAPI.ts"
+          title="profiler-usage-example.ts"
         />
+      </section>
+
+      {/* Navigation */}
+      <div className="p-5 bg-white border border-[#18241b]/15 rounded-[2px] flex items-center justify-between">
+        <div>
+          <h3 className="font-headline-md text-sm font-bold text-[#18241b]">
+            Next: Theming & Color Tokens
+          </h3>
+          <p className="font-body-ui text-xs text-[#60685c]">
+            Learn how the 6-token cartography palette styles your visualizations.
+          </p>
+        </div>
+        <Link
+          href="/docs/theming"
+          className="px-3.5 py-1.5 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold rounded-[2px] transition-colors"
+        >
+          Theming Guide &rarr;
+        </Link>
       </div>
     </div>
   );

@@ -42,6 +42,6 @@ export function renderSceneGraphToSVGString(scene: SceneGraph): string {
     .map((node) => renderSceneNodeToString(node))
     .join('');
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${escapeXml(scene.viewBox)}" width="${escapeXml(scene.width)}" height="${escapeXml(scene.height)}">${childrenStr}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${escapeXml(scene.viewBox)}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;">${childrenStr}</svg>`;
 }
 

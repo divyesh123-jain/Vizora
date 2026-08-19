@@ -60,7 +60,7 @@ export class HistogramChartStrategy implements ChartLayoutStrategy {
           width: bw,
           height: h,
           fill: palette.contour,
-          rx: 0,
+          rx: 3,
         },
       });
 

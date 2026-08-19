@@ -1,13 +1,38 @@
 {
   "name": "@vizora/core",
   "version": "0.1.0",
-  "private": true,
+  "description": "Vizora core — ChartSpec schema, scales, transforms, and headless scene graph engine",
+  "license": "MIT",
+  "author": "Vizora Contributors",
+  "homepage": "https://github.com/your-org/vizora#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/vizora.git",
+    "directory": "packages/core"
+  },
+  "keywords": ["chart", "visualization", "chartspec", "data", "svg"],
+  "sideEffects": false,
   "main": "./src/index.ts",
+  "module": "./src/index.ts",
   "types": "./src/index.ts",
+  "source": "./src/index.ts",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "import": "./src/index.ts",
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": ["dist", "src", "README.md", "CHANGELOG.md"],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc --build",
     "test": "vitest run",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "zod": "^3.23.0"
