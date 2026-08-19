@@ -18,8 +18,8 @@ export const FeaturesSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white/80 border border-[#18241b]/10 rounded-2xl p-6 space-y-3.5 shadow-sm hover:shadow-xl hover:border-[#c2872e] hover:-translate-y-1 transition-all duration-300 backdrop-blur-md group">
-            <div className="w-10 h-10 rounded-xl bg-[#18241b] text-[#c2872e] flex items-center justify-center font-sans font-bold text-base group-hover:bg-[#c2872e] group-hover:text-white transition-all shadow-sm">
-              ⚡
+            <div className="w-10 h-10 rounded-xl bg-[#18241b] text-[#c2872e] flex items-center justify-center font-mono font-bold text-xs tracking-tight group-hover:bg-[#c2872e] group-hover:text-white transition-all shadow-sm">
+              01
             </div>
             <h3 className="font-headline-md text-lg text-[#18241b] font-bold">
               Zero-Config AutoChart
@@ -30,8 +30,8 @@ export const FeaturesSection: React.FC = () => {
           </div>
 
           <div className="bg-white/80 border border-[#18241b]/10 rounded-2xl p-6 space-y-3.5 shadow-sm hover:shadow-xl hover:border-[#c2872e] hover:-translate-y-1 transition-all duration-300 backdrop-blur-md group">
-            <div className="w-10 h-10 rounded-xl bg-[#18241b] text-[#c2872e] flex items-center justify-center font-sans font-bold text-base group-hover:bg-[#c2872e] group-hover:text-white transition-all shadow-sm">
-              📜
+            <div className="w-10 h-10 rounded-xl bg-[#18241b] text-[#c2872e] flex items-center justify-center font-mono font-bold text-xs tracking-tight group-hover:bg-[#c2872e] group-hover:text-white transition-all shadow-sm">
+              02
             </div>
             <h3 className="font-headline-md text-lg text-[#18241b] font-bold">
               Typed ChartSpec Contract
@@ -42,8 +42,8 @@ export const FeaturesSection: React.FC = () => {
           </div>
 
           <div className="bg-white/80 border border-[#18241b]/10 rounded-2xl p-6 space-y-3.5 shadow-sm hover:shadow-xl hover:border-[#c2872e] hover:-translate-y-1 transition-all duration-300 backdrop-blur-md group">
-            <div className="w-10 h-10 rounded-xl bg-[#18241b] text-[#c2872e] flex items-center justify-center font-sans font-bold text-base group-hover:bg-[#c2872e] group-hover:text-white transition-all shadow-sm">
-              ⚙️
+            <div className="w-10 h-10 rounded-xl bg-[#18241b] text-[#c2872e] flex items-center justify-center font-mono font-bold text-xs tracking-tight group-hover:bg-[#c2872e] group-hover:text-white transition-all shadow-sm">
+              03
             </div>
             <h3 className="font-headline-md text-lg text-[#18241b] font-bold">
               Headless & SSR Safe
