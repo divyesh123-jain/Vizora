@@ -213,7 +213,7 @@ function MicroKpiCard({ label, value, sparkline }: { label: string; value: strin
     .join(' ');
 
   return (
-    <div className="bg-[#f4f7f3] dark:bg-[#151f17] border border-[#18241b]/10 dark:border-[#2d3a30] rounded-[2px] p-3.5 flex items-center justify-between">
+    <div className="bg-[#f4f7f3] dark:bg-[#151f17] border border-[#18241b]/10 dark:border-[#2d3a30] rounded-xl p-4 flex items-center justify-between shadow-xs hover:shadow-sm transition-all">
       <div className="space-y-1">
         <span className="font-mono text-xs text-[#60685c] block">{label}</span>
         <div className="text-xl font-bold font-mono text-[#18241b] dark:text-[#f1f5ee]">{value}</div>
@@ -263,13 +263,13 @@ export default function TemplatesGalleryPage() {
           {TEMPLATES_LIST.map((tpl) => (
             <section
               key={tpl.slug}
-              className="bg-white border border-[#18241b]/15 rounded-[2px] p-5 sm:p-6 space-y-5 transition-colors hover:border-[#18241b]/30"
+              className="bg-white border border-[#18241b]/10 rounded-xl p-5 sm:p-6 space-y-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-[#18241b]/20"
             >
               {/* Template Title & Action Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#18241b]/10 pb-3.5 gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase bg-[#c2872e]/10 text-[#c2872e] px-2 py-0.2 rounded-[2px] font-bold border border-[#c2872e]/20">
+                    <span className="text-[10px] font-mono uppercase bg-[#c2872e]/10 text-[#c2872e] px-2.5 py-0.5 rounded-full font-bold border border-[#c2872e]/20">
                       {tpl.badge}
                     </span>
                     <span className="font-mono text-xs text-[#60685c]">{tpl.category}</span>

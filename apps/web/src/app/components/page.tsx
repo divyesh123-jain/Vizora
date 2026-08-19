@@ -223,10 +223,10 @@ export default function ComponentsIndexPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by chart name, category, or field type..."
-                className="w-full bg-white border border-[#18241b]/20 rounded-[2px] px-3.5 py-2 pl-9 font-mono text-xs text-[#18241b] placeholder:text-[#60685c]/60 focus:outline-2 focus:outline-[#c2872e]"
+                className="w-full bg-white border border-[#18241b]/15 rounded-xl px-4 py-2.5 pl-10 font-mono text-xs text-[#18241b] placeholder:text-[#60685c]/60 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all"
               />
               <svg
-                className="w-4 h-4 text-[#60685c] absolute left-3 top-2.5"
+                className="w-4 h-4 text-[#60685c] absolute left-3.5 top-3"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -241,7 +241,7 @@ export default function ComponentsIndexPage() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-2.5 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
+                  className="absolute right-3.5 top-2.5 text-xs font-mono text-[#60685c] hover:text-[#18241b] px-1.5 py-0.5 rounded-md hover:bg-[#18241b]/5"
                 >
                   Clear
                 </button>
@@ -252,7 +252,7 @@ export default function ComponentsIndexPage() {
 
         {/* Search Results Display if Query present */}
         {searchQuery.trim() && (
-          <div className="space-y-3 bg-white border border-[#18241b]/15 rounded-[2px] p-5">
+          <div className="space-y-3 bg-white border border-[#18241b]/10 rounded-xl p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="font-headline-md text-base font-bold text-[#18241b]">
                 Search Matches ({filteredCharts.length})
@@ -270,7 +270,7 @@ export default function ComponentsIndexPage() {
                   <Link
                     key={item.type}
                     href={`/components/${item.type}`}
-                    className="p-3.5 bg-[#f4f7f3] border border-[#18241b]/10 rounded-[2px] hover:border-[#c2872e] transition-colors space-y-1.5 group"
+                    className="p-3.5 bg-[#f4f7f3] border border-[#18241b]/10 rounded-xl hover:border-[#c2872e] shadow-xs hover:shadow-sm transition-all duration-150 space-y-1.5 group hover:-translate-y-0.5"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-headline-md font-bold text-sm text-[#18241b] group-hover:text-[#c2872e]">

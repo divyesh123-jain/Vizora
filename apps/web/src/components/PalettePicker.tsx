@@ -34,14 +34,14 @@ export const PalettePicker: React.FC<PalettePickerProps> = ({ selectedId, onSele
             <button
               key={p.id}
               onClick={() => onSelect(p)}
-              className={`flex items-center gap-2 px-2.5 py-1 rounded-[2px] border transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-150 shadow-xs ${
                 isSelected
-                  ? 'bg-[#18241b] text-white border-[#18241b] font-bold dark:bg-white dark:text-[#18241b]'
-                  : 'bg-white dark:bg-[#0f1611] text-[#404641] dark:text-[#9ba196] hover:text-[#18241b] dark:hover:text-white border-[#18241b]/15 dark:border-[#2d3a30]'
+                  ? 'bg-[#18241b] text-white border-[#18241b] font-bold dark:bg-white dark:text-[#18241b] shadow-sm'
+                  : 'bg-white dark:bg-[#0f1611] text-[#404641] dark:text-[#9ba196] hover:text-[#18241b] dark:hover:text-white border-[#18241b]/15 dark:border-[#2d3a30] hover:border-[#18241b]/30'
               }`}
             >
               <span
-                className="w-3 h-3 rounded-[1px] border border-black/10 shrink-0"
+                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0 shadow-xs"
                 style={{ backgroundColor: p.primary }}
               />
               <span>{p.name}</span>

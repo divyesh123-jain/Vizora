@@ -794,7 +794,7 @@ export default function DynamicComponentOrCategoryPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] font-bold text-[#c2872e] bg-[#c2872e]/10 px-2 py-0.5 rounded-[2px] border border-[#c2872e]/20 uppercase">
+                <span className="font-mono text-[10px] font-bold text-[#c2872e] bg-[#c2872e]/10 px-2.5 py-0.5 rounded-full border border-[#c2872e]/20 uppercase">
                   {config.badge}
                 </span>
                 <h1 className="font-headline-lg text-2xl sm:text-3xl font-bold">
@@ -808,7 +808,7 @@ export default function DynamicComponentOrCategoryPage() {
 
             <button
               onClick={() => router.push(`/playground?type=${config.type}`)}
-              className="px-4 py-2 rounded-[2px] bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold uppercase tracking-wider transition-colors whitespace-nowrap"
+              className="px-4 py-2 rounded-lg bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold uppercase tracking-wider transition-all duration-150 shadow-sm hover:-translate-y-0.5 whitespace-nowrap"
             >
               Try it in Playground &rarr;
             </button>
@@ -823,7 +823,7 @@ export default function DynamicComponentOrCategoryPage() {
               <span className="font-mono text-[11px] font-bold text-[#18241b] uppercase">
                 Presets:
               </span>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1.5">
                 {config.presets.map((p, i) => (
                   <button
                     key={i}
@@ -831,10 +831,10 @@ export default function DynamicComponentOrCategoryPage() {
                       setActivePresetIdx(i);
                       setChartTitle(p.name);
                     }}
-                    className={`px-2 py-0.5 rounded-[2px] text-[11px] font-mono transition-colors ${
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-all duration-150 shadow-xs ${
                       activePresetIdx === i
-                        ? 'bg-[#18241b] text-white font-bold'
-                        : 'bg-white text-[#60685c] hover:text-[#18241b] border border-[#18241b]/15'
+                        ? 'bg-[#18241b] text-white font-bold shadow-sm'
+                        : 'bg-white text-[#60685c] hover:text-[#18241b] border border-[#18241b]/12 hover:bg-[#f9fbf8]'
                     }`}
                   >
                     {p.name}
@@ -875,7 +875,7 @@ export default function DynamicComponentOrCategoryPage() {
             </span>
           </div>
 
-          <div className="bg-white border border-[#18241b]/15 rounded-[2px] overflow-hidden">
+          <div className="bg-white border border-[#18241b]/10 rounded-xl overflow-hidden shadow-sm">
             <table className="w-full text-left font-mono text-xs border-collapse">
               <thead>
                 <tr className="bg-[#18241b] text-white border-b border-[#18241b]">

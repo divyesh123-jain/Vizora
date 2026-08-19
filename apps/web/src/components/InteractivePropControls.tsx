@@ -18,20 +18,20 @@ export const PropControlRow: React.FC<PropControlRowProps> = ({
   children,
 }) => {
   return (
-    <tr className="border-b border-[#18241b]/10 hover:bg-[#18241b]/5 transition-colors">
-      <td className="p-3 align-top">
+    <tr className="border-b border-[#18241b]/10 hover:bg-[#18241b]/4 transition-colors">
+      <td className="p-3.5 align-top">
         <div className="font-mono text-xs font-bold text-[#18241b] dark:text-[#f1f5ee]">{name}</div>
         <div className="font-mono text-[10px] text-[#c2872e] mt-0.5">{type}</div>
         {defaultVal && (
           <div className="font-mono text-[10px] text-[#60685c] mt-0.5">
-            Default: <code className="bg-[#18241b]/8 dark:bg-white/10 px-1 py-0.5 rounded-[2px]">{defaultVal}</code>
+            Default: <code className="bg-[#18241b]/8 dark:bg-white/10 px-1.5 py-0.5 rounded-md">{defaultVal}</code>
           </div>
         )}
       </td>
-      <td className="p-3 align-top font-body-doc text-xs text-[#404641] dark:text-[#9ba196] max-w-xs leading-relaxed">
+      <td className="p-3.5 align-top font-body-doc text-xs text-[#404641] dark:text-[#9ba196] max-w-xs leading-relaxed">
         {description}
       </td>
-      <td className="p-3 align-top font-mono text-xs">
+      <td className="p-3.5 align-top font-mono text-xs">
         <div className="flex items-center gap-2">{children}</div>
       </td>
     </tr>
@@ -44,7 +44,7 @@ export const ColorControl: React.FC<{
 }> = ({ value, onChange }) => {
   return (
     <div className="flex items-center gap-2">
-      <div className="relative w-6 h-6 rounded-[2px] overflow-hidden border border-[#18241b]/20 dark:border-[#2d3a30] shrink-0">
+      <div className="relative w-6 h-6 rounded-md overflow-hidden border border-[#18241b]/20 dark:border-[#2d3a30] shrink-0 shadow-sm">
         <input
           type="color"
           value={value.startsWith('#') ? value : '#c2872e'}
@@ -56,7 +56,7 @@ export const ColorControl: React.FC<{
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-24 px-2 py-1 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-mono text-[#18241b] dark:text-[#f1f5ee] focus:outline-2 focus:outline-[#c2872e]"
+        className="w-24 px-2.5 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-mono text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all"
       />
     </div>
   );
@@ -71,7 +71,7 @@ export const SelectControl: React.FC<{
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="px-2.5 py-1 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-sans font-medium text-[#18241b] dark:text-[#f1f5ee] focus:outline-2 focus:outline-[#c2872e] cursor-pointer"
+      className="px-3 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-sans font-medium text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 cursor-pointer transition-all shadow-sm"
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>
@@ -94,13 +94,13 @@ export const ToggleControl: React.FC<{
       className="flex items-center gap-2 cursor-pointer select-none font-sans text-xs text-[#18241b] dark:text-[#f1f5ee]"
     >
       <div
-        className={`w-7 h-4 rounded-[2px] transition-colors relative p-0.5 border border-[#18241b]/20 ${
-          value ? 'bg-[#c2872e]' : 'bg-[#18241b]/10 dark:bg-white/10'
+        className={`w-8 h-4.5 rounded-full transition-colors duration-200 relative p-0.5 border border-[#18241b]/15 ${
+          value ? 'bg-[#c2872e]' : 'bg-[#18241b]/15 dark:bg-white/15'
         }`}
       >
         <div
-          className={`w-2.5 h-2.5 rounded-[1px] bg-white dark:bg-[#18241b] transform transition-transform ${
-            value ? 'translate-x-3' : 'translate-x-0'
+          className={`w-3.5 h-3.5 rounded-full bg-white dark:bg-[#18241b] shadow-sm transform transition-transform duration-200 ${
+            value ? 'translate-x-3.5' : 'translate-x-0'
           }`}
         />
       </div>
@@ -135,7 +135,7 @@ export const NumberControl: React.FC<{
         max={max}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-14 px-2 py-1 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-mono text-[#18241b] dark:text-[#f1f5ee] focus:outline-2 focus:outline-[#c2872e]"
+        className="w-14 px-2 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-mono text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-sm"
       />
     </div>
   );
@@ -152,7 +152,7 @@ export const TextControl: React.FC<{
       value={value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
-      className="w-36 px-2.5 py-1 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-sans font-medium text-[#18241b] dark:text-[#f1f5ee] focus:outline-2 focus:outline-[#c2872e]"
+      className="w-36 px-2.5 py-1 bg-white dark:bg-[#0f1611] rounded-md border border-[#18241b]/20 dark:border-[#2d3a30] text-xs font-sans font-medium text-[#18241b] dark:text-[#f1f5ee] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-sm"
     />
   );
 };

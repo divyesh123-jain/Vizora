@@ -11,7 +11,6 @@ import { StepperProgress, StepItem } from '../../components/StepperProgress';
 import { CompassDial } from '../../components/CompassDial';
 import { PalettePicker } from '../../components/PalettePicker';
 import { LegendBand } from '../../components/LegendBand';
-import { CodeBlock } from '../../components/CodeBlock';
 import { ChartPreviewBlock } from '../../components/ChartPreviewBlock';
 
 const BUILDER_STEPS: StepItem[] = [
@@ -214,7 +213,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
 
   // Annotated Spec Mapping Explanation for Tab 3 (§4)
   const specMappingContent = (
-    <div className="p-4 bg-[#f4f7f3] dark:bg-[#151f17] rounded-[2px] font-mono text-xs space-y-3">
+    <div className="p-4 bg-[#f4f7f3] dark:bg-[#151f17] rounded-lg font-mono text-xs space-y-3">
       <div className="flex items-center gap-2 border-b border-[#18241b]/10 dark:border-[#2d3a30] pb-2">
         <span className="font-bold text-[#c2872e] uppercase text-[10px]">Contract Schema Mapping</span>
         <span className="text-[#60685c]">|</span>
@@ -222,28 +221,28 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
-        <div className="p-2.5 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1">
+        <div className="p-3 bg-white dark:bg-[#0f1611] rounded-lg border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1 shadow-xs">
           <div className="text-[#c2872e] font-bold">type=&quot;{chartType}&quot;</div>
           <div className="text-[#60685c]">
             &rarr; Compiles to <code className="text-[#18241b] dark:text-[#e0e4dc]">ChartSpec.type</code>. Determines scene graph layout strategy.
           </div>
         </div>
 
-        <div className="p-2.5 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1">
+        <div className="p-3 bg-white dark:bg-[#0f1611] rounded-lg border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1 shadow-xs">
           <div className="text-[#c2872e] font-bold">x=&quot;{xField}&quot;</div>
           <div className="text-[#60685c]">
             &rarr; Compiles to <code className="text-[#18241b] dark:text-[#e0e4dc]">ChartSpec.encoding.x.field</code>. Inferred as domain coordinate scale.
           </div>
         </div>
 
-        <div className="p-2.5 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1">
+        <div className="p-3 bg-white dark:bg-[#0f1611] rounded-lg border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1 shadow-xs">
           <div className="text-[#c2872e] font-bold">y=&quot;{yField}&quot;</div>
           <div className="text-[#60685c]">
             &rarr; Compiles to <code className="text-[#18241b] dark:text-[#e0e4dc]">ChartSpec.encoding.y.field</code>. Scaled to range dimension ticks.
           </div>
         </div>
 
-        <div className="p-2.5 bg-white dark:bg-[#0f1611] rounded-[2px] border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1">
+        <div className="p-3 bg-white dark:bg-[#0f1611] rounded-lg border border-[#18241b]/10 dark:border-[#2d3a30] space-y-1 shadow-xs">
           <div className="text-[#c2872e] font-bold">data=&#123;data&#125;</div>
           <div className="text-[#60685c]">
             &rarr; Serialized data payload ({dataset.length} records) evaluated through headless transforms.
@@ -279,7 +278,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
         </div>
 
         {/* Stepper Progress Bar */}
-        <div className="bg-white border border-[#18241b]/15 rounded-[2px] p-4">
+        <div className="bg-white border border-[#18241b]/10 rounded-xl p-4 shadow-sm">
           <StepperProgress
             steps={BUILDER_STEPS}
             currentStep={currentStep}
@@ -291,7 +290,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
         {/* Step 1: Category Selection */}
         {/* ========================================================= */}
         {currentStep === 1 && (
-          <div className="step-page-transition bg-white border border-[#18241b]/15 rounded-[2px] p-6 sm:p-7 space-y-5">
+          <div className="step-page-transition bg-white border border-[#18241b]/10 rounded-xl p-6 sm:p-7 space-y-5 shadow-sm">
             <div>
               <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">
                 Step 01 / 06
@@ -312,10 +311,10 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                     setCategory(cat.id);
                     setChartType(cat.types[0]);
                   }}
-                  className={`p-4 rounded-[2px] border text-left transition-colors flex flex-col justify-between space-y-3 ${
+                  className={`p-4 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between space-y-3 shadow-xs hover:shadow-md hover:-translate-y-0.5 ${
                     category === cat.id
-                      ? 'bg-[#18241b] text-white border-[#18241b]'
-                      : 'bg-[#f9fbf8] border-[#18241b]/15 text-[#18241b] hover:border-[#c2872e]'
+                      ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
+                      : 'bg-[#f9fbf8] border-[#18241b]/10 text-[#18241b] hover:border-[#c2872e]'
                   }`}
                 >
                   <div className="space-y-1">
@@ -332,8 +331,8 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                     {cat.types.map((t) => (
                       <span
                         key={t}
-                        className={`px-1.5 py-0.2 rounded-[2px] ${
-                          category === cat.id ? 'bg-white/10 text-white' : 'bg-[#18241b]/8 text-[#18241b]'
+                        className={`px-2 py-0.5 rounded-md ${
+                          category === cat.id ? 'bg-white/15 text-white' : 'bg-[#18241b]/8 text-[#18241b]'
                         }`}
                       >
                         {t}
@@ -347,7 +346,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
             <div className="flex justify-end pt-3 border-t border-[#18241b]/10">
               <button
                 onClick={() => setCurrentStep(2)}
-                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-[2px] transition-colors"
+                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg transition-all duration-150 shadow-sm hover:-translate-y-0.5"
               >
                 Continue to Chart Type &rarr;
               </button>
@@ -359,7 +358,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
         {/* Step 2: Chart Type Selection (with Compass Dial) */}
         {/* ========================================================= */}
         {currentStep === 2 && (
-          <div className="step-page-transition bg-white border border-[#18241b]/15 rounded-[2px] p-6 sm:p-7 space-y-5">
+          <div className="step-page-transition bg-white border border-[#18241b]/10 rounded-xl p-6 sm:p-7 space-y-5 shadow-sm">
             <div>
               <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">
                 Step 02 / 06
@@ -389,10 +388,10 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                     <button
                       key={t}
                       onClick={() => setChartType(t)}
-                      className={`p-2.5 rounded-[2px] border font-bold uppercase transition-colors ${
+                      className={`p-2.5 rounded-lg border font-bold uppercase transition-all duration-150 shadow-xs ${
                         chartType === t
-                          ? 'bg-[#18241b] text-white border-[#18241b]'
-                          : 'bg-[#f4f7f3] text-[#18241b] border-[#18241b]/15 hover:border-[#c2872e]'
+                          ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
+                          : 'bg-[#f4f7f3] text-[#18241b] border-[#18241b]/10 hover:border-[#c2872e] hover:bg-white'
                       }`}
                     >
                       {t}
@@ -405,13 +404,13 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
             <div className="flex justify-between pt-3 border-t border-[#18241b]/10">
               <button
                 onClick={() => setCurrentStep(1)}
-                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
+                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b] rounded-lg transition-colors"
               >
                 &larr; Back
               </button>
               <button
                 onClick={() => setCurrentStep(3)}
-                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-[2px] transition-colors"
+                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg transition-all duration-150 shadow-sm hover:-translate-y-0.5"
               >
                 Continue to Connect Data &rarr;
               </button>
@@ -423,7 +422,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
         {/* Step 3: Connect Data */}
         {/* ========================================================= */}
         {currentStep === 3 && (
-          <div className="step-page-transition bg-white border border-[#18241b]/15 rounded-[2px] p-6 sm:p-7 space-y-5">
+          <div className="step-page-transition bg-white border border-[#18241b]/10 rounded-xl p-6 sm:p-7 space-y-5 shadow-sm">
             <div>
               <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">
                 Step 03 / 06
@@ -442,9 +441,9 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                 <button
                   key={m}
                   onClick={() => setDataSource(m)}
-                  className={`px-3 py-1 font-mono text-xs font-bold rounded-[2px] transition-colors capitalize ${
+                  className={`px-3 py-1.5 font-mono text-xs font-bold rounded-lg transition-all duration-150 capitalize ${
                     dataSource === m
-                      ? 'bg-[#18241b] text-white'
+                      ? 'bg-[#18241b] text-white shadow-sm'
                       : 'bg-[#f4f7f3] text-[#60685c] hover:text-[#18241b]'
                   }`}
                 >
@@ -467,10 +466,10 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                       setYField(s.defaultY);
                       setChartTitle(s.name);
                     }}
-                    className={`p-3.5 rounded-[2px] border text-left font-mono text-xs transition-colors ${
+                    className={`p-3.5 rounded-xl border text-left font-mono text-xs transition-all duration-150 shadow-xs hover:shadow-sm ${
                       selectedSampleKey === k
-                        ? 'bg-[#18241b] text-white border-[#18241b]'
-                        : 'bg-[#f9fbf8] border-[#18241b]/15 text-[#18241b] hover:border-[#c2872e]'
+                        ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
+                        : 'bg-[#f9fbf8] border-[#18241b]/10 text-[#18241b] hover:border-[#c2872e]'
                     }`}
                   >
                     <div className="font-bold">{s.name}</div>
@@ -497,14 +496,14 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                     }
                   }}
                   rows={7}
-                  className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3 rounded-[2px] border border-[#2d3a30] outline-none focus:border-[#c2872e]"
+                  className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3.5 rounded-xl border border-[#2d3a30] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all"
                 />
                 {parseError && <div className="text-[#d6502b] text-xs font-mono">{parseError}</div>}
               </div>
             )}
 
             {dataSource === 'upload' && (
-              <div className="border border-dashed border-[#18241b]/20 p-6 rounded-[2px] text-center space-y-2">
+              <div className="border-2 border-dashed border-[#18241b]/15 p-8 rounded-xl text-center space-y-2 bg-[#f9fbf8] hover:border-[#c2872e] transition-colors">
                 <input
                   type="file"
                   accept=".json,.csv"
@@ -531,13 +530,13 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
             <div className="flex justify-between pt-3 border-t border-[#18241b]/10">
               <button
                 onClick={() => setCurrentStep(2)}
-                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
+                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b] rounded-lg transition-colors"
               >
                 &larr; Back
               </button>
               <button
                 onClick={() => setCurrentStep(4)}
-                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-[2px] transition-colors"
+                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg transition-all duration-150 shadow-sm hover:-translate-y-0.5"
               >
                 Continue to Map Fields &rarr;
               </button>
@@ -546,10 +545,10 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
         )}
 
         {/* ========================================================= */}
-        {/* Step 4: Map Encodings & Fields with Live Side Preview (§4) */}
+        {/* Step 4: Map Encodings & Fields with Live Side Preview */}
         {/* ========================================================= */}
         {currentStep === 4 && (
-          <div className="step-page-transition bg-white border border-[#18241b]/15 rounded-[2px] p-6 sm:p-7 space-y-5">
+          <div className="step-page-transition bg-white border border-[#18241b]/10 rounded-xl p-6 sm:p-7 space-y-5 shadow-sm">
             <div>
               <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">
                 Step 04 / 06
@@ -563,7 +562,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
             </div>
 
             {validationWarning && (
-              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-[2px] font-mono text-xs flex items-center gap-2">
+              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg font-mono text-xs flex items-center gap-2">
                 <span className="text-[#c2872e] font-bold">⚠️ Warning:</span>
                 <span>{validationWarning}</span>
               </div>
@@ -577,7 +576,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                   <select
                     value={xField}
                     onChange={(e) => setXField(e.target.value)}
-                    className="w-full bg-[#f4f7f3] border border-[#18241b]/20 rounded-[2px] p-2.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
+                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg p-2.5 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
                   >
                     {availableFields.map((f) => (
                       <option key={f} value={f}>
@@ -595,7 +594,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                   <select
                     value={yField}
                     onChange={(e) => setYField(e.target.value)}
-                    className="w-full bg-[#f4f7f3] border border-[#18241b]/20 rounded-[2px] p-2.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
+                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg p-2.5 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
                   >
                     {availableFields.map((f) => (
                       <option key={f} value={f}>
@@ -616,10 +615,10 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                         <button
                           key={o}
                           onClick={() => setOrientation(o)}
-                          className={`px-3 py-1.5 rounded-[2px] border capitalize ${
+                          className={`px-3.5 py-1.5 rounded-lg border capitalize transition-all duration-150 shadow-xs ${
                             orientation === o
-                              ? 'bg-[#18241b] text-white border-[#18241b]'
-                              : 'bg-[#f4f7f3] text-[#60685c] border-[#18241b]/15'
+                              ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
+                              : 'bg-[#f4f7f3] text-[#60685c] border-[#18241b]/10 hover:bg-white'
                           }`}
                         >
                           {o}
@@ -630,9 +629,9 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                 )}
               </div>
 
-              {/* Persistent Live Chart Preview Column (§4) */}
-              <div className="rounded-[2px] border border-[#18241b]/10 bg-[#f9fbf8] overflow-hidden flex flex-col justify-between">
-                <div className="p-2.5 border-b border-[#18241b]/8 flex items-center justify-between text-[11px] font-mono">
+              {/* Persistent Live Chart Preview Column */}
+              <div className="rounded-xl border border-[#18241b]/10 bg-[#f9fbf8] overflow-hidden flex flex-col justify-between shadow-xs">
+                <div className="p-3 border-b border-[#18241b]/8 flex items-center justify-between text-[11px] font-mono">
                   <span className="text-[#60685c] font-bold">Live Mapping Preview</span>
                   <span className="text-[#c2872e] uppercase font-bold">{chartType}</span>
                 </div>
@@ -655,13 +654,13 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
             <div className="flex justify-between pt-3 border-t border-[#18241b]/10">
               <button
                 onClick={() => setCurrentStep(3)}
-                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
+                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b] rounded-lg transition-colors"
               >
                 &larr; Back
               </button>
               <button
                 onClick={() => setCurrentStep(5)}
-                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-[2px] transition-colors"
+                className="px-5 py-2 bg-[#18241b] hover:bg-[#c2872e] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg transition-all duration-150 shadow-sm hover:-translate-y-0.5"
               >
                 Continue to Style & Theme &rarr;
               </button>
@@ -673,7 +672,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
         {/* Step 5: Style & Theme */}
         {/* ========================================================= */}
         {currentStep === 5 && (
-          <div className="step-page-transition bg-white border border-[#18241b]/15 rounded-[2px] p-6 sm:p-7 space-y-5">
+          <div className="step-page-transition bg-white border border-[#18241b]/10 rounded-xl p-6 sm:p-7 space-y-5 shadow-sm">
             <div>
               <span className="font-mono text-xs text-[#c2872e] font-bold uppercase">
                 Step 05 / 06
@@ -695,7 +694,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                   type="text"
                   value={chartTitle}
                   onChange={(e) => setChartTitle(e.target.value)}
-                  className="w-full bg-[#f4f7f3] border border-[#18241b]/20 rounded-[2px] p-2.5 font-mono text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
+                  className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg p-2.5 font-mono text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
                 />
               </div>
 
@@ -706,10 +705,10 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
               <div className="flex flex-wrap gap-3 pt-2 font-mono text-xs">
                 <button
                   onClick={() => setThemeMode(themeMode === 'light' ? 'dark' : 'light')}
-                  className={`px-3 py-1.5 rounded-[2px] border ${
+                  className={`px-3.5 py-1.5 rounded-lg border transition-all duration-150 shadow-xs ${
                     themeMode === 'dark'
-                      ? 'bg-[#0f1611] text-white border-[#2d3a30]'
-                      : 'bg-[#f4f7f3] text-[#18241b] border-[#18241b]/15'
+                      ? 'bg-[#0f1611] text-white border-[#2d3a30] shadow-sm'
+                      : 'bg-[#f4f7f3] text-[#18241b] border-[#18241b]/10 hover:bg-white'
                   }`}
                 >
                   Theme: {themeMode === 'dark' ? 'Dark Terminal' : 'Light Carto'}
@@ -717,10 +716,10 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
 
                 <button
                   onClick={() => setShowGrid(!showGrid)}
-                  className={`px-3 py-1.5 rounded-[2px] border ${
+                  className={`px-3.5 py-1.5 rounded-lg border transition-all duration-150 shadow-xs ${
                     showGrid
-                      ? 'bg-[#18241b] text-white border-[#18241b]'
-                      : 'bg-[#f4f7f3] text-[#60685c] border-[#18241b]/15'
+                      ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
+                      : 'bg-[#f4f7f3] text-[#60685c] border-[#18241b]/10 hover:bg-white'
                   }`}
                 >
                   Gridlines: {showGrid ? 'ON' : 'OFF'}
@@ -731,13 +730,13 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
             <div className="flex justify-between pt-3 border-t border-[#18241b]/10">
               <button
                 onClick={() => setCurrentStep(4)}
-                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
+                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b] rounded-lg transition-colors"
               >
                 &larr; Back
               </button>
               <button
                 onClick={() => setCurrentStep(6)}
-                className="px-5 py-2 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold uppercase tracking-wider rounded-[2px] transition-colors"
+                className="px-5 py-2 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold uppercase tracking-wider rounded-lg transition-all duration-150 shadow-sm hover:-translate-y-0.5"
               >
                 Generate Final Export &rarr;
               </button>
@@ -746,12 +745,12 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
         )}
 
         {/* ========================================================= */}
-        {/* Step 6: Final Export (3-Tab Standardized Block §4) */}
+        {/* Step 6: Final Export (3-Tab Standardized Block) */}
         {/* ========================================================= */}
         {currentStep === 6 && (
           <div className="step-page-transition space-y-6">
             {/* Payoff Banner */}
-            <div className="bg-[#18241b] text-white rounded-[2px] p-6 sm:p-7 space-y-2 border border-[#18241b]">
+            <div className="bg-[#18241b] text-white rounded-xl p-6 sm:p-7 space-y-2 border border-[#18241b] shadow-md">
               <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase tracking-wider">
                 Step 06 / 06 • COMPONENT READY
               </span>
@@ -763,7 +762,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
               </p>
             </div>
 
-            {/* Standardized 3-Tab Component Block (§4: Preview / Code / How this maps to Vizora) */}
+            {/* Standardized 3-Tab Component Block */}
             <ChartPreviewBlock
               title={chartTitle}
               codeSnippet={generatedCode}
@@ -800,15 +799,15 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
               <button
                 onClick={() => setCurrentStep(5)}
-                className="px-4 py-1.5 text-xs font-mono text-[#60685c] hover:text-[#18241b]"
+                className="px-4 py-2 text-xs font-mono text-[#60685c] hover:text-[#18241b] rounded-lg transition-colors"
               >
                 &larr; Back to Customization
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   onClick={handleDownloadTsx}
-                  className="px-3.5 py-1.5 bg-[#18241b] hover:bg-[#25382a] text-white font-mono text-xs font-bold rounded-[2px] transition-colors"
+                  className="px-4 py-2 bg-[#18241b] hover:bg-[#25382a] text-white font-mono text-xs font-bold rounded-lg transition-all duration-150 shadow-sm hover:-translate-y-0.5"
                 >
                   Download .tsx
                 </button>
@@ -817,7 +816,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                   onClick={() => {
                     router.push(`/playground?type=${chartType}`);
                   }}
-                  className="px-3.5 py-1.5 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold rounded-[2px] transition-colors"
+                  className="px-4 py-2 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold rounded-lg transition-all duration-150 shadow-sm hover:-translate-y-0.5"
                 >
                   Open in Playground &rarr;
                 </button>

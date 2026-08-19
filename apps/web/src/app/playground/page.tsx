@@ -375,19 +375,19 @@ function LivePlaygroundContent() {
           <div className="flex items-center gap-3">
             <Link
               href="/builder"
-              className="px-3 py-1.5 rounded-[2px] border border-[#18241b]/20 bg-white hover:bg-[#18241b] hover:text-white font-mono text-xs font-semibold transition-colors flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-lg border border-[#18241b]/15 bg-white hover:bg-[#18241b] hover:text-white font-mono text-xs font-semibold shadow-xs transition-all duration-150 flex items-center gap-1.5 hover:-translate-y-0.5"
             >
               <span>Guided Stepper instead?</span>
               <span>&rarr;</span>
             </Link>
 
             {/* Mode Switch: AutoChart vs Manual */}
-            <div className="flex items-center p-0.5 bg-white border border-[#18241b]/15 rounded-[2px]">
+            <div className="flex items-center p-0.5 bg-white border border-[#18241b]/15 rounded-lg shadow-xs">
               <button
                 onClick={() => setMode('auto')}
-                className={`px-3 py-1 text-xs font-mono font-bold rounded-[2px] transition-colors ${
+                className={`px-3 py-1 text-xs font-mono font-bold rounded-md transition-all duration-150 ${
                   mode === 'auto'
-                    ? 'bg-[#18241b] text-white'
+                    ? 'bg-[#18241b] text-white shadow-sm'
                     : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
@@ -395,9 +395,9 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setMode('manual')}
-                className={`px-3 py-1 text-xs font-mono font-bold rounded-[2px] transition-colors ${
+                className={`px-3 py-1 text-xs font-mono font-bold rounded-md transition-all duration-150 ${
                   mode === 'manual'
-                    ? 'bg-[#18241b] text-white'
+                    ? 'bg-[#18241b] text-white shadow-sm'
                     : 'text-[#60685c] hover:text-[#18241b]'
                 }`}
               >
@@ -407,9 +407,9 @@ function LivePlaygroundContent() {
           </div>
         </div>
 
-        {/* Large Dataset Soft Cap Warning (§5) */}
+        {/* Large Dataset Soft Cap Warning */}
         {isLargeDataset && (
-          <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-[2px] font-mono text-xs">
+          <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg font-mono text-xs shadow-xs">
             Showing first 5,000 rows — large datasets get a faster renderer in a future release.
           </div>
         )}
@@ -420,15 +420,15 @@ function LivePlaygroundContent() {
           {/* ========================================================= */}
           {/* Left Pane (40%): Data Input Studio */}
           {/* ========================================================= */}
-          <div className="lg:col-span-5 bg-white border border-[#18241b]/15 rounded-[2px] overflow-hidden flex flex-col">
+          <div className="lg:col-span-5 bg-white border border-[#18241b]/10 rounded-xl overflow-hidden shadow-sm flex flex-col">
             {/* Data Input Tabs */}
-            <div className="flex items-center justify-between border-b border-[#18241b]/10 bg-[#f9fbf8] px-3.5 pt-2.5">
+            <div className="flex items-center justify-between border-b border-[#18241b]/10 bg-[#f9fbf8] px-4 pt-3">
               <div className="flex gap-1 font-mono text-xs">
                 {(['sample', 'paste', 'upload'] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => setDataTab(t)}
-                    className={`px-3 py-1 font-mono text-xs font-bold rounded-t-[2px] transition-colors capitalize border-b-2 ${
+                    className={`px-3 py-1.5 font-mono text-xs font-bold rounded-t-md transition-all duration-150 capitalize border-b-2 ${
                       dataTab === t
                         ? 'border-[#c2872e] text-[#c2872e]'
                         : 'border-transparent text-[#60685c] hover:text-[#18241b]'
@@ -443,10 +443,10 @@ function LivePlaygroundContent() {
               <span className="font-mono text-[10px] text-[#60685c]">{dataset.length} rows</span>
             </div>
 
-            <div className="p-4 space-y-3.5">
+            <div className="p-4 space-y-4">
               {/* Tab 1: Bundled Samples */}
               {dataTab === 'sample' && (
-                <div className="space-y-2.5">
+                <div className="space-y-3">
                   <span className="font-mono text-[11px] text-[#60685c] block">
                     Choose a curated dataset to test heuristic profiling:
                   </span>
@@ -455,9 +455,9 @@ function LivePlaygroundContent() {
                       <button
                         key={sample.id}
                         onClick={() => handleSelectSample(sample)}
-                        className={`p-2.5 rounded-[2px] border text-left font-mono text-xs transition-colors flex flex-col justify-between gap-1 ${
+                        className={`p-3 rounded-lg border text-left font-mono text-xs transition-all duration-150 flex flex-col justify-between gap-1 shadow-xs hover:shadow-sm ${
                           selectedSampleId === sample.id
-                            ? 'bg-[#18241b] text-white border-[#18241b]'
+                            ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
                             : 'bg-[#f4f7f3] border-[#18241b]/10 text-[#18241b] hover:border-[#c2872e]'
                         }`}
                       >
@@ -474,7 +474,7 @@ function LivePlaygroundContent() {
 
               {/* Tab 2: Paste JSON or CSV */}
               {dataTab === 'paste' && (
-                <div className="space-y-2.5">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[11px] text-[#60685c]">
                       Paste raw JSON objects or CSV text:
@@ -485,8 +485,8 @@ function LivePlaygroundContent() {
                           setRawFormat('json');
                           handleRawTextChange(rawText, 'json');
                         }}
-                        className={`px-2 py-0.5 rounded-[2px] ${
-                          rawFormat === 'json' ? 'bg-[#18241b] text-white font-bold' : 'text-[#60685c]'
+                        className={`px-2.5 py-0.5 rounded-md transition-colors ${
+                          rawFormat === 'json' ? 'bg-[#18241b] text-white font-bold shadow-xs' : 'text-[#60685c]'
                         }`}
                       >
                         JSON
@@ -496,8 +496,8 @@ function LivePlaygroundContent() {
                           setRawFormat('csv');
                           handleRawTextChange(rawText, 'csv');
                         }}
-                        className={`px-2 py-0.5 rounded-[2px] ${
-                          rawFormat === 'csv' ? 'bg-[#18241b] text-white font-bold' : 'text-[#60685c]'
+                        className={`px-2.5 py-0.5 rounded-md transition-colors ${
+                          rawFormat === 'csv' ? 'bg-[#18241b] text-white font-bold shadow-xs' : 'text-[#60685c]'
                         }`}
                       >
                         CSV
@@ -514,11 +514,11 @@ function LivePlaygroundContent() {
                         ? '[{ "date": "2026-01-01", "value": 100 }, ...]'
                         : 'date,value\n2026-01-01,100\n2026-01-02,150'
                     }
-                    className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3 rounded-[2px] border border-[#18241b]/20 focus:outline-none focus:border-[#c2872e] resize-none"
+                    className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3.5 rounded-xl border border-[#18241b]/20 focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all resize-none"
                   />
 
                   {dataError && (
-                    <div className="p-2 rounded-[2px] bg-red-50 border border-red-200 text-[#d6502b] font-mono text-xs">
+                    <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-[#d6502b] font-mono text-xs">
                       {dataError}
                     </div>
                   )}
@@ -528,7 +528,7 @@ function LivePlaygroundContent() {
               {/* Tab 3: Upload File */}
               {dataTab === 'upload' && (
                 <div className="space-y-3">
-                  <div className="border border-dashed border-[#18241b]/20 rounded-[2px] p-6 text-center space-y-2 bg-[#f9fbf8] hover:border-[#c2872e] transition-colors">
+                  <div className="border-2 border-dashed border-[#18241b]/15 rounded-xl p-8 text-center space-y-2 bg-[#f9fbf8] hover:border-[#c2872e] transition-colors">
                     <div>
                       <label className="cursor-pointer font-mono text-xs font-bold text-[#c2872e] hover:underline">
                         <span>Click to browse files</span>
@@ -549,17 +549,17 @@ function LivePlaygroundContent() {
             </div>
 
             {/* Bottom Encodings & Profiling Summary */}
-            <div className="border-t border-[#18241b]/10 p-3.5 bg-[#f9fbf8] space-y-2.5">
+            <div className="border-t border-[#18241b]/10 p-4 bg-[#f9fbf8] space-y-3">
               <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase block">
                 Detected Field Encodings
               </span>
-              <div className="grid grid-cols-2 gap-2.5 font-mono text-xs">
+              <div className="grid grid-cols-2 gap-3 font-mono text-xs">
                 <div>
                   <label className="text-[10px] text-[#60685c] block mb-1">X AXIS FIELD</label>
                   <select
                     value={xField}
                     onChange={(e) => setXField(e.target.value)}
-                    className="w-full bg-white border border-[#18241b]/15 rounded-[2px] p-1.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
+                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
                   >
                     {availableFields.map((f) => (
                       <option key={f} value={f}>
@@ -574,7 +574,7 @@ function LivePlaygroundContent() {
                   <select
                     value={yField}
                     onChange={(e) => setYField(e.target.value)}
-                    className="w-full bg-white border border-[#18241b]/15 rounded-[2px] p-1.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
+                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
                   >
                     {availableFields.map((f) => (
                       <option key={f} value={f}>
@@ -612,7 +612,7 @@ function LivePlaygroundContent() {
                   {/* Theme Mode Toggle */}
                   <button
                     onClick={() => setThemeMode(themeMode === 'light' ? 'dark' : 'light')}
-                    className="px-2 py-0.5 text-xs font-mono rounded-[2px] border border-[#18241b]/15 dark:border-[#2d3a30] bg-white dark:bg-[#0f1611] text-[#18241b] dark:text-[#f1f5ee] hover:bg-[#18241b] hover:text-white transition-colors"
+                    className="px-2.5 py-1 text-xs font-mono rounded-lg border border-[#18241b]/15 dark:border-[#2d3a30] bg-white dark:bg-[#0f1611] text-[#18241b] dark:text-[#f1f5ee] hover:bg-[#18241b] hover:text-white transition-all shadow-xs"
                   >
                     {themeMode === 'light' ? '☀️ Light' : '🌙 Dark'}
                   </button>
@@ -620,9 +620,9 @@ function LivePlaygroundContent() {
                   {/* Grid Toggle */}
                   <button
                     onClick={() => setShowGrid(!showGrid)}
-                    className={`px-2 py-0.5 text-xs font-mono rounded-[2px] border transition-colors ${
+                    className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all shadow-xs ${
                       showGrid
-                        ? 'bg-[#18241b] text-white border-[#18241b] dark:bg-white dark:text-[#18241b]'
+                        ? 'bg-[#18241b] text-white border-[#18241b] dark:bg-white dark:text-[#18241b] shadow-sm'
                         : 'bg-white text-[#60685c] border-[#18241b]/15 dark:bg-[#0f1611]'
                     }`}
                   >
@@ -634,7 +634,7 @@ function LivePlaygroundContent() {
                     <select
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value as ChartType)}
-                      className="bg-white dark:bg-[#0f1611] border border-[#18241b]/20 dark:border-[#2d3a30] rounded-[2px] px-2 py-0.5 font-mono text-xs text-[#18241b] dark:text-[#f1f5ee] outline-none"
+                      className="bg-white dark:bg-[#0f1611] border border-[#18241b]/20 dark:border-[#2d3a30] rounded-lg px-2.5 py-1 font-mono text-xs text-[#18241b] dark:text-[#f1f5ee] outline-none shadow-xs"
                     >
                       <option value="line">line</option>
                       <option value="bar">bar</option>
@@ -678,8 +678,8 @@ function LivePlaygroundContent() {
 
             {/* Compass Dial & Palette Picker Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Compass Dial (Auto Bearing or Direct Waypoint Selection) */}
-              <div className="bg-white border border-[#18241b]/15 rounded-[2px] p-4 flex flex-col items-center justify-center">
+              {/* Compass Dial */}
+              <div className="bg-white border border-[#18241b]/10 rounded-xl p-4 flex flex-col items-center justify-center shadow-sm">
                 <span className="font-mono text-[10px] text-[#c2872e] uppercase font-bold mb-1">
                   Compass Bearing Instrument
                 </span>
@@ -694,7 +694,7 @@ function LivePlaygroundContent() {
               </div>
 
               {/* Palette & Theme Controls */}
-              <div className="bg-white border border-[#18241b]/15 rounded-[2px] p-4 space-y-3">
+              <div className="bg-white border border-[#18241b]/10 rounded-xl p-5 space-y-3.5 shadow-sm">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[10px] text-[#c2872e] uppercase font-bold">
                     Theme Tokens & Palette
@@ -710,7 +710,7 @@ function LivePlaygroundContent() {
                     type="text"
                     value={chartTitle}
                     onChange={(e) => setChartTitle(e.target.value)}
-                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-[2px] p-1.5 text-xs text-[#18241b] outline-none focus:outline-2 focus:outline-[#c2872e]"
+                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
                   />
                 </div>
               </div>
@@ -721,13 +721,13 @@ function LivePlaygroundContent() {
         {/* ========================================================= */}
         {/* Bottom Panel: Live 2-Way Spec Editor & Code Export */}
         {/* ========================================================= */}
-        <div className="bg-[#0f1611] border border-[#18241b]/30 rounded-[2px] overflow-hidden text-[#a4c995]">
+        <div className="bg-[#0f1611] border border-[#18241b]/30 rounded-xl overflow-hidden text-[#a4c995] shadow-lg">
           {/* Tab Header & Action Bar */}
-          <div className="flex flex-wrap items-center justify-between border-b border-[#2d3a30] bg-[#141d16] px-3 pt-2">
+          <div className="flex flex-wrap items-center justify-between border-b border-[#2d3a30] bg-[#141d16] px-4 pt-2.5">
             <div className="flex gap-1 font-mono text-xs">
               <button
                 onClick={() => setActiveBottomTab('jsx')}
-                className={`px-3 py-1.5 font-mono text-xs font-bold transition-colors border-b-2 ${
+                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 ${
                   activeBottomTab === 'jsx'
                     ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
@@ -737,7 +737,7 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setActiveBottomTab('spec')}
-                className={`px-3 py-1.5 font-mono text-xs font-bold transition-colors border-b-2 ${
+                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 ${
                   activeBottomTab === 'spec'
                     ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
@@ -747,7 +747,7 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setActiveBottomTab('profile')}
-                className={`px-3 py-1.5 font-mono text-xs font-bold transition-colors border-b-2 ${
+                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 ${
                   activeBottomTab === 'profile'
                     ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
@@ -758,10 +758,10 @@ function LivePlaygroundContent() {
             </div>
 
             {/* Persistent Export Actions */}
-            <div className="flex items-center gap-2 py-1.5">
+            <div className="flex items-center gap-2 py-2">
               <button
                 onClick={handleExportSvg}
-                className="px-2.5 py-1 rounded-[2px] bg-[#1f2c22] hover:bg-[#2e4032] text-white font-mono text-xs transition-colors border border-[#2d3a30]"
+                className="px-3 py-1.5 rounded-lg bg-[#1f2c22] hover:bg-[#2e4032] text-white font-mono text-xs transition-all duration-150 border border-[#2d3a30] shadow-xs"
               >
                 Export SVG
               </button>
@@ -771,20 +771,20 @@ function LivePlaygroundContent() {
                   navigator.clipboard.writeText(reactSnippet);
                   alert('Copied React code snippet!');
                 }}
-                className="px-2.5 py-1 rounded-[2px] bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold transition-all duration-150 shadow-xs hover:-translate-y-0.5"
               >
                 Copy JSX
               </button>
 
-              {/* Disabled / V1 Share Link Button (§3.5 honest disabled state) */}
+              {/* Disabled / V1 Share Link Button */}
               <div className="flex flex-col items-center">
                 <button
                   disabled
                   title="Cloud spec sharing requires backend service (Scheduled for V1)"
-                  className="px-2.5 py-1 rounded-[2px] bg-[#141d16] border border-[#2d3a30] text-[#60685c] font-mono text-xs cursor-not-allowed flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-lg bg-[#141d16] border border-[#2d3a30] text-[#60685c] font-mono text-xs cursor-not-allowed flex items-center gap-1 opacity-70"
                 >
                   <span>Share Link</span>
-                  <span className="text-[9px] bg-[#c2872e]/20 text-[#c2872e] px-1 py-0.2 rounded font-bold">
+                  <span className="text-[9px] bg-[#c2872e]/20 text-[#c2872e] px-1.5 py-0.2 rounded-full font-bold">
                     V1
                   </span>
                 </button>
@@ -794,7 +794,7 @@ function LivePlaygroundContent() {
           </div>
 
           {/* Bottom Tab Content */}
-          <div className="p-4">
+          <div className="p-5">
             {activeBottomTab === 'jsx' && (
               <CodeBlock
                 code={reactSnippet}
@@ -804,7 +804,7 @@ function LivePlaygroundContent() {
             )}
 
             {activeBottomTab === 'spec' && (
-              <div className="space-y-2.5 font-mono">
+              <div className="space-y-3 font-mono">
                 <div className="flex items-center justify-between text-xs text-[#9ba196]">
                   <span>Edit the JSON below directly — changes immediately sync to the chart:</span>
                   {specJsonError && <span className="text-[#d6502b] font-bold">{specJsonError}</span>}
@@ -813,25 +813,25 @@ function LivePlaygroundContent() {
                   value={specJsonText}
                   onChange={(e) => handleSpecJsonChange(e.target.value)}
                   rows={9}
-                  className="w-full bg-[#0b100d] text-[#a4c995] font-mono text-xs p-3 rounded-[2px] border border-[#2d3a30] focus:outline-none focus:border-[#c2872e] resize-none leading-relaxed"
+                  className="w-full bg-[#0b100d] text-[#a4c995] font-mono text-xs p-4 rounded-xl border border-[#2d3a30] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 resize-none leading-relaxed transition-all"
                 />
               </div>
             )}
 
             {activeBottomTab === 'profile' && (
-              <div className="space-y-2.5 font-mono text-xs">
+              <div className="space-y-3 font-mono text-xs">
                 <span className="text-[#c2872e] font-bold uppercase block text-[10px]">
                   Deterministic Field Profiler Output
                 </span>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {profiledFields.map((p) => (
                     <div
                       key={p.field}
-                      className="p-2.5 bg-[#141d16] border border-[#2d3a30] rounded-[2px] space-y-0.5"
+                      className="p-3.5 bg-[#141d16] border border-[#2d3a30] rounded-xl space-y-1 shadow-xs"
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-white">{p.field}</span>
-                        <span className="text-[#c2872e] text-[10px] uppercase">{p.type}</span>
+                        <span className="text-[#c2872e] text-[10px] uppercase font-bold">{p.type}</span>
                       </div>
                       <div className="text-[11px] text-[#9ba196]">
                         Distinct count: <span className="text-white">{p.distinctCount}</span>

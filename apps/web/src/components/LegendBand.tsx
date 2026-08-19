@@ -169,10 +169,10 @@ export const LegendBand: React.FC<LegendBandProps> = ({
           onClick={() => setShowJsonModal(false)}
         >
           <div
-            className="bg-[#0f1611] text-[#a4c995] border border-[#2d3a30] rounded-[2px] w-full max-w-xl max-h-[80vh] flex flex-col shadow-none overflow-hidden"
+            className="bg-[#0f1611] text-[#a4c995] border border-[#2d3a30] rounded-xl w-full max-w-xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#2d3a30] bg-[#141d16]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#2d3a30] bg-[#141d16]">
               <div className="flex items-center gap-2">
                 <span className="font-mono text-xs font-bold text-[#e0e3de] tracking-wide uppercase">
                   ChartSpec Contract Ledger
@@ -180,7 +180,7 @@ export const LegendBand: React.FC<LegendBandProps> = ({
               </div>
               <button
                 onClick={() => setShowJsonModal(false)}
-                className="text-[#9ba196] hover:text-white font-mono text-sm px-2 py-0.5 rounded-[2px] hover:bg-white/10"
+                className="text-[#9ba196] hover:text-white font-mono text-sm px-2 py-0.5 rounded-md hover:bg-white/10 transition-colors"
               >
                 ✕
               </button>
@@ -188,7 +188,7 @@ export const LegendBand: React.FC<LegendBandProps> = ({
             <pre className="p-4 overflow-auto text-xs font-mono leading-relaxed selection:bg-[#c2872e]/30">
               <code>{JSON.stringify(spec, null, 2)}</code>
             </pre>
-            <div className="flex items-center justify-between px-4 py-2.5 border-t border-[#2d3a30] bg-[#141d16]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-[#2d3a30] bg-[#141d16]">
               <span className="font-mono text-[10px] text-[#60685c]">
                 Framework-agnostic Scene Graph payload
               </span>
@@ -201,7 +201,7 @@ export const LegendBand: React.FC<LegendBandProps> = ({
                     setShowJsonModal(false);
                   }, 1200);
                 }}
-                className="px-3 py-1 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] text-xs font-bold rounded-[2px] transition-colors font-mono"
+                className="px-3.5 py-1.5 bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] text-xs font-bold rounded-lg transition-all shadow-sm font-mono hover:-translate-y-0.5"
               >
                 {copiedModal ? 'Copied' : 'Copy Spec JSON'}
               </button>

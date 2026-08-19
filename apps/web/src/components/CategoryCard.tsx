@@ -27,10 +27,10 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
     <Link
       href={`/components/${category.slug}`}
-      className={`group flex flex-col justify-between p-5 rounded-[2px] transition-colors border focus-visible:outline-2 focus-visible:outline-[#c2872e] focus-visible:outline-offset-2 ${
+      className={`group flex flex-col justify-between p-5 rounded-xl transition-all duration-200 border shadow-sm hover:shadow-md hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-[#c2872e] ${
         category.dark
           ? 'bg-[#151f17] border-[#2d3a30] text-[#e0e4dc] hover:border-[#9ba196]/40'
-          : 'bg-white border-[#18241b]/15 text-[#18241b] hover:border-[#18241b]/30'
+          : 'bg-white border-[#18241b]/10 text-[#18241b] hover:border-[#18241b]/25'
       }`}
     >
       {/* Top: Header metadata */}
@@ -40,10 +40,10 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
             {category.badge}
           </span>
           <span
-            className={`font-mono text-[10px] px-1.5 py-0.2 rounded-[2px] border ${
+            className={`font-mono text-[10px] px-2 py-0.5 rounded-full border ${
               category.dark
                 ? 'bg-[#18221b] border-[#2d3a30] text-[#9ba196]'
-                : 'bg-[#f4f7f3] border-[#18241b]/15 text-[#60685c]'
+                : 'bg-[#f4f7f3] border-[#18241b]/12 text-[#60685c]'
             }`}
           >
             {category.count} charts
@@ -60,7 +60,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       </div>
 
       {/* Center: Live Mini-Chart Preview with LegendBand */}
-      <div className="my-3.5 rounded-[2px] overflow-hidden border border-[#18241b]/10 dark:border-[#2d3a30]">
+      <div className="my-3.5 rounded-lg overflow-hidden border border-[#18241b]/10 dark:border-[#2d3a30]">
         <div
           className={`h-36 p-2 flex items-center justify-center pointer-events-none ${
             category.dark ? 'bg-[#0b100d]' : 'bg-[#f9fbf8]'

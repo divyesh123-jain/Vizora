@@ -41,7 +41,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
 
   return (
     <div
-      className={`rounded-[2px] border border-[#18241b]/15 dark:border-[#2d3a30] bg-[#0f1611] text-[#e0e3de] overflow-hidden font-mono text-xs transition-colors ${className}`}
+      className={`rounded-xl border border-[#18241b]/15 dark:border-[#2d3a30] bg-[#0f1611] text-[#e0e3de] overflow-hidden font-mono text-xs shadow-sm transition-all duration-200 ${className}`}
     >
       {/* File Tabs (if multi-file) or Title Bar */}
       {files && files.length > 1 ? (

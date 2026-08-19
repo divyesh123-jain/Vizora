@@ -35,7 +35,7 @@ export const StepperProgress: React.FC<StepperProgressProps> = ({
                   onSelectStep(step.number);
                 }
               }}
-              className={`h-full rounded-[1px] transition-colors ${
+              className={`h-full rounded-full transition-all duration-200 ${
                 step.number <= currentStep ? 'cursor-pointer' : 'cursor-default'
               } ${
                 isComplete

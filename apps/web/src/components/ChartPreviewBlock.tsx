@@ -55,25 +55,25 @@ export const ChartPreviewBlock: React.FC<ChartPreviewBlockProps> = ({
 
   return (
     <div
-      className={`rounded-[2px] border transition-colors focus-within:outline focus-within:outline-2 focus-within:outline-[#c2872e] focus-within:outline-offset-2 ${
+      className={`rounded-xl border overflow-hidden shadow-sm transition-all duration-200 focus-within:ring-2 focus-within:ring-[#c2872e]/40 ${
         dark
           ? 'bg-[#151f17] border-[#2d3a30] hover:border-[#9ba196]/30'
-          : 'bg-white border-[#18241b]/15 hover:border-[#18241b]/30'
+          : 'bg-white border-[#18241b]/10 hover:border-[#18241b]/25 hover:shadow-md'
       } ${className}`}
     >
       {/* Tab Row + Right-Aligned Copy Button */}
       <div
-        className={`flex items-center justify-between px-3 border-b text-xs transition-colors ${
+        className={`flex items-center justify-between px-4 border-b text-xs transition-colors ${
           dark
             ? 'bg-[#0f1611] border-[#2d3a30] text-[#9ba196]'
-            : 'bg-[#f4f7f3] border-[#18241b]/15 text-[#18241b]'
+            : 'bg-[#f4f7f3]/80 border-[#18241b]/10 text-[#18241b]'
         }`}
       >
         {/* Left: Tab Switcher (Preview / Code / Extra) */}
-        <div className="flex items-center gap-5 font-mono text-[11px]">
+        <div className="flex items-center gap-4 font-mono text-xs">
           {title && (
             <span
-              className={`font-sans text-xs font-semibold py-2 mr-1 ${
+              className={`font-sans text-xs font-semibold py-2.5 mr-1 ${
                 dark ? 'text-[#e0e4dc]' : 'text-[#18241b]'
               }`}
             >
@@ -83,7 +83,7 @@ export const ChartPreviewBlock: React.FC<ChartPreviewBlockProps> = ({
 
           <button
             onClick={() => setActiveTab('preview')}
-            className={`py-2 tracking-wide transition-colors border-b-2 ${
+            className={`py-2.5 tracking-wide transition-colors border-b-2 ${
               activeTab === 'preview'
                 ? 'border-[#c2872e] text-[#c2872e] font-bold'
                 : 'border-transparent text-[#60685c] hover:text-[#18241b] dark:hover:text-[#e0e4dc]'
@@ -94,7 +94,7 @@ export const ChartPreviewBlock: React.FC<ChartPreviewBlockProps> = ({
 
           <button
             onClick={() => setActiveTab('code')}
-            className={`py-2 tracking-wide transition-colors border-b-2 ${
+            className={`py-2.5 tracking-wide transition-colors border-b-2 ${
               activeTab === 'code'
                 ? 'border-[#c2872e] text-[#c2872e] font-bold'
                 : 'border-transparent text-[#60685c] hover:text-[#18241b] dark:hover:text-[#e0e4dc]'
@@ -107,7 +107,7 @@ export const ChartPreviewBlock: React.FC<ChartPreviewBlockProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-2 tracking-wide transition-colors border-b-2 ${
+              className={`py-2.5 tracking-wide transition-colors border-b-2 ${
                 activeTab === tab.id
                   ? 'border-[#c2872e] text-[#c2872e] font-bold'
                   : 'border-transparent text-[#60685c] hover:text-[#18241b] dark:hover:text-[#e0e4dc]'
@@ -121,10 +121,10 @@ export const ChartPreviewBlock: React.FC<ChartPreviewBlockProps> = ({
         {/* Right: Clean Copy Button (Outline icon + text, changes to Copied for 1.5s) */}
         <button
           onClick={handleCopy}
-          className={`flex items-center gap-1.5 px-2 py-1 font-mono text-[11px] transition-colors focus-visible:outline-2 focus-visible:outline-[#c2872e] ${
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px] transition-all duration-150 focus-visible:ring-1 focus-visible:ring-[#c2872e] ${
             dark
-              ? 'text-[#9ba196] hover:text-[#c2872e]'
-              : 'text-[#60685c] hover:text-[#c2872e]'
+              ? 'text-[#9ba196] hover:text-[#c2872e] hover:bg-white/5'
+              : 'text-[#60685c] hover:text-[#c2872e] hover:bg-[#18241b]/5'
           }`}
           title="Copy snippet"
           aria-label={copied ? 'Code snippet copied' : 'Copy code snippet'}
@@ -191,7 +191,7 @@ export const ChartPreviewBlock: React.FC<ChartPreviewBlockProps> = ({
         )}
       </div>
 
-      {/* Persistent Legend Band (Spec Ledger, Present in BOTH Preview and Code states) */}
+      {/* Persistent Legend Band */}
       <LegendBand
         spec={defaultSpec}
         dataCount={dataCount}
