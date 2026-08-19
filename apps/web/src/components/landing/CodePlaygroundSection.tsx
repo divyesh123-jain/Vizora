@@ -80,10 +80,10 @@ export const CodePlaygroundSection: React.FC = () => {
             </h2>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-[#18241b]/8 p-1.5 rounded-full border border-[#18241b]/10 font-sans text-xs">
+          <div className="flex flex-wrap items-center gap-1.5 bg-[#18241b]/8 p-1.5 rounded-2xl sm:rounded-full border border-[#18241b]/10 font-sans text-xs">
             <button
               onClick={() => setActiveCodeTab('auto')}
-              className={`px-4 py-1.5 rounded-full font-bold transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded-full font-bold transition-all duration-200 ${
                 activeCodeTab === 'auto'
                   ? 'bg-[#18241b] text-white shadow-sm'
                   : 'text-[#60685c] hover:text-[#18241b]'

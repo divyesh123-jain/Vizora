@@ -876,14 +876,15 @@ export default function DynamicComponentOrCategoryPage() {
           </div>
 
           <div className="bg-white border border-[#18241b]/10 rounded-xl overflow-hidden shadow-sm">
-            <table className="w-full text-left font-mono text-xs border-collapse">
-              <thead>
-                <tr className="bg-[#18241b] text-white border-b border-[#18241b]">
-                  <th className="p-3 w-1/4">Name</th>
-                  <th className="p-3 w-1/2">Description & Type</th>
-                  <th className="p-3 w-1/4">Live Control</th>
-                </tr>
-              </thead>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[520px] text-left font-mono text-xs border-collapse">
+                <thead>
+                  <tr className="bg-[#18241b] text-white border-b border-[#18241b]">
+                    <th className="p-3 w-1/4">Name</th>
+                    <th className="p-3 w-1/2">Description & Type</th>
+                    <th className="p-3 w-1/4">Live Control</th>
+                  </tr>
+                </thead>
               <tbody>
                 <PropControlRow
                   name="title"
@@ -939,13 +940,14 @@ export default function DynamicComponentOrCategoryPage() {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
 
         {/* Accessibility Ledger Section (NFR-5 Compliance) */}
-        <div className="space-y-3 bg-white border border-[#18241b]/15 rounded-[2px] p-5">
+        <div className="space-y-3 bg-white border border-[#18241b]/10 rounded-xl p-5 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase px-1.5 py-0.2 rounded-[2px] bg-[#c2872e]/10 border border-[#c2872e]/20">
+            <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase px-2.5 py-0.5 rounded-full bg-[#c2872e]/10 border border-[#c2872e]/20">
               A11Y Specification
             </span>
             <span className="font-headline-md text-base font-bold">
@@ -957,11 +959,11 @@ export default function DynamicComponentOrCategoryPage() {
             {config.a11yNotes}
           </p>
 
-          <div className="p-2.5 bg-[#f4f7f3] border border-[#18241b]/10 rounded-[2px] overflow-x-auto">
+          <div className="p-3 bg-[#f4f7f3] border border-[#18241b]/10 rounded-lg overflow-x-auto">
             <span className="font-mono text-[10px] text-[#60685c] uppercase block mb-1.5 font-bold">
               Rendered Semantic HTML Data Table:
             </span>
-            <table className="w-full text-left font-mono text-[11px] border-collapse">
+            <table className="w-full min-w-[360px] text-left font-mono text-[11px] border-collapse">
               <thead>
                 <tr className="border-b border-[#18241b]/20 text-[#18241b]">
                   {Object.keys(currentData[0] || {}).map((k) => (
@@ -996,7 +998,7 @@ export default function DynamicComponentOrCategoryPage() {
                 return (
                   <div
                     key={idx}
-                    className="bg-white border border-[#18241b]/15 rounded-[2px] p-4 space-y-3"
+                    className="bg-white border border-[#18241b]/10 rounded-xl p-4 space-y-3 shadow-sm"
                   >
                     <div className="flex items-center justify-between">
                       <h3 className="font-headline-md font-bold text-sm">{variant.name}</h3>
