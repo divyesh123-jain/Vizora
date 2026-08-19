@@ -10,7 +10,6 @@ export interface SidebarSection {
     label: string;
     href: string;
     badge?: string;
-    icon?: string;
   }[];
 }
 
@@ -22,10 +21,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ sections }) => {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full md:w-64 shrink-0 bg-[#f4f7f3]/95 backdrop-blur-md border-r border-[#18241b]/10 p-4 md:p-5 space-y-6 md:min-h-[calc(100vh-3.5rem)]">
+    <aside className="w-full md:w-60 shrink-0 bg-[#f4f7f3]/95 backdrop-blur-md border-r border-[#18241b]/10 p-4 md:p-5 space-y-6 md:min-h-[calc(100vh-3.5rem)]">
       {sections.map((sec, idx) => (
         <div key={idx} className="space-y-1.5">
-          <h4 className="font-mono text-[10px] font-bold text-[#c2872e] uppercase tracking-wider px-2.5">
+          <h4 className="font-mono text-[10px] font-bold text-[#c2872e] uppercase tracking-wider px-2">
             {sec.title}
           </h4>
           <div className="space-y-0.5">
@@ -41,10 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ sections }) => {
                       : 'text-[#404641] hover:text-[#18241b] hover:bg-[#18241b]/5'
                   }`}
                 >
-                  <span className="flex items-center gap-2 truncate">
-                    {item.icon && <span className="text-xs">{item.icon}</span>}
-                    <span className="truncate">{item.label}</span>
-                  </span>
+                  <span className="truncate">{item.label}</span>
                   {item.badge && (
                     <span
                       className={`text-[9px] font-mono px-1.5 py-0.2 rounded-[2px] font-bold uppercase shrink-0 ${
