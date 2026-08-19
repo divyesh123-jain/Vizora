@@ -41,7 +41,7 @@ export const HeroSection: React.FC = () => {
           <div className="lg:col-span-6 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18241b] text-[#f4f7f3] border border-[#18241b] text-[11px] font-sans font-bold tracking-wider uppercase shadow-sm">
               <span className="w-2 h-2 rounded-full bg-[#c2872e] animate-pulse" />
-              <span>VIZORA 0.1.0 MVP • POWERFUL & FLEXIBLE CHART ENGINE</span>
+              <span>VIZORA • POWERFUL & FLEXIBLE CHART ENGINE</span>
             </div>
 
             <h1 className="font-display-hero text-4xl sm:text-5xl lg:text-6xl text-[#18241b] leading-[1.1] tracking-tight font-extrabold">

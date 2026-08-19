@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
     <header className="sticky top-0 z-50 w-full bg-[#f4f7f3]/95 backdrop-blur-md border-b border-[#18241b]/10 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between gap-4">
         
-        {/* Left Column: Brand Logo & Version Badge */}
+        {/* Left Column: Brand Logo */}
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           <Link href="/" className="flex items-center gap-2.5 group focus-visible:outline-none">
             <div className="w-8 h-8 rounded-lg bg-[#18241b] text-[#c2872e] flex items-center justify-center font-mono font-bold text-xs tracking-tight shadow-sm group-hover:bg-[#c2872e] group-hover:text-[#18241b] transition-all duration-200">
@@ -44,9 +44,6 @@ export const Navbar: React.FC = () => {
               Vizora
             </span>
           </Link>
-          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full border border-[#c2872e]/30 text-[10px] font-mono font-bold text-[#c2872e] bg-[#c2872e]/10 uppercase tracking-wider">
-            v0.1.0 MVP
-          </span>
         </div>
 
         {/* Center Column: Perfectly Centered Navigation Links with Tools Dropdown */}
