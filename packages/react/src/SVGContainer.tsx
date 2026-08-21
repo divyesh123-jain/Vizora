@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { buildSceneGraph, ChartSpec } from '@vizora/core';
 import { renderSceneGraphToSVGString, renderAccessibleDataTable } from '@vizora/render-svg';
 import { ChartTooltip } from './ChartTooltip';
@@ -35,21 +35,31 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoverState, setHoverState] = useState<HoverState | null>(null);
 
-  if (!spec.data || spec.data.length === 0) {
+  // Memoize the scene graph computation — prevents re-running on every hover state change
+  const renderResult = useMemo(() => {
+    if (!spec.data || spec.data.length === 0) {
+      return { status: 'empty' as const, svgMarkup: '', tableMarkup: '', error: '' };
+    }
+    try {
+      const scene = buildSceneGraph(spec);
+      const svgMarkup = renderSceneGraphToSVGString(scene);
+      const tableMarkup = renderAccessibleDataTable(spec);
+      return { status: 'ok' as const, svgMarkup, tableMarkup, error: '' };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Invalid ChartSpec encoding configuration.';
+      return { status: 'error' as const, svgMarkup: '', tableMarkup: '', error: message };
+    }
+  }, [spec]);
+
+  if (renderResult.status === 'empty') {
     return <ChartEmptyState className={className} />;
   }
 
-  let svgMarkup = '';
-  let tableMarkup = '';
-
-  try {
-    const scene = buildSceneGraph(spec);
-    svgMarkup = renderSceneGraphToSVGString(scene);
-    tableMarkup = renderAccessibleDataTable(spec);
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Invalid ChartSpec encoding configuration.';
-    return <ChartErrorFallback message={message} className={className} />;
+  if (renderResult.status === 'error') {
+    return <ChartErrorFallback message={renderResult.error} className={className} />;
   }
+
+  const { svgMarkup, tableMarkup } = renderResult;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!enableHover || !containerRef.current) return;
@@ -134,15 +144,14 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
     setHoverState(null);
   };
 
-  const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || 'X';
-  const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || 'Y';
-
   const renderTooltip = (state: HoverState) => {
     if (!containerRef.current) return null;
     const cWidth = containerRef.current.clientWidth;
+    const cHeight = containerRef.current.clientHeight;
 
     const isBar = state.chartType === 'bar' || state.chartType === 'histogram';
     const isHorizontalBar = isBar && state.orientation === 'horizontal';
+    const isRadial = state.chartType === 'donut' || state.chartType === 'pie' || state.chartType === 'funnel';
 
     let leftPos: number;
     let topPos: number;
@@ -176,6 +185,24 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
           transformY = '0%';
         }
       }
+    } else if (isRadial) {
+      // For radial charts, anchor tooltip near the mouse but center it
+      leftPos = state.mouseX;
+      topPos = state.mouseY - 14;
+      transformX = '-50%';
+      transformY = '-100%';
+
+      if (leftPos > cWidth - 120) {
+        transformX = '-100%';
+        leftPos -= 8;
+      } else if (leftPos < 120) {
+        transformX = '0%';
+        leftPos += 8;
+      }
+      if (topPos < 70) {
+        topPos = state.mouseY + 16;
+        transformY = '0%';
+      }
     } else {
       leftPos = state.mouseX;
       topPos = state.mouseY - 14;
@@ -194,6 +221,27 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
       }
     }
 
+    // Smart tooltip title & label based on chart type
+    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || 'X';
+    const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || 'Value';
+
+    let tooltipTitle: string | undefined;
+    let tooltipItems: { label: string; value: string; color: string }[];
+
+    if (isRadial) {
+      tooltipTitle = state.xVal || undefined;
+      tooltipItems = [{ label: 'Value', value: state.yVal, color: 'var(--chart-1, #6366f1)' }];
+    } else if (state.chartType === 'candlestick') {
+      tooltipTitle = state.xVal ? `Date: ${state.xVal}` : undefined;
+      tooltipItems = [{ label: 'OHLC', value: state.yVal, color: 'var(--chart-1, #6366f1)' }];
+    } else if (state.chartType === 'kpi-sparkline') {
+      tooltipTitle = state.xVal || 'Current Value';
+      tooltipItems = [{ label: 'Value', value: state.yVal, color: 'var(--chart-1, #6366f1)' }];
+    } else {
+      tooltipTitle = state.xVal ? `${xLabel}: ${state.xVal}` : undefined;
+      tooltipItems = [{ label: yLabel, value: state.yVal, color: 'var(--chart-1, #6366f1)' }];
+    }
+
     return (
       <div
         className="vizora-tooltip-wrapper z-50 pointer-events-none transition-all duration-75 ease-out"
@@ -205,14 +253,8 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
         }}
       >
         <ChartTooltip
-          title={state.xVal ? `${xLabel}: ${state.xVal}` : undefined}
-          items={[
-            {
-              label: yLabel,
-              value: state.yVal,
-              color: 'var(--chart-1, #6366f1)',
-            },
-          ]}
+          title={tooltipTitle}
+          items={tooltipItems}
         />
       </div>
     );

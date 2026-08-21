@@ -61,6 +61,10 @@ export class HistogramChartStrategy implements ChartLayoutStrategy {
           height: h,
           fill: palette.contour,
           rx: 3,
+          'data-vizora-item': 'true',
+          'data-x-val': b.label,
+          'data-y-val': String(b.count),
+          'data-index': String(i),
         },
       });
 
