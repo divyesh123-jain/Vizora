@@ -198,6 +198,31 @@ function LivePlaygroundContent() {
     setDataError(null);
   };
 
+  // Smart type selector with dataset auto-alignment
+  const handleSelectChartType = (type: ChartType) => {
+    setMode('manual');
+    setSelectedType(type);
+
+    // If switching to candlestick and current data lacks OHLC fields, auto-switch to stock OHLC sample
+    if (type === 'candlestick') {
+      const firstRow = dataset[0] || {};
+      const hasOHLC = 'open' in firstRow && 'close' in firstRow && 'high' in firstRow && 'low' in firstRow;
+      if (!hasOHLC) {
+        const ohlcSample = BUNDLED_DATASETS.find((s) => s.id === 'stock-ohlc-sample');
+        if (ohlcSample) {
+          handleSelectSample(ohlcSample);
+        }
+      }
+    } else if (type === 'donut' || type === 'pie' || type === 'funnel') {
+      const firstRow = dataset[0] || {};
+      const keys = Object.keys(firstRow);
+      if (keys.length >= 2) {
+        if (!xField || !(xField in firstRow)) setXField(keys[0]);
+        if (!yField || !(yField in firstRow)) setYField(keys[1]);
+      }
+    }
+  };
+
   // When raw text changes
   const handleRawTextChange = (text: string, format: 'json' | 'csv') => {
     setRawText(text);
@@ -633,7 +658,7 @@ function LivePlaygroundContent() {
                   {mode === 'manual' && (
                     <select
                       value={selectedType}
-                      onChange={(e) => setSelectedType(e.target.value as ChartType)}
+                      onChange={(e) => handleSelectChartType(e.target.value as ChartType)}
                       className="bg-white dark:bg-[#0f1611] border border-[#18241b]/20 dark:border-[#2d3a30] rounded-lg px-2.5 py-1 font-mono text-xs text-[#18241b] dark:text-[#f1f5ee] outline-none shadow-xs"
                     >
                       <option value="line">line</option>
@@ -687,8 +712,7 @@ function LivePlaygroundContent() {
                   recommendedType={recommendedBearing}
                   selectedType={activeType}
                   onSelectType={(type) => {
-                    setMode('manual');
-                    setSelectedType(type);
+                    handleSelectChartType(type);
                   }}
                 />
               </div>

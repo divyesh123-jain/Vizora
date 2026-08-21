@@ -7,5 +7,5 @@ export * from './ChartTooltip';
 export * from './ChartLegend';
 export * from './ResponsiveContainer';
 export * from './ChartEmptyState';
+export * from './ChartErrorFallback';
 export * from './exportUtils';
-
