@@ -3,6 +3,7 @@ import { buildSceneGraph, ChartSpec } from '@vizora/core';
 import { renderSceneGraphToSVGString, renderAccessibleDataTable } from '@vizora/render-svg';
 import { ChartTooltip } from './ChartTooltip';
 import { ChartEmptyState } from './ChartEmptyState';
+import { ChartErrorFallback } from './ChartErrorFallback';
 import { cn } from './utils';
 
 export interface SVGContainerProps {
@@ -38,9 +39,17 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
     return <ChartEmptyState className={className} />;
   }
 
-  const scene = buildSceneGraph(spec);
-  const svgMarkup = renderSceneGraphToSVGString(scene);
-  const tableMarkup = renderAccessibleDataTable(spec);
+  let svgMarkup = '';
+  let tableMarkup = '';
+
+  try {
+    const scene = buildSceneGraph(spec);
+    svgMarkup = renderSceneGraphToSVGString(scene);
+    tableMarkup = renderAccessibleDataTable(spec);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Invalid ChartSpec encoding configuration.';
+    return <ChartErrorFallback message={message} className={className} />;
+  }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!enableHover || !containerRef.current) return;
