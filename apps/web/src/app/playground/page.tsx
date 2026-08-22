@@ -20,6 +20,7 @@ interface SampleDataset {
   id: string;
   name: string;
   category: string;
+  description: string;
   data: Record<string, unknown>[];
   suggestedType?: ChartType;
   x?: string;
@@ -31,6 +32,7 @@ const BUNDLED_DATASETS: SampleDataset[] = [
     id: 'revenue-by-month',
     name: 'SaaS Monthly Revenue',
     category: 'Business',
+    description: 'Monthly MRR & user growth tracking temporal trajectory over time.',
     suggestedType: 'line',
     x: 'month',
     y: 'revenue',
@@ -46,6 +48,7 @@ const BUNDLED_DATASETS: SampleDataset[] = [
     id: 'regional-sales',
     name: 'Regional Sales Magnitude',
     category: 'Comparison',
+    description: 'Multi-region sales vs quota performance comparison across territories.',
     suggestedType: 'bar',
     x: 'region',
     y: 'sales',
@@ -61,6 +64,7 @@ const BUNDLED_DATASETS: SampleDataset[] = [
     id: 'stock-ohlc-sample',
     name: 'Stock Daily OHLC',
     category: 'Trading',
+    description: 'Daily Open, High, Low, Close asset pricing with traded volume metrics.',
     suggestedType: 'candlestick',
     x: 'date',
     data: [
@@ -75,6 +79,7 @@ const BUNDLED_DATASETS: SampleDataset[] = [
     id: 'marketing-scatter',
     name: 'Ad Spend vs Conversions',
     category: 'Statistical',
+    description: 'Correlation analysis between digital advertising budget and customer acquisitions.',
     suggestedType: 'scatter',
     x: 'spend',
     y: 'conversions',
@@ -91,6 +96,7 @@ const BUNDLED_DATASETS: SampleDataset[] = [
     id: 'device-share',
     name: 'Device Traffic Proportions',
     category: 'Composition',
+    description: 'Breakdown of web visitors across mobile, desktop, and tablet platforms.',
     suggestedType: 'donut',
     x: 'device',
     y: 'users',
@@ -105,6 +111,7 @@ const BUNDLED_DATASETS: SampleDataset[] = [
     id: 'demographic-ages',
     name: 'Customer Age Distribution',
     category: 'Statistical',
+    description: 'Frequency distribution of customer demographics across discrete age brackets.',
     suggestedType: 'histogram',
     x: 'age',
     data: [
@@ -134,6 +141,13 @@ function parseCsv(csvText: string): Record<string, unknown>[] {
   return rows;
 }
 
+interface DataValidationState {
+  status: 'idle' | 'valid' | 'invalid';
+  message: string;
+  rowCount?: number;
+  colCount?: number;
+}
+
 function LivePlaygroundContent() {
   const searchParams = useSearchParams();
   const initialTypeParam = searchParams.get('type') as ChartType | null;
@@ -144,6 +158,11 @@ function LivePlaygroundContent() {
   const [rawText, setRawText] = useState<string>('');
   const [rawFormat, setRawFormat] = useState<'json' | 'csv'>('json');
   const [dataError, setDataError] = useState<string | null>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
+  const [validationState, setValidationState] = useState<DataValidationState>({
+    status: 'idle',
+    message: 'Ready for data input',
+  });
 
   // Active dataset state
   const [dataset, setDataset] = useState<Record<string, unknown>[]>(BUNDLED_DATASETS[0].data);
@@ -152,6 +171,10 @@ function LivePlaygroundContent() {
   const [mode, setMode] = useState<'auto' | 'manual'>(initialTypeParam ? 'manual' : 'auto');
   const [selectedType, setSelectedType] = useState<ChartType>(initialTypeParam || 'line');
 
+  // Compare Mode State (§5)
+  const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
+  const [compareType, setCompareType] = useState<ChartType>('bar');
+
   // Encoding & Styling State
   const [xField, setXField] = useState<string>('month');
   const [yField, setYField] = useState<string>('revenue');
@@ -159,6 +182,12 @@ function LivePlaygroundContent() {
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light');
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [chartTitle, setChartTitle] = useState<string>('SaaS Monthly Revenue');
+
+  // Progressive Disclosure Advanced Options (§8)
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  const [orientation, setOrientation] = useState<'vertical' | 'horizontal'>('vertical');
+  const [zeroBaseline, setZeroBaseline] = useState<boolean>(true);
+  const [histogramBins, setHistogramBins] = useState<number>(10);
 
   // 2-Way ChartSpec JSON & Bottom Tabs
   const [activeBottomTab, setActiveBottomTab] = useState<'jsx' | 'spec' | 'profile'>('jsx');
@@ -185,6 +214,20 @@ function LivePlaygroundContent() {
     return Object.keys(dataset[0]);
   }, [dataset]);
 
+  // Profiled field types map for live previews in encoding selects
+  const fieldTypeMap = useMemo(() => {
+    if (!dataset || dataset.length === 0) return {} as Record<string, string>;
+    const map: Record<string, string> = {};
+    availableFields.forEach((f) => {
+      try {
+        map[f] = profileField(dataset, f).type;
+      } catch {
+        map[f] = 'categorical';
+      }
+    });
+    return map;
+  }, [dataset, availableFields]);
+
   // When sample changes
   const handleSelectSample = (sample: SampleDataset) => {
     setSelectedSampleId(sample.id);
@@ -197,6 +240,12 @@ function LivePlaygroundContent() {
     if (sample.y) setYField(sample.y);
     setRawText(JSON.stringify(sample.data, null, 2));
     setDataError(null);
+    setValidationState({
+      status: 'valid',
+      message: `Loaded "${sample.name}" — ${sample.data.length} rows, ${Object.keys(sample.data[0] || {}).length} fields detected`,
+      rowCount: sample.data.length,
+      colCount: Object.keys(sample.data[0] || {}).length,
+    });
   };
 
   // Smart type selector with dataset auto-alignment
@@ -224,40 +273,120 @@ function LivePlaygroundContent() {
     }
   };
 
-  // When raw text changes
+  // When raw text changes with real-time validation
   const handleRawTextChange = (text: string, format: 'json' | 'csv') => {
     setRawText(text);
     setDataError(null);
-    if (!text.trim()) return;
+
+    if (!text.trim()) {
+      setDataset([]);
+      setValidationState({
+        status: 'idle',
+        message: 'Enter or paste data records to visualize',
+      });
+      return;
+    }
 
     try {
       if (format === 'json') {
         const parsed = JSON.parse(text);
-        if (!Array.isArray(parsed) || parsed.length === 0) {
-          setDataError('Input must be a non-empty array of JSON objects.');
+        if (!Array.isArray(parsed)) {
+          const err = 'JSON root must be an array of objects (e.g. [{"a": 1}])';
+          setDataError(err);
+          setValidationState({ status: 'invalid', message: err });
           return;
         }
+        if (parsed.length === 0) {
+          setDataset([]);
+          setValidationState({ status: 'invalid', message: 'JSON array is empty — provide at least 1 object record' });
+          return;
+        }
+        if (typeof parsed[0] !== 'object' || parsed[0] === null) {
+          const err = 'Array elements must be JSON key-value objects';
+          setDataError(err);
+          setValidationState({ status: 'invalid', message: err });
+          return;
+        }
+
         setDataset(parsed);
         const keys = Object.keys(parsed[0]);
-        if (keys.length > 0) setXField(keys[0]);
-        if (keys.length > 1) setYField(keys[1]);
+        if (keys.length > 0 && (!xField || !keys.includes(xField))) setXField(keys[0]);
+        if (keys.length > 1 && (!yField || !keys.includes(yField))) setYField(keys[1]);
+
+        setValidationState({
+          status: 'valid',
+          message: `Valid JSON payload: ${parsed.length} row${parsed.length > 1 ? 's' : ''}, ${keys.length} field${keys.length > 1 ? 's' : ''} detected`,
+          rowCount: parsed.length,
+          colCount: keys.length,
+        });
       } else {
         const parsed = parseCsv(text);
         if (parsed.length === 0) {
-          setDataError('CSV parsing failed. Ensure valid header row.');
+          const err = 'CSV parsing failed. Ensure a valid header row and at least 1 data row.';
+          setDataError(err);
+          setValidationState({ status: 'invalid', message: err });
           return;
         }
         setDataset(parsed);
         const keys = Object.keys(parsed[0]);
-        if (keys.length > 0) setXField(keys[0]);
-        if (keys.length > 1) setYField(keys[1]);
+        if (keys.length > 0 && (!xField || !keys.includes(xField))) setXField(keys[0]);
+        if (keys.length > 1 && (!yField || !keys.includes(yField))) setYField(keys[1]);
+
+        setValidationState({
+          status: 'valid',
+          message: `Valid CSV payload: ${parsed.length} row${parsed.length > 1 ? 's' : ''}, ${keys.length} column${keys.length > 1 ? 's' : ''} detected`,
+          rowCount: parsed.length,
+          colCount: keys.length,
+        });
       }
     } catch (err: unknown) {
-      setDataError(err instanceof Error ? err.message : 'Invalid data format');
+      const msg = err instanceof Error ? err.message : 'Invalid data format';
+      setDataError(msg);
+      setValidationState({
+        status: 'invalid',
+        message: `Parse Error: ${msg}`,
+      });
     }
   };
 
-  // When file is uploaded
+  // Drag and drop handlers (§9)
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingOver(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const content = evt.target?.result as string;
+      if (file.name.endsWith('.csv')) {
+        setDataTab('paste');
+        setRawFormat('csv');
+        handleRawTextChange(content, 'csv');
+      } else {
+        setDataTab('paste');
+        setRawFormat('json');
+        handleRawTextChange(content, 'json');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  // When file is uploaded via input
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -383,7 +512,7 @@ function LivePlaygroundContent() {
       {/* Onboarding Tour - guides new users through Data → Encoding → Chart Type */}
       <TourOverlay onComplete={() => {}} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
         {/* Playground Top Title & Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#18241b]/10 pb-5 gap-4">
           <div>
@@ -401,10 +530,10 @@ function LivePlaygroundContent() {
           </div>
 
           {/* Quick Actions & Handoff to Builder */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/builder"
-              className="px-3.5 py-1.5 rounded-lg border border-[#18241b]/15 bg-white hover:bg-[#18241b] hover:text-white font-mono text-xs font-semibold shadow-xs transition-all duration-150 flex items-center gap-1.5 hover:-translate-y-0.5"
+              className="px-3.5 py-1.5 rounded-lg border border-[#18241b]/15 bg-white hover:bg-[#18241b] hover:text-white font-mono text-xs font-semibold shadow-xs transition-all duration-150 flex items-center gap-1.5 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
             >
               <span>Guided Stepper instead?</span>
               <span>&rarr;</span>
@@ -414,7 +543,7 @@ function LivePlaygroundContent() {
             <div className="flex items-center p-0.5 bg-white border border-[#18241b]/15 rounded-lg shadow-xs">
               <button
                 onClick={() => setMode('auto')}
-                className={`px-3 py-1 text-xs font-mono font-bold rounded-md transition-all duration-150 ${
+                className={`px-3 py-1 text-xs font-mono font-bold rounded-md transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                   mode === 'auto'
                     ? 'bg-[#18241b] text-white shadow-sm'
                     : 'text-[#60685c] hover:text-[#18241b]'
@@ -424,7 +553,7 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setMode('manual')}
-                className={`px-3 py-1 text-xs font-mono font-bold rounded-md transition-all duration-150 ${
+                className={`px-3 py-1 text-xs font-mono font-bold rounded-md transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                   mode === 'manual'
                     ? 'bg-[#18241b] text-white shadow-sm'
                     : 'text-[#60685c] hover:text-[#18241b]'
@@ -443,21 +572,30 @@ function LivePlaygroundContent() {
           </div>
         )}
 
-        {/* Main Layered Studio Panel */}
+        {/* Main Layered Studio Panel - Responsive Grid (§12) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* ========================================================= */}
           {/* Left Pane (40%): Data Input Studio */}
           {/* ========================================================= */}
-          <div className="lg:col-span-5 bg-white border border-[#18241b]/10 rounded-xl overflow-hidden shadow-sm flex flex-col">
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`lg:col-span-5 bg-white border rounded-xl overflow-hidden shadow-sm flex flex-col transition-all ${
+              isDraggingOver
+                ? 'border-[#c2872e] ring-2 ring-[#c2872e]/30 bg-[#c2872e]/5'
+                : 'border-[#18241b]/10'
+            }`}
+          >
             {/* Data Input Tabs */}
-            <div className="flex items-center justify-between border-b border-[#18241b]/10 bg-[#f9fbf8] px-4 pt-3">
+            <div className="flex items-center justify-between border-b border-[#18241b]/10 bg-[#f9fbf8] px-4 pt-3 overflow-x-auto">
               <div className="flex gap-1 font-mono text-xs">
                 {(['sample', 'paste', 'upload'] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => setDataTab(t)}
-                    className={`px-3 py-1.5 font-mono text-xs font-bold rounded-t-md transition-all duration-150 capitalize border-b-2 ${
+                    className={`px-3 py-1.5 font-mono text-xs font-bold rounded-t-md transition-all duration-150 capitalize border-b-2 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                       dataTab === t
                         ? 'border-[#c2872e] text-[#c2872e]'
                         : 'border-transparent text-[#60685c] hover:text-[#18241b]'
@@ -469,39 +607,120 @@ function LivePlaygroundContent() {
                   </button>
                 ))}
               </div>
-              <span className="font-mono text-[10px] text-[#60685c]">{dataset.length} rows</span>
+              <div className="flex items-center gap-2 font-mono text-[10px]">
+                <span className="text-[#60685c]">{dataset.length} rows</span>
+                {dataset.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setDataset([]);
+                      setRawText('');
+                      setDataError(null);
+                      setValidationState({ status: 'idle', message: 'Dataset cleared' });
+                    }}
+                    className="text-[#d6502b] hover:underline focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none rounded"
+                    title="Clear active dataset"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
             </div>
 
+            {/* Drag and Drop Active Banner (§9) */}
+            {isDraggingOver && (
+              <div className="p-4 m-3 bg-[#c2872e]/10 border-2 border-dashed border-[#c2872e] rounded-xl text-center font-mono text-xs text-[#18241b] animate-pulse">
+                <span className="font-bold block">Drop CSV or JSON file here</span>
+                <span className="text-[11px] text-[#60685c]">Instant client-side parser will ingest dataset</span>
+              </div>
+            )}
+
             <div className="p-4 space-y-4">
-              {/* Tab 1: Bundled Samples */}
-              {dataTab === 'sample' && (
-                <div className="space-y-3">
-                  <span className="font-mono text-[11px] text-[#60685c] block">
-                    Choose a curated dataset to test heuristic profiling:
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {BUNDLED_DATASETS.map((sample) => (
-                      <button
-                        key={sample.id}
-                        onClick={() => handleSelectSample(sample)}
-                        className={`p-3 rounded-lg border text-left font-mono text-xs transition-all duration-150 flex flex-col justify-between gap-1 shadow-xs hover:shadow-sm ${
-                          selectedSampleId === sample.id
-                            ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
-                            : 'bg-[#f4f7f3] border-[#18241b]/10 text-[#18241b] hover:border-[#c2872e]'
-                        }`}
-                      >
-                        <span className="font-bold truncate">{sample.name}</span>
-                        <div className="flex items-center justify-between text-[10px] opacity-80">
-                          <span>{sample.category}</span>
-                          <span className="uppercase">{sample.suggestedType}</span>
-                        </div>
-                      </button>
-                    ))}
+              {/* Empty State Illustration for Playground when no data is loaded */}
+              {dataset.length === 0 && (
+                <div className="p-5 text-center space-y-3 bg-[#f7faf5] border border-dashed border-[#18241b]/20 rounded-xl">
+                  <div className="w-12 h-12 rounded-full bg-[#c2872e]/10 text-[#c2872e] flex items-center justify-center mx-auto ring-4 ring-[#c2872e]/5">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <circle cx="12" cy="12" r="9" strokeWidth={1.75} />
+                      <polygon points="12,6 14.5,12 12,10.5 9.5,12" fill="#c2872e" stroke="none" />
+                      <polygon points="12,18 14.5,12 12,13.5 9.5,12" fill="#60685c" stroke="none" />
+                      <circle cx="12" cy="12" r="1.5" fill="#18241b" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-mono text-xs font-bold text-[#18241b]">No Data Loaded Yet</h4>
+                    <p className="font-mono text-[11px] text-[#60685c] mt-1 max-w-xs mx-auto leading-relaxed">
+                      Start by pasting custom JSON/CSV records, dropping a file, or choosing a benchmark sample below.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 pt-1">
+                    <button
+                      onClick={() => handleSelectSample(BUNDLED_DATASETS[0])}
+                      className="px-3 py-1.5 rounded-lg bg-[#18241b] text-white font-mono text-xs font-bold shadow-xs hover:bg-[#2c3d31] transition-all focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
+                    >
+                      Try SaaS Sample
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDataTab('paste');
+                        setRawFormat('json');
+                        setRawText('[\n  { "month": "2026-01-01", "revenue": 45000 },\n  { "month": "2026-02-01", "revenue": 62000 }\n]');
+                        handleRawTextChange('[\n  { "month": "2026-01-01", "revenue": 45000 },\n  { "month": "2026-02-01", "revenue": 62000 }\n]', 'json');
+                      }}
+                      className="px-3 py-1.5 rounded-lg border border-[#18241b]/15 bg-white text-[#18241b] font-mono text-xs font-semibold hover:border-[#c2872e] transition-all focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
+                    >
+                      Paste JSON
+                    </button>
                   </div>
                 </div>
               )}
 
-              {/* Tab 2: Paste JSON or CSV */}
+              {/* Tab 1: Bundled Samples */}
+              {dataTab === 'sample' && (
+                <div className="space-y-3">
+                  <span className="font-mono text-[11px] text-[#60685c] block">
+                    Choose a curated dataset to test heuristic profiling and visualization:
+                  </span>
+                  <div className="grid grid-cols-1 gap-2.5">
+                    {BUNDLED_DATASETS.map((sample) => {
+                      const isSelected = selectedSampleId === sample.id && dataset.length > 0;
+                      return (
+                        <button
+                          key={sample.id}
+                          onClick={() => handleSelectSample(sample)}
+                          className={`p-3 rounded-lg border text-left font-mono text-xs transition-all duration-150 flex flex-col gap-1.5 shadow-xs hover:shadow-sm focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
+                            isSelected
+                              ? 'bg-[#18241b] text-white border-[#18241b] shadow-sm'
+                              : 'bg-[#f4f7f3] border-[#18241b]/10 text-[#18241b] hover:border-[#c2872e]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold truncate text-sm">{sample.name}</span>
+                            <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md ${
+                              isSelected
+                                ? 'bg-[#c2872e] text-[#18241b]'
+                                : 'bg-[#c2872e]/15 text-[#c2872e]'
+                            }`}>
+                              {sample.suggestedType}
+                            </span>
+                          </div>
+                          {/* Sample Dataset Description (§3) */}
+                          <p className={`text-[11px] leading-snug line-clamp-2 ${
+                            isSelected ? 'text-[#a4c995]' : 'text-[#60685c]'
+                          }`}>
+                            {sample.description}
+                          </p>
+                          <div className="flex items-center justify-between text-[10px] opacity-75 pt-1 border-t border-current/10">
+                            <span>Category: <strong>{sample.category}</strong></span>
+                            <span>{sample.data.length} records</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: Paste JSON or CSV (§4) */}
               {dataTab === 'paste' && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -514,7 +733,7 @@ function LivePlaygroundContent() {
                           setRawFormat('json');
                           handleRawTextChange(rawText, 'json');
                         }}
-                        className={`px-2.5 py-0.5 rounded-md transition-colors ${
+                        className={`px-2.5 py-0.5 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                           rawFormat === 'json' ? 'bg-[#18241b] text-white font-bold shadow-xs' : 'text-[#60685c]'
                         }`}
                       >
@@ -525,7 +744,7 @@ function LivePlaygroundContent() {
                           setRawFormat('csv');
                           handleRawTextChange(rawText, 'csv');
                         }}
-                        className={`px-2.5 py-0.5 rounded-md transition-colors ${
+                        className={`px-2.5 py-0.5 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                           rawFormat === 'csv' ? 'bg-[#18241b] text-white font-bold shadow-xs' : 'text-[#60685c]'
                         }`}
                       >
@@ -535,32 +754,62 @@ function LivePlaygroundContent() {
                   </div>
 
                   <textarea
-                    value={rawText || JSON.stringify(dataset, null, 2)}
+                    value={rawText || (dataset.length > 0 ? JSON.stringify(dataset, null, 2) : '')}
                     onChange={(e) => handleRawTextChange(e.target.value, rawFormat)}
-                    rows={10}
+                    rows={9}
                     placeholder={
                       rawFormat === 'json'
                         ? '[{ "date": "2026-01-01", "value": 100 }, ...]'
                         : 'date,value\n2026-01-01,100\n2026-01-02,150'
                     }
-                    className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3.5 rounded-xl border border-[#18241b]/20 focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all resize-none"
+                    className="w-full bg-[#0f1611] text-[#a4c995] font-mono text-xs p-3.5 rounded-xl border border-[#18241b]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e] transition-all resize-none font-medium leading-relaxed"
                   />
 
-                  {dataError && (
-                    <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-[#d6502b] font-mono text-xs">
-                      {dataError}
+                  {/* Inline Real-Time Validation Status */}
+                  {validationState.status === 'valid' && (
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-mono text-xs">
+                      <svg className="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="font-medium truncate">{validationState.message}</span>
+                    </div>
+                  )}
+
+                  {validationState.status === 'invalid' && (
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-900 font-mono text-xs">
+                      <svg className="w-4 h-4 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      <span className="font-medium truncate">{validationState.message}</span>
+                    </div>
+                  )}
+
+                  {validationState.status === 'idle' && (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-[#f4f7f3] border border-[#18241b]/10 text-[#60685c] font-mono text-[11px]">
+                      <span className="w-2 h-2 rounded-full bg-[#c2872e]"></span>
+                      <span>Paste JSON array or CSV text above for real-time validation</span>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Tab 3: Upload File */}
+              {/* Tab 3: Upload / Drop File (§9) */}
               {dataTab === 'upload' && (
                 <div className="space-y-3">
-                  <div className="border-2 border-dashed border-[#18241b]/15 rounded-xl p-8 text-center space-y-2 bg-[#f9fbf8] hover:border-[#c2872e] transition-colors">
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className="border-2 border-dashed border-[#18241b]/20 hover:border-[#c2872e] rounded-xl p-8 text-center space-y-2 bg-[#f9fbf8] transition-colors"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-[#c2872e]/10 text-[#c2872e] flex items-center justify-center mx-auto mb-2">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    </div>
                     <div>
-                      <label className="cursor-pointer font-mono text-xs font-bold text-[#c2872e] hover:underline">
-                        <span>Click to browse files</span>
+                      <label className="cursor-pointer font-mono text-xs font-bold text-[#c2872e] hover:underline focus-within:ring-2 focus-within:ring-[#c2872e] rounded">
+                        <span>Click to browse files or drop here</span>
                         <input
                           type="file"
                           accept=".csv,.json"
@@ -569,7 +818,7 @@ function LivePlaygroundContent() {
                         />
                       </label>
                       <p className="font-mono text-[11px] text-[#60685c] mt-1">
-                        Supports .csv and .json data payloads
+                        Supports .csv and .json structured payloads
                       </p>
                     </div>
                   </div>
@@ -579,57 +828,162 @@ function LivePlaygroundContent() {
 
             {/* Bottom Encodings & Profiling Summary */}
             <div className="border-t border-[#18241b]/10 p-4 bg-[#f9fbf8] space-y-3">
-              <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase block">
-                Detected Field Encodings
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] font-bold text-[#c2872e] uppercase">
+                  Detected Field Encodings
+                </span>
+                <span className="font-mono text-[10px] text-[#60685c]">
+                  {availableFields.length} field{availableFields.length !== 1 ? 's' : ''} available
+                </span>
+              </div>
+
               <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+                {/* X Axis Field Select with Type Preview (§2) */}
                 <div>
-                  <label className="text-[10px] text-[#60685c] block mb-1">X AXIS FIELD</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[10px] text-[#60685c]">X AXIS FIELD</label>
+                    {xField && fieldTypeMap[xField] && (
+                      <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold uppercase ${
+                        fieldTypeMap[xField] === 'temporal'
+                          ? 'bg-amber-100 text-amber-800'
+                          : fieldTypeMap[xField] === 'quantitative'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}>
+                        {fieldTypeMap[xField]}
+                      </span>
+                    )}
+                  </div>
                   <select
                     value={xField}
                     onChange={(e) => setXField(e.target.value)}
-                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
+                    disabled={availableFields.length === 0}
+                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e] transition-all shadow-xs disabled:opacity-50"
                   >
-                    {availableFields.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
+                    {availableFields.length === 0 ? (
+                      <option value="">(No fields detected)</option>
+                    ) : (
+                      availableFields.map((f) => (
+                        <option key={f} value={f}>
+                          {f} ({fieldTypeMap[f] || 'categorical'})
+                        </option>
+                      ))
+                    )}
                   </select>
                 </div>
 
+                {/* Y Axis Field Select with Type Preview (§2) */}
                 <div>
-                  <label className="text-[10px] text-[#60685c] block mb-1">Y AXIS FIELD</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[10px] text-[#60685c]">Y AXIS FIELD</label>
+                    {yField && fieldTypeMap[yField] && (
+                      <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold uppercase ${
+                        fieldTypeMap[yField] === 'temporal'
+                          ? 'bg-amber-100 text-amber-800'
+                          : fieldTypeMap[yField] === 'quantitative'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}>
+                        {fieldTypeMap[yField]}
+                      </span>
+                    )}
+                  </div>
                   <select
                     value={yField}
                     onChange={(e) => setYField(e.target.value)}
-                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
+                    disabled={availableFields.length === 0}
+                    className="w-full bg-white border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e] transition-all shadow-xs disabled:opacity-50"
                   >
-                    {availableFields.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
+                    {availableFields.length === 0 ? (
+                      <option value="">(No fields detected)</option>
+                    ) : (
+                      availableFields.map((f) => (
+                        <option key={f} value={f}>
+                          {f} ({fieldTypeMap[f] || 'quantitative'})
+                        </option>
+                      ))
+                    )}
                   </select>
                 </div>
+              </div>
+
+              {/* Progressive Disclosure of Advanced Options (§8) */}
+              <div className="pt-2 border-t border-[#18241b]/10">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  className="flex items-center justify-between w-full text-left font-mono text-xs font-semibold text-[#18241b] hover:text-[#c2872e] py-1 transition-colors focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none rounded"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-[#c2872e]">{showAdvanced ? '▼' : '▶'}</span>
+                    <span>Advanced Encoding Options</span>
+                  </span>
+                  <span className="text-[10px] text-[#60685c] uppercase">
+                    {showAdvanced ? 'Hide' : 'Expand'}
+                  </span>
+                </button>
+
+                {showAdvanced && (
+                  <div className="mt-2.5 pt-2.5 border-t border-dashed border-[#18241b]/10 space-y-3 font-mono text-xs animate-in fade-in duration-150">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] text-[#60685c] block mb-1">ORIENTATION</label>
+                        <select
+                          value={orientation}
+                          onChange={(e) => setOrientation(e.target.value as 'vertical' | 'horizontal')}
+                          className="w-full bg-white border border-[#18241b]/15 rounded-lg p-1.5 text-xs text-[#18241b] outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e]"
+                        >
+                          <option value="vertical">Vertical</option>
+                          <option value="horizontal">Horizontal</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-[#60685c] block mb-1">HISTOGRAM BINS</label>
+                        <select
+                          value={histogramBins}
+                          onChange={(e) => setHistogramBins(Number(e.target.value))}
+                          className="w-full bg-white border border-[#18241b]/15 rounded-lg p-1.5 text-xs text-[#18241b] outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e]"
+                        >
+                          <option value={5}>5 Bins (Coarse)</option>
+                          <option value={10}>10 Bins (Standard)</option>
+                          <option value={20}>20 Bins (Granular)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 text-[11px] text-[#60685c]">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={zeroBaseline}
+                          onChange={(e) => setZeroBaseline(e.target.checked)}
+                          className="rounded border-[#18241b]/20 text-[#c2872e] focus-visible:ring-2 focus-visible:ring-[#c2872e]"
+                        />
+                        <span>Zero Baseline (Y-min at 0)</span>
+                      </label>
+                      <span className="text-[10px] opacity-75">Auto-scale applied</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
           {/* ========================================================= */}
-          {/* Right Pane (60%): Live Chart Preview & Compass Dial */}
+          {/* Right Pane (60%): Live Chart Preview & Comparison (§5) */}
           {/* ========================================================= */}
           <div className="lg:col-span-7 space-y-5">
             
             {/* Standardized Chart Viewport Card with Preview / Code */}
             <ChartPreviewBlock
-              title={chartTitle}
+              title={isCompareMode ? `${chartTitle} (Primary)` : chartTitle}
               codeSnippet={reactSnippet}
               dataCount={dataset.length}
               dark={themeMode === 'dark'}
               spec={currentSpec}
             >
-              {/* Canvas Controls Sub-header */}
+              {/* Canvas Controls Sub-header (§5 Compare Mode & §7 Theme Toggle) */}
               <div className="flex flex-wrap items-center justify-between border-b border-[#18241b]/10 dark:border-[#2d3a30] pb-2.5 mb-2.5 gap-2">
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs text-[#60685c]">
@@ -637,19 +991,47 @@ function LivePlaygroundContent() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {/* Theme Mode Toggle */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Compare Mode Toggle (§5) */}
+                  <button
+                    onClick={() => setIsCompareMode(!isCompareMode)}
+                    className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all shadow-xs flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
+                      isCompareMode
+                        ? 'bg-[#c2872e] text-[#18241b] border-[#c2872e] font-bold shadow-sm'
+                        : 'bg-white text-[#60685c] border-[#18241b]/15 dark:bg-[#0f1611] dark:border-[#2d3a30] hover:text-[#18241b] dark:hover:text-white'
+                    }`}
+                    title="Compare two chart types side-by-side with synchronized data"
+                  >
+                    <span>{isCompareMode ? '◫ Comparing' : '◫ Compare Mode'}</span>
+                  </button>
+
+                  {/* Theme Mode Toggle with Distinct Visual Feedback (§7) */}
                   <button
                     onClick={() => setThemeMode(themeMode === 'light' ? 'dark' : 'light')}
-                    className="px-2.5 py-1 text-xs font-mono rounded-lg border border-[#18241b]/15 dark:border-[#2d3a30] bg-white dark:bg-[#0f1611] text-[#18241b] dark:text-[#f1f5ee] hover:bg-[#18241b] hover:text-white transition-all shadow-xs"
+                    className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all shadow-xs flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
+                      themeMode === 'dark'
+                        ? 'bg-[#0f1611] text-[#f1f5ee] border-[#3a4d3f] ring-1 ring-[#c2872e]/30 shadow-inner'
+                        : 'bg-white text-[#18241b] border-[#18241b]/20 shadow-xs hover:bg-[#f4f7f3]'
+                    }`}
+                    title="Toggle light/dark visualization canvas theme"
                   >
-                    {themeMode === 'light' ? '☀️ Light' : '🌙 Dark'}
+                    {themeMode === 'light' ? (
+                      <>
+                        <span>☀️</span>
+                        <span className="font-semibold">Light</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>🌙</span>
+                        <span className="font-semibold text-[#c2872e]">Dark</span>
+                      </>
+                    )}
                   </button>
 
                   {/* Grid Toggle */}
                   <button
                     onClick={() => setShowGrid(!showGrid)}
-                    className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all shadow-xs ${
+                    className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all shadow-xs focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                       showGrid
                         ? 'bg-[#18241b] text-white border-[#18241b] dark:bg-white dark:text-[#18241b] shadow-sm'
                         : 'bg-white text-[#60685c] border-[#18241b]/15 dark:bg-[#0f1611]'
@@ -663,7 +1045,7 @@ function LivePlaygroundContent() {
                     <select
                       value={selectedType}
                       onChange={(e) => handleSelectChartType(e.target.value as ChartType)}
-                      className="bg-white dark:bg-[#0f1611] border border-[#18241b]/20 dark:border-[#2d3a30] rounded-lg px-2.5 py-1 font-mono text-xs text-[#18241b] dark:text-[#f1f5ee] outline-none shadow-xs"
+                      className="bg-white dark:bg-[#0f1611] border border-[#18241b]/20 dark:border-[#2d3a30] rounded-lg px-2.5 py-1 font-mono text-xs text-[#18241b] dark:text-[#f1f5ee] outline-none shadow-xs focus-visible:ring-2 focus-visible:ring-[#c2872e]"
                     >
                       <option value="line">line</option>
                       <option value="bar">bar</option>
@@ -680,27 +1062,122 @@ function LivePlaygroundContent() {
                 </div>
               </div>
 
+              {/* Viewports: Single View vs Compare Mode (§5) */}
               <div
                 id="playground-svg-viewport"
-                className={`h-72 p-4 flex items-center justify-center transition-colors ${
+                className={`p-4 transition-colors rounded-lg ${
                   themeMode === 'dark' ? 'bg-[#0f1611]' : 'bg-[#f7faf5]'
                 }`}
               >
-                {mode === 'auto' ? (
-                  <AutoChart
-                    data={dataset}
-                    title={chartTitle}
-                  />
+                {dataset.length === 0 ? (
+                  <div className="h-72 flex flex-col items-center justify-center p-6 text-center space-y-3">
+                    <div className="w-14 h-14 rounded-full bg-[#18241b]/5 flex items-center justify-center text-[#c2872e] ring-8 ring-[#18241b]/5">
+                      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <circle cx="12" cy="12" r="9" strokeWidth={1.5} />
+                        <polygon points="12,6 14.5,12 12,10.5 9.5,12" fill="#c2872e" stroke="none" />
+                        <polygon points="12,18 14.5,12 12,13.5 9.5,12" fill="#60685c" stroke="none" />
+                        <circle cx="12" cy="12" r="1.5" fill="#18241b" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-mono text-xs font-bold text-[#18241b] dark:text-[#f1f5ee]">
+                        Awaiting Coordinates
+                      </h4>
+                      <p className="font-mono text-[11px] text-[#60685c] max-w-xs mt-1">
+                        No dataset active. Select a benchmark sample or paste data on the left panel to chart.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleSelectSample(BUNDLED_DATASETS[0])}
+                      className="px-3 py-1.5 rounded-lg bg-[#c2872e] text-[#18241b] font-mono text-xs font-bold hover:bg-[#d99a38] transition-all shadow-xs focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
+                    >
+                      Load SaaS Revenue Sample
+                    </button>
+                  </div>
+                ) : isCompareMode ? (
+                  /* Side-by-Side Comparison Mode (§5) */
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Primary Chart Viewport */}
+                    <div className="border border-[#18241b]/10 dark:border-[#2d3a30] rounded-xl p-3 bg-white dark:bg-[#141d16] flex flex-col justify-between shadow-xs">
+                      <div className="flex items-center justify-between pb-2 border-b border-[#18241b]/10 dark:border-[#2d3a30] font-mono text-xs">
+                        <span className="font-bold text-[#18241b] dark:text-[#f1f5ee] uppercase">
+                          Chart A: {activeType}
+                        </span>
+                        <span className="text-[10px] text-[#c2872e] font-bold">PRIMARY</span>
+                      </div>
+                      <div className="h-64 flex items-center justify-center pt-2">
+                        {mode === 'auto' ? (
+                          <AutoChart data={dataset} title={`${chartTitle} (A)`} />
+                        ) : (
+                          <Chart
+                            type={activeType}
+                            data={dataset}
+                            x={xField}
+                            y={yField}
+                            title={`${chartTitle} (A)`}
+                            showGrid={showGrid}
+                            theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
+                          />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Comparison Chart Viewport */}
+                    <div className="border border-[#18241b]/10 dark:border-[#2d3a30] rounded-xl p-3 bg-white dark:bg-[#141d16] flex flex-col justify-between shadow-xs">
+                      <div className="flex items-center justify-between pb-2 border-b border-[#18241b]/10 dark:border-[#2d3a30] font-mono text-xs">
+                        <span className="font-bold text-[#18241b] dark:text-[#f1f5ee] uppercase">
+                          Chart B:
+                        </span>
+                        <select
+                          value={compareType}
+                          onChange={(e) => setCompareType(e.target.value as ChartType)}
+                          className="bg-[#f4f7f3] dark:bg-[#0f1611] border border-[#18241b]/15 dark:border-[#2d3a30] rounded px-2 py-0.5 font-mono text-xs text-[#18241b] dark:text-[#f1f5ee] outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e]"
+                        >
+                          <option value="line">line</option>
+                          <option value="bar">bar</option>
+                          <option value="area">area</option>
+                          <option value="donut">donut</option>
+                          <option value="pie">pie</option>
+                          <option value="candlestick">candlestick</option>
+                          <option value="funnel">funnel</option>
+                          <option value="scatter">scatter</option>
+                          <option value="histogram">histogram</option>
+                          <option value="kpi-sparkline">kpi-sparkline</option>
+                        </select>
+                      </div>
+                      <div className="h-64 flex items-center justify-center pt-2">
+                        <Chart
+                          type={compareType}
+                          data={dataset}
+                          x={xField}
+                          y={yField}
+                          title={`${chartTitle} (B)`}
+                          showGrid={showGrid}
+                          theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 ) : (
-                  <Chart
-                    type={activeType}
-                    data={dataset}
-                    x={xField}
-                    y={yField}
-                    title={chartTitle}
-                    showGrid={showGrid}
-                    theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
-                  />
+                  /* Standard Single Viewport */
+                  <div className="h-72 flex items-center justify-center">
+                    {mode === 'auto' ? (
+                      <AutoChart
+                        data={dataset}
+                        title={chartTitle}
+                      />
+                    ) : (
+                      <Chart
+                        type={activeType}
+                        data={dataset}
+                        x={xField}
+                        y={yField}
+                        title={chartTitle}
+                        showGrid={showGrid}
+                        theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
+                      />
+                    )}
+                  </div>
                 )}
               </div>
             </ChartPreviewBlock>
@@ -738,7 +1215,7 @@ function LivePlaygroundContent() {
                     type="text"
                     value={chartTitle}
                     onChange={(e) => setChartTitle(e.target.value)}
-                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus:ring-2 focus:ring-[#c2872e]/40 transition-all shadow-xs"
+                    className="w-full bg-[#f4f7f3] border border-[#18241b]/15 rounded-lg p-2 text-xs text-[#18241b] outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e] transition-all shadow-xs"
                   />
                 </div>
               </div>
@@ -752,10 +1229,10 @@ function LivePlaygroundContent() {
         <div className="bg-[#0f1611] border border-[#18241b]/30 rounded-xl overflow-hidden text-[#a4c995] shadow-lg">
           {/* Tab Header & Action Bar */}
           <div className="flex flex-wrap items-center justify-between border-b border-[#2d3a30] bg-[#141d16] px-4 pt-2.5">
-            <div className="flex gap-1 font-mono text-xs">
+            <div className="flex gap-1 font-mono text-xs overflow-x-auto">
               <button
                 onClick={() => setActiveBottomTab('jsx')}
-                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 ${
+                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                   activeBottomTab === 'jsx'
                     ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
@@ -765,7 +1242,7 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setActiveBottomTab('spec')}
-                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 ${
+                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                   activeBottomTab === 'spec'
                     ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
@@ -775,7 +1252,7 @@ function LivePlaygroundContent() {
               </button>
               <button
                 onClick={() => setActiveBottomTab('profile')}
-                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 ${
+                className={`px-3.5 py-2 font-mono text-xs font-bold transition-all duration-150 border-b-2 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none ${
                   activeBottomTab === 'profile'
                     ? 'border-[#c2872e] text-[#c2872e]'
                     : 'text-[#9ba196] hover:text-white border-transparent'
@@ -789,7 +1266,7 @@ function LivePlaygroundContent() {
             <div className="flex items-center gap-2 py-2">
               <button
                 onClick={handleExportSvg}
-                className="px-3 py-1.5 rounded-lg bg-[#1f2c22] hover:bg-[#2e4032] text-white font-mono text-xs transition-all duration-150 border border-[#2d3a30] shadow-xs"
+                className="px-3 py-1.5 rounded-lg bg-[#1f2c22] hover:bg-[#2e4032] text-white font-mono text-xs transition-all duration-150 border border-[#2d3a30] shadow-xs focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
               >
                 Export SVG
               </button>
@@ -799,7 +1276,7 @@ function LivePlaygroundContent() {
                   navigator.clipboard.writeText(reactSnippet);
                   alert('Copied React code snippet!');
                 }}
-                className="px-3 py-1.5 rounded-lg bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold transition-all duration-150 shadow-xs hover:-translate-y-0.5"
+                className="px-3 py-1.5 rounded-lg bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold transition-all duration-150 shadow-xs hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
               >
                 Copy JSX
               </button>
@@ -833,6 +1310,32 @@ function LivePlaygroundContent() {
 
             {activeBottomTab === 'spec' && (
               <div className="space-y-3 font-mono">
+                {/* Data Type Badges in Spec View (§10) */}
+                <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-[#141d16] border border-[#2d3a30] text-xs">
+                  <span className="text-[#9ba196] text-[11px]">Active Fields & Data Types:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {availableFields.map((f) => {
+                      const t = fieldTypeMap[f] || 'categorical';
+                      return (
+                        <span
+                          key={f}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
+                            t === 'quantitative'
+                              ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
+                              : t === 'temporal'
+                              ? 'bg-amber-950/60 text-amber-400 border-amber-800/60'
+                              : 'bg-slate-900/80 text-slate-300 border-slate-700/60'
+                          }`}
+                        >
+                          <span>{t === 'quantitative' ? '🔴' : t === 'temporal' ? '🟢' : '🟡'}</span>
+                          <span>{f}</span>
+                          <span className="opacity-70 font-normal">({t})</span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between text-xs text-[#9ba196]">
                   <span>Edit the JSON below directly — changes immediately sync to the chart:</span>
                   {specJsonError && <span className="text-[#d6502b] font-bold">{specJsonError}</span>}
@@ -841,7 +1344,7 @@ function LivePlaygroundContent() {
                   value={specJsonText}
                   onChange={(e) => handleSpecJsonChange(e.target.value)}
                   rows={9}
-                  className="w-full bg-[#0b100d] text-[#a4c995] font-mono text-xs p-4 rounded-xl border border-[#2d3a30] focus:outline-none focus:ring-2 focus:ring-[#c2872e]/40 resize-none leading-relaxed transition-all"
+                  className="w-full bg-[#0b100d] text-[#a4c995] font-mono text-xs p-4 rounded-xl border border-[#2d3a30] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c2872e] resize-none leading-relaxed transition-all"
                 />
               </div>
             )}
@@ -849,20 +1352,31 @@ function LivePlaygroundContent() {
             {activeBottomTab === 'profile' && (
               <div className="space-y-3 font-mono text-xs">
                 <span className="text-[#c2872e] font-bold uppercase block text-[10px]">
-                  Deterministic Field Profiler Output
+                  Deterministic Field Profiler Output (§10)
                 </span>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {profiledFields.map((p) => (
                     <div
                       key={p.field}
-                      className="p-3.5 bg-[#141d16] border border-[#2d3a30] rounded-xl space-y-1 shadow-xs"
+                      className="p-3.5 bg-[#141d16] border border-[#2d3a30] rounded-xl space-y-1 shadow-xs hover:border-[#c2872e]/50 transition-colors"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-white">{p.field}</span>
-                        <span className="text-[#c2872e] text-[10px] uppercase font-bold">{p.type}</span>
+                        <span className="font-bold text-white flex items-center gap-1.5">
+                          <span>{p.type === 'quantitative' ? '🔴' : p.type === 'temporal' ? '🟢' : '🟡'}</span>
+                          <span>{p.field}</span>
+                        </span>
+                        <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${
+                          p.type === 'quantitative'
+                            ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
+                            : p.type === 'temporal'
+                            ? 'bg-amber-950/60 text-amber-400 border-amber-800/60'
+                            : 'bg-slate-900/80 text-slate-300 border-slate-700/60'
+                        }`}>
+                          {p.type}
+                        </span>
                       </div>
                       <div className="text-[11px] text-[#9ba196]">
-                        Distinct count: <span className="text-white">{p.distinctCount}</span>
+                        Distinct values: <span className="text-white font-semibold">{p.distinctCount}</span>
                       </div>
                     </div>
                   ))}
