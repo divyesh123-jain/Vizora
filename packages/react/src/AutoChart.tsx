@@ -8,6 +8,13 @@ export interface AutoChartProps {
 }
 
 export const AutoChart: React.FC<AutoChartProps> = ({ data, title }) => {
-  const spec = useChartSpec({ data, title });
+  const { spec, validationError } = useChartSpec({ data, title });
+
+  if (validationError) {
+    console.warn(validationError);
+    // Render with a default spec when validation fails
+    return <SVGContainer spec={{ version: '0.1.0', type: 'bar', data, encoding: { x: undefined, y: undefined } }} />;
+  }
+
   return <SVGContainer spec={spec} />;
 };

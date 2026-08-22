@@ -11,6 +11,7 @@ import { CompassDial } from '../../components/CompassDial';
 import { PalettePicker } from '../../components/PalettePicker';
 import { CodeBlock } from '../../components/CodeBlock';
 import { ChartPreviewBlock } from '../../components/ChartPreviewBlock';
+import { TourOverlay } from './TourOverlay';
 
 // ==========================================
 // Bundled Sample Datasets
@@ -378,6 +379,9 @@ function LivePlaygroundContent() {
   return (
     <div className="min-h-screen bg-[#f4f7f3] text-[#18241b] font-sans antialiased">
       <Navbar />
+
+      {/* Onboarding Tour - guides new users through Data → Encoding → Chart Type */}
+      <TourOverlay onComplete={() => {}} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
         {/* Playground Top Title & Header */}

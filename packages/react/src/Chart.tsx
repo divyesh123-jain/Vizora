@@ -3,6 +3,7 @@ import { ChartType } from '@vizora/core';
 import { useChartSpec } from './useChartSpec';
 import { SVGContainer } from './SVGContainer';
 import { ChartContainer, ChartConfig } from './ChartContainer';
+import { ChartErrorFallback } from './ChartErrorFallback';
 
 export interface ChartProps {
   data: Record<string, unknown>[];
@@ -57,7 +58,7 @@ export const Chart: React.FC<ChartProps> = ({
   config,
   style,
 }) => {
-  const spec = useChartSpec({
+  const { spec, validationError } = useChartSpec({
     data,
     type,
     x,
@@ -79,6 +80,10 @@ export const Chart: React.FC<ChartProps> = ({
     width,
     height,
   });
+
+  if (validationError) {
+    return <ChartErrorFallback message={validationError} className={className} />;
+  }
 
   if (config || containerClassName) {
     return (

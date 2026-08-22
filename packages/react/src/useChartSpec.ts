@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
-import { ChartSpec, ChartType } from '@vizora/core';
-import { recommendChartSpec } from '@vizora/intelligence';
+import { useMemo } from "react";
+import { ChartSpec, ChartType } from "@vizora/core";
+import { recommendChartSpec } from "@vizora/intelligence";
+import { validateChartSpec } from "@vizora/core";
+import { ChartSpecValidationError } from "@vizora/core";
 
 export interface UseChartSpecOptions {
   data: Record<string, unknown>[];
@@ -13,16 +15,21 @@ export interface UseChartSpecOptions {
   high?: string;
   low?: string;
   close?: string;
-  orientation?: 'vertical' | 'horizontal';
+  orientation?: "vertical" | "horizontal";
   title?: string;
   bins?: number;
-  mode?: 'grouped' | 'stacked';
+  mode?: "grouped" | "stacked";
   area?: boolean;
   curve?: boolean;
   showGrid?: boolean;
   theme?: string;
   width?: number;
   height?: number;
+}
+
+export interface UseChartSpecReturn {
+  spec: ChartSpec;
+  validationError?: string;
 }
 
 export function useChartSpec({
@@ -46,8 +53,8 @@ export function useChartSpec({
   theme,
   width,
   height,
-}: UseChartSpecOptions): ChartSpec {
-  return useMemo(() => {
+}: UseChartSpecOptions): UseChartSpecReturn {
+  const spec = useMemo<ChartSpec>(() => {
     if (!type && !x && !y && !open && !close) {
       const recommended = recommendChartSpec(data);
       if (title) recommended.title = title;
@@ -70,8 +77,8 @@ export function useChartSpec({
     }
 
     return {
-      version: '0.1.0',
-      type: type || 'bar',
+      version: "0.1.0" as const,
+      type: type || "bar",
       title,
       data,
       encoding: {
@@ -91,11 +98,27 @@ export function useChartSpec({
       },
       config: {
         showGrid: showGrid ?? true,
-        theme: theme || 'light',
+        theme: theme || "light",
         ...(width ? { width } : {}),
         ...(height ? { height } : {}),
       },
     };
   }, [data, type, x, y, color, series, open, high, low, close, orientation, title, bins, mode, area, curve, showGrid, theme, width, height]);
+
+  // Validate the generated spec and capture any validation errors
+  const validationError = useMemo(() => {
+    try {
+      validateChartSpec(spec);
+      return undefined;
+    } catch (err: unknown) {
+      if (err instanceof ChartSpecValidationError) {
+        const issues = err.issues.join("\n - ");
+        return `ChartSpec validation failed:\n - ${issues}`;
+      }
+      return "ChartSpec validation failed: " + (err instanceof Error ? err.message : "Unknown error");
+    }
+  }, [spec]);
+
+  return { spec, validationError };
 }
 
