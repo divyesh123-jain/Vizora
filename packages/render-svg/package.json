@@ -1,6 +1,6 @@
 {
   "name": "@vizora/render-svg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vizora SVG renderer — converts a ChartSpec scene graph to an SVG string",
   "license": "MIT",
   "author": "Vizora Contributors",
@@ -35,7 +35,7 @@
     "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
-    "@vizora/core": "^0.1.0"
+    "@vizora/core": "^0.1.1"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

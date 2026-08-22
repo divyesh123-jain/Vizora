@@ -197,12 +197,62 @@ describe('Headless SceneGraph Resolution', () => {
     expect(slicesDonut?.length).toBe(2);
     
     // Check Pie
-    const pieSpec = { ...spec, type: 'pie' };
+    const pieSpec = { ...spec, type: 'pie' as const };
     const scenePie = buildSceneGraph(pieSpec);
     expect(scenePie).toBeDefined();
     const mainGroupPie = scenePie.children.find(c => c.id === 'chart-main-group');
     const slicesPie = mainGroupPie?.children?.filter(c => c.id.startsWith('slice-'));
     expect(slicesPie?.length).toBe(2);
+  });
+
+  it('handles candlestick with case-insensitive fallback fields and doji bars', () => {
+    const spec = {
+      version: '0.1.0' as const,
+      type: 'candlestick' as const,
+      data: [
+        { date: '2026-01-01', Open: 100, High: 105, Low: 95, Close: 100 }, // Doji (open === close)
+        { date: '2026-01-02', Open: 100, High: 120, Low: 90, Close: 115 },  // Bullish
+      ],
+      encoding: {
+        x: { field: 'date' },
+      },
+    };
+
+    const scene = buildSceneGraph(spec);
+    expect(scene).toBeDefined();
+    const mainGroup = scene.children.find(c => c.id === 'chart-main-group');
+    expect(mainGroup).toBeDefined();
+    const candles = mainGroup?.children?.filter(c => c.id.startsWith('candle-'));
+    expect(candles?.length).toBe(2);
+    // Ensure doji has non-zero height
+    const dojiCandle = candles?.[0];
+    expect(Number(dojiCandle?.attributes?.height)).toBeGreaterThanOrEqual(1.5);
+  });
+
+  it('handles empty dataset gracefully for all strategies', () => {
+    const emptyDonut = buildSceneGraph({
+      version: '0.1.0' as const,
+      type: 'donut' as const,
+      data: [],
+      encoding: { x: { field: 'x' }, y: { field: 'y' } },
+    });
+    expect(emptyDonut.children.length).toBeGreaterThan(0);
+
+    const emptyCandle = buildSceneGraph({
+      version: '0.1.0' as const,
+      type: 'candlestick' as const,
+      data: [],
+      encoding: { x: { field: 'x' } },
+    });
+    expect(emptyCandle.children.length).toBeGreaterThan(0);
+
+    const emptyFunnel = buildSceneGraph({
+      version: '0.1.0' as const,
+      type: 'funnel' as const,
+      data: [],
+      encoding: { x: { field: 'stage' }, y: { field: 'val' } },
+    });
+    expect(emptyFunnel.children.length).toBeGreaterThan(0);
   });
 });
 

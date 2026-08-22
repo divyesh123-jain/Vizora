@@ -6,9 +6,9 @@ import {
 } from '../types';
 import { formatNumber } from '../../format/number';
 
-const parseNum = (v: unknown): number => {
+const parseNum = (v: unknown, fallback = 0): number => {
   const n = Number(v);
-  return isNaN(n) ? 0 : n;
+  return isNaN(n) ? fallback : n;
 };
 
 export class FunnelChartStrategy implements ChartLayoutStrategy {
@@ -22,25 +22,33 @@ export class FunnelChartStrategy implements ChartLayoutStrategy {
       children: [],
     };
 
-    const count = spec.data.length;
+    const count = spec.data?.length ?? 0;
     if (count === 0) return [chartGroup];
 
     const values = spec.data.map((d) => parseNum(d[yField]));
-    const maxVal = values[0] || 1; // Top stage is 100% width
+    const maxVal = Math.max(...values, 1);
 
-    const stageHeight = (innerHeight - (count - 1) * 8) / count;
+    const gap = Math.min(8, Math.max(3, 40 / count));
+    const stageHeight = Math.max(16, (innerHeight - (count - 1) * gap) / count);
     const centerX = innerWidth / 2;
+    const maxFunnelWidth = innerWidth * 0.92;
+    const minStageWidth = Math.min(60, innerWidth * 0.2);
 
     spec.data.forEach((d, i) => {
       const stageName = String(d[xField] ?? `Stage ${i + 1}`);
       const val = parseNum(d[yField]);
       const prevVal = i > 0 ? parseNum(spec.data[i - 1][yField]) : val;
       const conversionPct = prevVal > 0 ? ((val / prevVal) * 100).toFixed(1) : '100.0';
+      const overallPct = ((val / maxVal) * 100).toFixed(1);
 
-      const topWidth = i === 0 ? innerWidth * 0.9 : (prevVal / maxVal) * (innerWidth * 0.9);
-      const bottomWidth = (val / maxVal) * (innerWidth * 0.9);
+      // Interpolate width with a minimum base so lower stages are always clickable/visible
+      const prevRatio = i === 0 ? 1 : Math.max(0.12, prevVal / maxVal);
+      const currRatio = Math.max(0.12, val / maxVal);
 
-      const topY = i * (stageHeight + 8);
+      const topWidth = Math.max(minStageWidth, prevRatio * maxFunnelWidth);
+      const bottomWidth = Math.max(minStageWidth, currRatio * maxFunnelWidth);
+
+      const topY = i * (stageHeight + gap);
       const bottomY = topY + stageHeight;
 
       const x1 = centerX - topWidth / 2;
@@ -61,12 +69,13 @@ export class FunnelChartStrategy implements ChartLayoutStrategy {
           'stroke-width': 1.5,
           'data-vizora-item': 'true',
           'data-x-val': stageName,
-          'data-y-val': `${formatNumber(val)} (${conversionPct}% retained)`,
+          'data-y-val': `${formatNumber(val)} (${conversionPct}% step, ${overallPct}% total)`,
           'data-index': String(i),
         },
       });
 
       // Stage label text centered inside trapezoid
+      const labelFontSize = Math.min(13, Math.max(10, stageHeight * 0.35));
       chartGroup.children?.push({
         id: `funnel-label-${i}`,
         type: 'text',
@@ -75,8 +84,9 @@ export class FunnelChartStrategy implements ChartLayoutStrategy {
           y: topY + stageHeight / 2 + 4,
           'text-anchor': 'middle',
           fill: '#ffffff',
-          'font-size': 12,
+          'font-size': labelFontSize,
           'font-weight': '600',
+          'font-family': 'system-ui, -apple-system, sans-serif',
         },
         children: [{ id: `funnel-lbl-${i}`, type: 'text', attributes: { text: `${stageName}: ${formatNumber(val)}` } }],
       });

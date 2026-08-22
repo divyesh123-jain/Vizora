@@ -36,7 +36,26 @@ export function scoreChartRecommendations(data: Record<string, unknown>[]): Char
 
   const scores: ChartRecommendationScore[] = [];
 
-  // 1. Line Chart Scoring
+  // 1. Candlestick OHLC Scoring
+  const openKey = fields.find((f) => /^(open|Open|o)$/i.test(f));
+  const closeKey = fields.find((f) => /^(close|Close|c)$/i.test(f));
+  const highKey = fields.find((f) => /^(high|High|h)$/i.test(f));
+  const lowKey = fields.find((f) => /^(low|Low|l)$/i.test(f));
+  const dateKey = temporalFields[0]?.field || fields.find((f) => /^(date|time|timestamp|day)$/i.test(f));
+
+  if (openKey && closeKey && highKey && lowKey && dateKey) {
+    scores.push({
+      type: 'candlestick',
+      score: 98,
+      reason: `Detected complete OHLC price action fields ('${openKey}', '${highKey}', '${lowKey}', '${closeKey}') across '${dateKey}'.`,
+      encoding: {
+        x: dateKey,
+        y: closeKey,
+      },
+    });
+  }
+
+  // 2. Line Chart Scoring
   if (temporalFields.length >= 1 && quantFields.length >= 1) {
     scores.push({
       type: 'line',
@@ -50,7 +69,7 @@ export function scoreChartRecommendations(data: Record<string, unknown>[]): Char
     });
   }
 
-  // 2. Bar / Horizontal Bar Scoring
+  // 3. Bar / Horizontal Bar Scoring
   if (catFields.length >= 1 && quantFields.length >= 1) {
     const cat = catFields[0];
     const isHighCardinality = cat.distinctCount > 12;
@@ -67,9 +86,22 @@ export function scoreChartRecommendations(data: Record<string, unknown>[]): Char
         orientation: isHighCardinality ? 'horizontal' : 'vertical',
       },
     });
+
+    // Donut Proportional scoring for low-cardinality discrete categories
+    if (cat.distinctCount >= 2 && cat.distinctCount <= 7) {
+      scores.push({
+        type: 'donut',
+        score: 82,
+        reason: `Low cardinality discrete categories (${cat.distinctCount} items in '${cat.field}') suitable for radial proportional share breakdown.`,
+        encoding: {
+          x: cat.field,
+          y: quantFields[0].field,
+        },
+      });
+    }
   }
 
-  // 3. Scatter Plot Scoring
+  // 4. Scatter Plot Scoring
   if (quantFields.length >= 2) {
     scores.push({
       type: 'scatter',
@@ -82,7 +114,7 @@ export function scoreChartRecommendations(data: Record<string, unknown>[]): Char
     });
   }
 
-  // 4. Histogram Scoring
+  // 5. Histogram Scoring
   if (quantFields.length >= 1) {
     const isSingleQuant = quantFields.length === 1 && catFields.length === 0 && temporalFields.length === 0;
     scores.push({

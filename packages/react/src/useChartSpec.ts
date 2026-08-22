@@ -9,6 +9,10 @@ export interface UseChartSpecOptions {
   y?: string;
   color?: string;
   series?: string;
+  open?: string;
+  high?: string;
+  low?: string;
+  close?: string;
   orientation?: 'vertical' | 'horizontal';
   title?: string;
   bins?: number;
@@ -28,6 +32,10 @@ export function useChartSpec({
   y,
   color,
   series,
+  open,
+  high,
+  low,
+  close,
   orientation,
   title,
   bins,
@@ -40,7 +48,7 @@ export function useChartSpec({
   height,
 }: UseChartSpecOptions): ChartSpec {
   return useMemo(() => {
-    if (!type && !x && !y) {
+    if (!type && !x && !y && !open && !close) {
       const recommended = recommendChartSpec(data);
       if (title) recommended.title = title;
       if (orientation) recommended.encoding.orientation = orientation;
@@ -71,6 +79,10 @@ export function useChartSpec({
         y: y ? { field: y } : undefined,
         color: color ? { field: color } : undefined,
         series: series ? { field: series } : undefined,
+        open: open ? { field: open } : undefined,
+        high: high ? { field: high } : undefined,
+        low: low ? { field: low } : undefined,
+        close: close ? { field: close } : undefined,
         orientation,
         bins,
         mode,
@@ -84,6 +96,6 @@ export function useChartSpec({
         ...(height ? { height } : {}),
       },
     };
-  }, [data, type, x, y, color, series, orientation, title, bins, mode, area, curve, showGrid, theme, width, height]);
+  }, [data, type, x, y, color, series, open, high, low, close, orientation, title, bins, mode, area, curve, showGrid, theme, width, height]);
 }
 

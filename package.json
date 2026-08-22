@@ -1,6 +1,6 @@
 {
   "name": "vizora-monorepo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -11,7 +11,8 @@
     "build": "npm run build --workspaces",
     "test": "vitest run",
     "test:workspaces": "vitest run",
-    "lint": "eslint packages/*/src apps/web/src"
+    "lint": "eslint packages/*/src apps/web/src",
+    "size": "node scripts/measure-size.mjs"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
