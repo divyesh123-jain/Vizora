@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '../../components/Navbar';
 import { Chart } from '@vizora/react';
-import { ChartType, ChartSpec } from '@vizora/core';
+import { ChartType } from '@vizora/core';
 import { profileField } from '@vizora/intelligence';
 import { StepperProgress, StepItem } from '../../components/StepperProgress';
 import { CompassDial } from '../../components/CompassDial';
@@ -790,7 +789,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                   orientation={orientation}
                   title={chartTitle}
                   showGrid={showGrid}
-                  theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
+                  theme={themeMode === 'dark' ? 'zinc' : palette}
                 />
               </div>
             </ChartPreviewBlock>

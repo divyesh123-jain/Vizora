@@ -157,7 +157,6 @@ function LivePlaygroundContent() {
   const [selectedSampleId, setSelectedSampleId] = useState<string>('revenue-by-month');
   const [rawText, setRawText] = useState<string>('');
   const [rawFormat, setRawFormat] = useState<'json' | 'csv'>('json');
-  const [dataError, setDataError] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
   const [validationState, setValidationState] = useState<DataValidationState>({
     status: 'idle',
@@ -239,7 +238,6 @@ function LivePlaygroundContent() {
     if (sample.x) setXField(sample.x);
     if (sample.y) setYField(sample.y);
     setRawText(JSON.stringify(sample.data, null, 2));
-    setDataError(null);
     setValidationState({
       status: 'valid',
       message: `Loaded "${sample.name}" — ${sample.data.length} rows, ${Object.keys(sample.data[0] || {}).length} fields detected`,
@@ -276,7 +274,6 @@ function LivePlaygroundContent() {
   // When raw text changes with real-time validation
   const handleRawTextChange = (text: string, format: 'json' | 'csv') => {
     setRawText(text);
-    setDataError(null);
 
     if (!text.trim()) {
       setDataset([]);
@@ -292,7 +289,6 @@ function LivePlaygroundContent() {
         const parsed = JSON.parse(text);
         if (!Array.isArray(parsed)) {
           const err = 'JSON root must be an array of objects (e.g. [{"a": 1}])';
-          setDataError(err);
           setValidationState({ status: 'invalid', message: err });
           return;
         }
@@ -303,7 +299,6 @@ function LivePlaygroundContent() {
         }
         if (typeof parsed[0] !== 'object' || parsed[0] === null) {
           const err = 'Array elements must be JSON key-value objects';
-          setDataError(err);
           setValidationState({ status: 'invalid', message: err });
           return;
         }
@@ -323,7 +318,6 @@ function LivePlaygroundContent() {
         const parsed = parseCsv(text);
         if (parsed.length === 0) {
           const err = 'CSV parsing failed. Ensure a valid header row and at least 1 data row.';
-          setDataError(err);
           setValidationState({ status: 'invalid', message: err });
           return;
         }
@@ -341,7 +335,6 @@ function LivePlaygroundContent() {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Invalid data format';
-      setDataError(msg);
       setValidationState({
         status: 'invalid',
         message: `Parse Error: ${msg}`,
@@ -614,7 +607,6 @@ function LivePlaygroundContent() {
                     onClick={() => {
                       setDataset([]);
                       setRawText('');
-                      setDataError(null);
                       setValidationState({ status: 'idle', message: 'Dataset cleared' });
                     }}
                     className="text-[#d6502b] hover:underline focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none rounded"
@@ -1116,7 +1108,7 @@ function LivePlaygroundContent() {
                             y={yField}
                             title={`${chartTitle} (A)`}
                             showGrid={showGrid}
-                            theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
+                            theme={themeMode === 'dark' ? 'zinc' : palette}
                           />
                         )}
                       </div>
@@ -1153,7 +1145,7 @@ function LivePlaygroundContent() {
                           y={yField}
                           title={`${chartTitle} (B)`}
                           showGrid={showGrid}
-                          theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
+                          theme={themeMode === 'dark' ? 'zinc' : palette}
                         />
                       </div>
                     </div>
@@ -1174,7 +1166,7 @@ function LivePlaygroundContent() {
                         y={yField}
                         title={chartTitle}
                         showGrid={showGrid}
-                        theme={themeMode === 'dark' ? 'zinc' : (palette as any)}
+                        theme={themeMode === 'dark' ? 'zinc' : palette}
                       />
                     )}
                   </div>

@@ -6,8 +6,6 @@ import Link from 'next/link';
 import { Navbar } from '../../../components/Navbar';
 import { Chart } from '@vizora/react';
 import { ChartType } from '@vizora/core';
-import { LegendBand } from '../../../components/LegendBand';
-import { CodeBlock } from '../../../components/CodeBlock';
 import { ChartPreviewBlock } from '../../../components/ChartPreviewBlock';
 import {
   PropControlRow,
@@ -733,7 +731,7 @@ export default function DynamicComponentOrCategoryPage() {
   const [xKey, setXKey] = useState(config.xDefault);
   const [yKey, setYKey] = useState(config.yDefault);
   const [chartTitle, setChartTitle] = useState(config.presets[0].name);
-  const [color, setColor] = useState('#c2872e');
+  const color = '#c2872e';
   const [orientation, setOrientation] = useState<'vertical' | 'horizontal'>('vertical');
 
   const currentPreset = config.presets[activePresetIdx] || config.presets[0];

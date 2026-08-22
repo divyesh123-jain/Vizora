@@ -62,7 +62,7 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
       {dimensions &&
         React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            const reactEl = child as React.ReactElement<any>;
+            const reactEl = child as React.ReactElement<Record<string, unknown>>;
             return React.cloneElement(reactEl, {
               width: dimensions.width,
               height: dimensions.height,

@@ -147,7 +147,6 @@ export const SVGContainer: React.FC<SVGContainerProps> = ({
   const renderTooltip = (state: HoverState) => {
     if (!containerRef.current) return null;
     const cWidth = containerRef.current.clientWidth;
-    const cHeight = containerRef.current.clientHeight;
 
     const isBar = state.chartType === 'bar' || state.chartType === 'histogram';
     const isHorizontalBar = isBar && state.orientation === 'horizontal';
