@@ -49,13 +49,14 @@ interface WaypointDef {
 
 const RAW_WAYPOINTS: { type: ChartType; label: string; angle: number }[] = [
   { type: 'bar', label: 'BAR', angle: 0 },
-  { type: 'kpi-sparkline', label: 'KPI', angle: 45 },
-  { type: 'line', label: 'LINE', angle: 90 },
-  { type: 'area', label: 'AREA', angle: 135 },
-  { type: 'histogram', label: 'HIST', angle: 180 },
-  { type: 'donut', label: 'DONUT', angle: 225 },
-  { type: 'scatter', label: 'SCAT', angle: 270 },
-  { type: 'candlestick', label: 'OHLC', angle: 315 },
+  { type: 'kpi-sparkline', label: 'KPI', angle: 40 },
+  { type: 'line', label: 'LINE', angle: 80 },
+  { type: 'area', label: 'AREA', angle: 120 },
+  { type: 'funnel', label: 'FUNL', angle: 160 },
+  { type: 'histogram', label: 'HIST', angle: 200 },
+  { type: 'donut', label: 'DONUT', angle: 240 },
+  { type: 'scatter', label: 'SCAT', angle: 280 },
+  { type: 'candlestick', label: 'OHLC', angle: 320 },
 ];
 
 // Precompute static waypoint coordinates rounded to 2 decimal places

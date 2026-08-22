@@ -197,6 +197,49 @@ export const TEMPLATES_LIST: DashboardTemplate[] = [
       },
     ],
   },
+  {
+    slug: 'sales-pipeline',
+    title: 'B2B Sales Pipeline & Funnel Conversion',
+    badge: 'TEMPLATE 05 • REVENUE',
+    category: 'Sales Operations',
+    theme: 'emerald',
+    description:
+      'Multi-stage deal conversion funnel paired with regional sales achievement bar comparisons and customer segment proportions.',
+    metrics: [
+      { label: 'Total Pipeline Value', value: '$2,840,000', sparkline: [1.8, 2.1, 2.3, 2.6, 2.84] },
+      { label: 'Win Rate (Deals)', value: '34.2%', sparkline: [28, 30, 31, 33, 34.2] },
+      { label: 'Avg Deal Velocity', value: '28 Days', sparkline: [35, 33, 31, 29, 28] },
+    ],
+    charts: [
+      {
+        title: 'Stage Conversion Funnel',
+        type: 'funnel',
+        x: 'stage',
+        y: 'deals',
+        widthClass: 'lg:col-span-2',
+        data: [
+          { stage: 'Prospects', deals: 420 },
+          { stage: 'Qualified Leads', deals: 260 },
+          { stage: 'Proposal Sent', deals: 140 },
+          { stage: 'Negotiation', deals: 78 },
+          { stage: 'Closed Won', deals: 48 },
+        ],
+      },
+      {
+        title: 'Regional Revenue Quota ($k)',
+        type: 'bar',
+        x: 'region',
+        y: 'closed',
+        widthClass: 'lg:col-span-1',
+        data: [
+          { region: 'North America', closed: 1240 },
+          { region: 'EMEA', closed: 890 },
+          { region: 'APAC', closed: 520 },
+          { region: 'LATAM', closed: 190 },
+        ],
+      },
+    ],
+  },
 ];
 
 // Pure 3-element KPI Card: Numeral, Label, Waypoint Sparkline
@@ -245,7 +288,7 @@ export default function TemplatesGalleryPage() {
               COMPOSED TEMPLATES GALLERY
             </span>
             <span className="font-mono text-xs text-[#60685c]">
-              4 Production Layouts
+              5 Production Layouts
             </span>
           </div>
 

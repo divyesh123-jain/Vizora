@@ -23,10 +23,17 @@ const parseNum = (v: unknown, fallback = 0): number => {
   return isNaN(n) ? fallback : n;
 };
 
+function resolveField(record: Record<string, unknown>, explicitField?: string, fallbacks: string[] = []): string {
+  if (explicitField && record[explicitField] !== undefined) return explicitField;
+  for (const fb of fallbacks) {
+    if (record[fb] !== undefined) return fb;
+  }
+  return explicitField || fallbacks[0] || '';
+}
+
 export class CandlestickChartStrategy implements ChartLayoutStrategy {
   render(ctx: LayoutContext): SceneNode[] {
     const { spec, innerWidth, innerHeight, xField } = ctx;
-    const palette = resolveThemeColors(spec.config?.theme, spec.encoding.color?.field);
     const chartGroup: SceneNode = {
       id: 'chart-main-group',
       type: 'group',
@@ -34,21 +41,29 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
       children: [],
     };
 
+    if (!spec.data || spec.data.length === 0) {
+      return [chartGroup];
+    }
+
     const gridGroup: SceneNode = { id: 'grid-group', type: 'group', attributes: {}, children: [] };
     const axesGroup: SceneNode = { id: 'axes-group', type: 'group', attributes: {}, children: [] };
+
+    const firstRow = spec.data[0] || {};
+    const openField = resolveField(firstRow, spec.encoding.open?.field, ['open', 'Open', 'o']);
+    const closeField = resolveField(firstRow, spec.encoding.close?.field, ['close', 'Close', 'c']);
+    const highField = resolveField(firstRow, spec.encoding.high?.field, ['high', 'High', 'h']);
+    const lowField = resolveField(firstRow, spec.encoding.low?.field, ['low', 'Low', 'l']);
 
     const rawDates = spec.data.map((d) => new Date(String(d[xField] ?? '')));
     const isTemporal = rawDates.every((dt) => !isNaN(dt.getTime()));
 
-    const openField = spec.encoding.open?.field || 'open';
-    const closeField = spec.encoding.close?.field || 'close';
-    const highField = spec.encoding.high?.field || 'high';
-    const lowField = spec.encoding.low?.field || 'low';
-
-    const highs = spec.data.map((d) => parseNum(d[highField] ?? d[openField] ?? d[closeField]));
-    const lows = spec.data.map((d) => parseNum(d[lowField] ?? d[openField] ?? d[closeField]));
-    const minLow = Math.min(...lows) * 0.98 || 0;
-    const maxHigh = Math.max(...highs) * 1.02 || 100;
+    const highs = spec.data.map((d) => parseNum(d[highField] ?? Math.max(parseNum(d[openField]), parseNum(d[closeField]))));
+    const lows = spec.data.map((d) => parseNum(d[lowField] ?? Math.min(parseNum(d[openField]), parseNum(d[closeField]))));
+    const rawMin = Math.min(...lows);
+    const rawMax = Math.max(...highs);
+    const pad = (rawMax - rawMin) * 0.05 || 10;
+    const minLow = rawMin - pad;
+    const maxHigh = rawMax + pad;
 
     const yScale = createScaleLinear([minLow, maxHigh], [innerHeight, 0]);
 
@@ -56,12 +71,12 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
     let candleWidth = 12;
     let xTickLabels: { pos: number; label: string }[] = [];
 
-    if (isTemporal && rawDates.length > 0) {
+    if (isTemporal && rawDates.length > 1) {
       const minTime = rawDates[0];
       const maxTime = rawDates[rawDates.length - 1];
       const xScale = createScaleTime([minTime, maxTime], [0, innerWidth]);
       getXPos = (d) => xScale(new Date(String(d[xField] ?? '')));
-      candleWidth = Math.max(6, Math.min(24, innerWidth / (spec.data.length * 1.8)));
+      candleWidth = Math.max(6, Math.min(28, innerWidth / (spec.data.length * 1.6)));
 
       xTickLabels = spec.data.map((d) => {
         const dt = new Date(String(d[xField] ?? ''));
@@ -69,9 +84,9 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
       });
     } else {
       const categories = spec.data.map((d) => String(d[xField] ?? ''));
-      const xScale = createScaleBand(categories, [0, innerWidth], 0.3);
+      const xScale = createScaleBand(categories, [0, innerWidth], 0.35);
       getXPos = (d) => xScale(String(d[xField] ?? '')) + xScale.bandwidth() / 2;
-      candleWidth = xScale.bandwidth();
+      candleWidth = Math.max(4, xScale.bandwidth());
       xTickLabels = categories.map((cat) => ({
         pos: xScale(cat) + xScale.bandwidth() / 2,
         label: cat,
@@ -90,14 +105,14 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
       axesGroup.children?.push(createTickTextX(`tick-x-${idx}`, t.pos, innerHeight + 18, t.label));
     });
 
-    const COLOR_BULLISH = '#10b981'; // Green
-    const COLOR_BEARISH = '#ef4444'; // Red
+    const COLOR_BULLISH = '#10b981'; // Vibrant Emerald
+    const COLOR_BEARISH = '#ef4444'; // Vibrant Rose/Red
 
     spec.data.forEach((d, i) => {
       const open = parseNum(d[openField] ?? d[closeField]);
-      const high = parseNum(d[highField] ?? Math.max(open, parseNum(d[closeField])));
-      const low = parseNum(d[lowField] ?? Math.min(open, parseNum(d[closeField])));
       const close = parseNum(d[closeField] ?? open);
+      const high = parseNum(d[highField] ?? Math.max(open, close));
+      const low = parseNum(d[lowField] ?? Math.min(open, close));
 
       const isBullish = close >= open;
       const candleColor = isBullish ? COLOR_BULLISH : COLOR_BEARISH;
@@ -109,7 +124,7 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
       const openY = yScale(open);
       const closeY = yScale(close);
       const bodyTopY = Math.min(openY, closeY);
-      const bodyHeight = Math.max(2, Math.abs(closeY - openY));
+      const bodyHeight = Math.max(1.5, Math.abs(closeY - openY));
 
       const xDateStr = isTemporal ? formatDate(new Date(String(d[xField] ?? ''))) : String(d[xField] ?? '');
 

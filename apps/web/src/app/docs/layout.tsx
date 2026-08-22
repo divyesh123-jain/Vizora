@@ -16,26 +16,50 @@ const docsSections: SidebarSection[] = [
     ],
   },
   {
-    title: 'Component Primitives',
+    title: 'Dashboard & Business',
     items: [
-      { label: 'All Components', href: '/components' },
-      { label: 'Line Chart', href: '/components/line' },
-      { label: 'Bar / Ranking Chart', href: '/components/bar' },
-      { label: 'Scatter Plot', href: '/components/scatter' },
-      { label: 'Histogram', href: '/components/histogram' },
+      { label: 'Category Overview', href: '/components/dashboard' },
       { label: 'KPI + Sparkline', href: '/components/kpi-sparkline' },
-      { label: 'Candlestick (OHLC)', href: '/components/candlestick' },
-      { label: 'Donut Chart', href: '/components/donut' },
-      { label: 'Area Chart', href: '/components/area' },
       { label: 'Funnel Chart', href: '/components/funnel' },
+      { label: 'Donut Chart', href: '/components/donut' },
+    ],
+  },
+  {
+    title: 'Trading & Financial',
+    items: [
+      { label: 'Category Overview', href: '/components/trading' },
+      { label: 'Candlestick (OHLC)', href: '/components/candlestick' },
+    ],
+  },
+  {
+    title: 'Statistical',
+    items: [
+      { label: 'Category Overview', href: '/components/statistical' },
+      { label: 'Histogram', href: '/components/histogram' },
+      { label: 'Scatter Plot', href: '/components/scatter' },
+    ],
+  },
+  {
+    title: 'Comparison & Ranking',
+    items: [
+      { label: 'Category Overview', href: '/components/comparison' },
+      { label: 'Bar & Ranking Chart', href: '/components/bar' },
+    ],
+  },
+  {
+    title: 'Composition & Flow',
+    items: [
+      { label: 'Category Overview', href: '/components/composition' },
+      { label: 'Line Chart', href: '/components/line' },
+      { label: 'Area Chart', href: '/components/area' },
     ],
   },
   {
     title: 'Interactive Tools',
     items: [
-      { label: 'Live Playground', href: '/playground' },
-      { label: 'Guided Chart Builder', href: '/builder' },
-      { label: 'Composed Templates', href: '/templates' },
+      { label: 'Live Studio Playground', href: '/playground', badge: 'Studio' },
+      { label: 'Guided Chart Builder', href: '/builder', badge: 'Wizard' },
+      { label: 'Composed Templates', href: '/templates', badge: 'Gallery' },
     ],
   },
 ];

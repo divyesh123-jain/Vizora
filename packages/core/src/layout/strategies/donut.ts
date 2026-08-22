@@ -6,9 +6,9 @@ import {
 } from '../types';
 import { formatNumber } from '../../format/number';
 
-const parseNum = (v: unknown): number => {
+const parseNum = (v: unknown, fallback = 0): number => {
   const n = Number(v);
-  return isNaN(n) ? 0 : n;
+  return isNaN(n) ? fallback : n;
 };
 
 export class DonutChartStrategy implements ChartLayoutStrategy {
@@ -21,6 +21,10 @@ export class DonutChartStrategy implements ChartLayoutStrategy {
       attributes: { transform: `translate(${ctx.margin.left}, ${ctx.margin.top})` },
       children: [],
     };
+
+    if (!spec.data || spec.data.length === 0) {
+      return [chartGroup];
+    }
 
     const isPie = spec.type === 'pie';
     const cx = innerWidth / 2;
@@ -36,7 +40,8 @@ export class DonutChartStrategy implements ChartLayoutStrategy {
     spec.data.forEach((d, i) => {
       const cat = String(d[xField] ?? `Category ${i + 1}`);
       const val = parseNum(d[yField]);
-      const sliceAngle = (val / total) * 2 * Math.PI;
+      // Cap slice angle slightly below 2*PI if single item to avoid SVG arc singularity
+      const sliceAngle = Math.min((val / total) * 2 * Math.PI, 2 * Math.PI - 0.0001);
       const startAngle = currentAngle;
       const endAngle = currentAngle + sliceAngle;
       currentAngle = endAngle;
@@ -59,10 +64,10 @@ export class DonutChartStrategy implements ChartLayoutStrategy {
         const x4 = cx + innerRadius * Math.cos(startAngle);
         const y4 = cy + innerRadius * Math.sin(startAngle);
 
-        pathD = `M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${outerRadius.toFixed(1)} ${outerRadius.toFixed(1)} 0 ${largeArc} 1 ${x2.toFixed(1)} ${y2.toFixed(1)} L ${x3.toFixed(1)} ${y3.toFixed(1)} A ${innerRadius.toFixed(1)} ${innerRadius.toFixed(1)} 0 ${largeArc} 0 ${x4.toFixed(1)} ${y4.toFixed(1)} Z`;
+        pathD = `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${outerRadius.toFixed(2)} ${outerRadius.toFixed(2)} 0 ${largeArc} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L ${x3.toFixed(2)} ${y3.toFixed(2)} A ${innerRadius.toFixed(2)} ${innerRadius.toFixed(2)} 0 ${largeArc} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
       } else {
         // Pie slice
-        pathD = `M ${cx.toFixed(1)} ${cy.toFixed(1)} L ${x1.toFixed(1)} ${y1.toFixed(1)} A ${outerRadius.toFixed(1)} ${outerRadius.toFixed(1)} 0 ${largeArc} 1 ${x2.toFixed(1)} ${y2.toFixed(1)} Z`;
+        pathD = `M ${cx.toFixed(2)} ${cy.toFixed(2)} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${outerRadius.toFixed(2)} ${outerRadius.toFixed(2)} 0 ${largeArc} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
       }
 
       chartGroup.children?.push({
@@ -88,11 +93,12 @@ export class DonutChartStrategy implements ChartLayoutStrategy {
         type: 'text',
         attributes: {
           x: cx,
-          y: cy - 4,
+          y: cy - 2,
           'text-anchor': 'middle',
           fill: palette.contour,
-          'font-size': 18,
+          'font-size': Math.min(20, Math.max(14, innerRadius * 0.45)),
           'font-weight': '700',
+          'font-family': 'system-ui, -apple-system, sans-serif',
         },
         children: [{ id: 'total-val', type: 'text', attributes: { text: formatNumber(total) } }],
       });
@@ -101,11 +107,13 @@ export class DonutChartStrategy implements ChartLayoutStrategy {
         type: 'text',
         attributes: {
           x: cx,
-          y: cy + 16,
+          y: cy + 18,
           'text-anchor': 'middle',
           fill: palette.datum,
-          'font-size': 11,
-          'font-weight': '500',
+          'font-size': 10,
+          'font-weight': '600',
+          'letter-spacing': '0.05em',
+          'font-family': 'system-ui, -apple-system, sans-serif',
         },
         children: [{ id: 'total-lbl', type: 'text', attributes: { text: 'TOTAL' } }],
       });

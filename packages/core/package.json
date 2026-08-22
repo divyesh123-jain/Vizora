@@ -1,6 +1,6 @@
 {
   "name": "@vizora/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vizora core — ChartSpec schema, scales, transforms, and headless scene graph engine",
   "license": "MIT",
   "author": "Vizora Contributors",

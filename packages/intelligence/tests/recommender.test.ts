@@ -36,4 +36,13 @@ describe('AutoChart Heuristic Recommender (FR-10, NFR-7 Benchmark)', () => {
     expect(scores[0].score).toBeGreaterThan(50);
     expect(scores[0].reason).toBeDefined();
   });
+
+  it('recommends Candlestick chart for OHLC dataset', () => {
+    const ohlcData = [
+      { date: '2026-01-01', open: 100, high: 110, low: 95, close: 105 },
+      { date: '2026-01-02', open: 105, high: 115, low: 100, close: 112 },
+    ];
+    const spec = recommendChartSpec(ohlcData);
+    expect(spec.type).toBe('candlestick');
+  });
 });

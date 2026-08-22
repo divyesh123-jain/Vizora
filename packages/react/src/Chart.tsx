@@ -11,6 +11,10 @@ export interface ChartProps {
   y?: string;
   color?: string;
   series?: string;
+  open?: string;
+  high?: string;
+  low?: string;
+  close?: string;
   orientation?: 'vertical' | 'horizontal';
   title?: string;
   bins?: number;
@@ -34,6 +38,10 @@ export const Chart: React.FC<ChartProps> = ({
   y,
   color,
   series,
+  open,
+  high,
+  low,
+  close,
   orientation,
   title,
   bins,
@@ -56,6 +64,10 @@ export const Chart: React.FC<ChartProps> = ({
     y,
     color,
     series,
+    open,
+    high,
+    low,
+    close,
     orientation,
     title,
     bins,
