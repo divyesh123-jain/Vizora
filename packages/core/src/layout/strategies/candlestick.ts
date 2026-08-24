@@ -2,7 +2,6 @@ import {
   ChartLayoutStrategy,
   LayoutContext,
   SceneNode,
-  resolveThemeColors,
 } from '../types';
 import { createScaleBand } from '../../scales/band';
 import { createScaleLinear } from '../../scales/linear';

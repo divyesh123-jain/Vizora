@@ -101,6 +101,7 @@ export function TourOverlay({ onComplete }: { onComplete?: () => void }) {
   };
   const stepData = stepDataMap[step] || STEP_DATA;
   const stepIndex = step === "data" ? 0 : step === "encoding" ? 1 : 2;
+  const progressPercent = Math.round(((stepIndex + 1) / 3) * 100);
 
   return (
     <div
@@ -128,15 +129,16 @@ export function TourOverlay({ onComplete }: { onComplete?: () => void }) {
               <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#c2872e] block">
                 {stepData.badge}
               </span>
-              <span className="font-mono text-xs text-[#9ba196]">
-                WAYPOINT {stepData.stepNumber} OF 03
-              </span>
+              <div className="flex items-center gap-2 font-mono text-xs text-[#9ba196]">
+                <span>WAYPOINT {stepData.stepNumber} OF 03</span>
+                <span className="text-[#c2872e] font-semibold">({progressPercent}% COMPLETE)</span>
+              </div>
             </div>
           </div>
 
           <button
             onClick={skip}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#9ba196] hover:text-white hover:bg-white/10 transition-colors font-mono text-sm"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#9ba196] hover:text-white hover:bg-white/10 transition-colors font-mono text-sm focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
             title="Close Tour (Esc)"
             aria-label="Close Tour"
           >
@@ -144,18 +146,25 @@ export function TourOverlay({ onComplete }: { onComplete?: () => void }) {
           </button>
         </div>
 
-        {/* 3-Step Segment Progress Line */}
-        <div className="grid grid-cols-3 gap-1 px-6 pt-4 bg-[#0f1611]">
-          {[0, 1, 2].map((idx) => (
-            <div
-              key={idx}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx <= stepIndex
-                  ? "bg-[#c2872e] shadow-xs shadow-[#c2872e]/50"
-                  : "bg-[#233126]"
-              }`}
-            />
-          ))}
+        {/* 3-Step Segment Progress Line with Step Labels */}
+        <div className="px-6 pt-4 pb-2 bg-[#0f1611] space-y-1.5">
+          <div className="grid grid-cols-3 gap-1.5">
+            {[0, 1, 2].map((idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx <= stepIndex
+                    ? "bg-[#c2872e] shadow-xs shadow-[#c2872e]/50"
+                    : "bg-[#233126]"
+                }`}
+              />
+            ))}
+          </div>
+          <div className="grid grid-cols-3 text-[10px] font-mono text-[#9ba196]">
+            <span className={stepIndex === 0 ? "text-[#c2872e] font-bold" : ""}>1. Data</span>
+            <span className={`text-center ${stepIndex === 1 ? "text-[#c2872e] font-bold" : ""}`}>2. Encoding</span>
+            <span className={`text-right ${stepIndex === 2 ? "text-[#c2872e] font-bold" : ""}`}>3. Chart Type</span>
+          </div>
         </div>
 
         {/* Body Content Area */}
@@ -192,7 +201,7 @@ export function TourOverlay({ onComplete }: { onComplete?: () => void }) {
               {stepIndex > 0 && (
                 <button
                   onClick={prev}
-                  className="px-4 py-2 rounded-xl border border-[#2d3a30] bg-[#141d16] hover:bg-[#1f2c22] text-[#e0e4dc] font-mono text-xs font-semibold transition-all shadow-xs flex items-center justify-center gap-1.5"
+                  className="px-4 py-2 rounded-xl border border-[#2d3a30] bg-[#141d16] hover:bg-[#1f2c22] text-[#e0e4dc] font-mono text-xs font-semibold transition-all shadow-xs flex items-center justify-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
                 >
                   <span>← Back</span>
                 </button>
@@ -200,7 +209,7 @@ export function TourOverlay({ onComplete }: { onComplete?: () => void }) {
 
               <button
                 onClick={skip}
-                className="px-3.5 py-2 rounded-xl text-[#9ba196] hover:text-white font-mono text-xs transition-colors"
+                className="px-3.5 py-2 rounded-xl text-[#9ba196] hover:text-white font-mono text-xs transition-colors focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
               >
                 Skip Guide
               </button>
@@ -215,7 +224,7 @@ export function TourOverlay({ onComplete }: { onComplete?: () => void }) {
                   next();
                 }
               }}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center gap-2 hover:-translate-y-0.5"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#c2872e] hover:bg-[#d99a38] text-[#18241b] font-mono text-xs font-bold shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center gap-2 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#c2872e] focus-visible:outline-none"
             >
               <span>{stepData.cta}</span>
             </button>
@@ -231,7 +240,7 @@ export function TourOverlay({ onComplete }: { onComplete?: () => void }) {
               onChange={(e) => {
                 if (e.target.checked) complete();
               }}
-              className="rounded border-[#2d3a30] bg-[#0f1611] text-[#c2872e] focus:ring-0 w-3.5 h-3.5 cursor-pointer"
+              className="rounded border-[#2d3a30] bg-[#0f1611] text-[#c2872e] focus:ring-0 w-3.5 h-3.5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#c2872e]"
             />
             <span>Don&apos;t show this guide on startup</span>
           </label>

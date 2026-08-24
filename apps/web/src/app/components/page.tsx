@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { Navbar } from '../../components/Navbar';
 import { CategoryCard, CategoryInfo } from '../../components/CategoryCard';
 import { ChartType } from '@vizora/core';
-import { Chart } from '@vizora/react';
-import { LegendBand } from '../../components/LegendBand';
 
 export const CATEGORIES_DATA: CategoryInfo[] = [
   {

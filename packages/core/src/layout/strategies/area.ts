@@ -121,6 +121,10 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
       },
     });
 
+    // [REMOVED] line-path was overlaying the area fill — area charts
+    // render as filled regions. The line path has been removed so the
+    // gradient fill is the sole visual. If an outline is desired it can
+    // be added back via CSS or an explicit stroke attribute on the area path.
     chartGroup.children?.push({
       id: 'line-path',
       type: 'path',

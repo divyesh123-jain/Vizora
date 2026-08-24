@@ -16,6 +16,40 @@ export default function Home() {
       {/* 2. Hero Section */}
       <HeroSection />
 
+      {/* Subtle In-Page Quick Navigation Bar */}
+      <div className="sticky top-16 z-30 bg-white/90 backdrop-blur-md border-b border-[#18241b]/10 py-2.5 px-4 hidden md:block">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs font-sans">
+          <div className="flex items-center gap-2 text-[#60685c]">
+            <span className="w-2 h-2 rounded-full bg-[#c2872e]" />
+            <span className="font-bold uppercase tracking-wider text-[11px] text-[#18241b]">Page Navigation:</span>
+          </div>
+          <div className="flex items-center gap-6 font-medium text-[#404641]">
+            <a href="#features" className="hover:text-[#c2872e] transition-colors">
+              01 Problem & Solution
+            </a>
+            <a href="#showcase" className="hover:text-[#c2872e] transition-colors">
+              02 Code & API
+            </a>
+            <a href="#chart-types" className="hover:text-[#c2872e] transition-colors">
+              03 MVP Primitives
+            </a>
+            <a href="#pillars" className="hover:text-[#c2872e] transition-colors">
+              04 Three Pillars
+            </a>
+            <a href="#packages" className="hover:text-[#c2872e] transition-colors">
+              05 Packages (<span className="font-mono text-[10px] text-[#c2872e]">&lt;15kb</span>)
+            </a>
+          </div>
+          <a
+            href="#features"
+            className="flex items-center gap-1 text-[11px] font-bold text-[#c2872e] hover:underline"
+          >
+            <span>Scroll Guide</span>
+            <span>↓</span>
+          </a>
+        </div>
+      </div>
+
       {/* 3. Features Section */}
       <FeaturesSection />
 
@@ -234,7 +268,7 @@ export default function Home() {
       </section>
 
       {/* 6. Three Pillars Callout Section */}
-      <section className="py-16 bg-[#0f1611] text-[#e0e4dc] border-b border-[#2d3a30]">
+      <section id="pillars" className="py-16 bg-[#0f1611] text-[#e0e4dc] border-b border-[#2d3a30]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">
@@ -301,7 +335,7 @@ export default function Home() {
       </section>
 
       {/* 7. Modular Package Architecture Section */}
-      <section className="py-16 lg:py-24 border-b border-[#18241b]/10 bg-white">
+      <section id="packages" className="py-16 lg:py-24 border-b border-[#18241b]/10 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="text-xs font-sans font-bold uppercase tracking-widest text-[#c2872e]">

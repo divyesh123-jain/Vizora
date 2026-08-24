@@ -1,5 +1,5 @@
 import { ChartSpec, ChartType } from '@vizora/core';
-import { profileField, FieldProfile } from './profile';
+import { profileField } from './profile';
 
 export interface ChartRecommendationScore {
   type: ChartType;
