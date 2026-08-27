@@ -11,6 +11,7 @@ import { createScaleTime } from '../../scales/time';
 import { formatNumber } from '../../format/number';
 import { formatDate } from '../../format/date';
 import {
+  createGridLineX,
   createGridLineY,
   createScaleTickX,
   createScaleTickY,
@@ -19,6 +20,8 @@ import {
   createBaseAxes,
   createAxisTitleX,
   createAxisTitleY,
+  createInChartLegend,
+  generateSmoothBezierPath,
 } from '../primitives/axis';
 
 const parseNum = (v: unknown): number => {
@@ -62,7 +65,7 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
         return { pos: xScale(dt), label: formatDate(dt) };
       });
     } else {
-      const categories = spec.data.map((d) => String(d[xField] ?? ''));
+      const categories = Array.from(new Set(spec.data.map((d) => String(d[xField] ?? ''))));
       const xScale = createScaleBand(categories, [0, innerWidth], 0);
       getXPos = (d) => xScale(String(d[xField] ?? '')) + xScale.bandwidth() / 2;
       xTickLabels = categories.map((cat) => ({
@@ -71,14 +74,17 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
       }));
     }
 
+    // 1. Horizontal gridlines (Y)
     yScale.ticks(5).forEach((t, idx) => {
       const y = yScale(t);
       gridGroup.children?.push(createGridLineY(`grid-y-${idx}`, y, innerWidth));
       axesGroup.children?.push(createScaleTickY(`scale-tick-y-${idx}`, y));
-      axesGroup.children?.push(createTickTextY(`tick-y-${idx}`, -8, y + 3, formatNumber(t)));
+      axesGroup.children?.push(createTickTextY(`tick-y-${idx}`, -8, y + 4, formatNumber(t)));
     });
 
+    // 2. Vertical gridlines (X) and Ticks
     xTickLabels.forEach((t, idx) => {
+      gridGroup.children?.push(createGridLineX(`grid-x-${idx}`, t.pos, innerHeight));
       axesGroup.children?.push(createScaleTickX(`scale-tick-x-${idx}`, t.pos, innerHeight));
       axesGroup.children?.push(createTickTextX(`tick-x-${idx}`, t.pos, innerHeight + 18, t.label));
     });
@@ -90,9 +96,7 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
       y: yScale(parseNum(d[yField])),
     }));
 
-    const points = pointsList
-      .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
-      .join(' L ');
+    const smoothPath = generateSmoothBezierPath(pointsList);
 
     const gradId = `vizora-area-grad`;
     chartGroup.children?.push({
@@ -112,7 +116,7 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
       ],
     });
 
-    const areaD = `M ${points} L ${lastX.toFixed(1)},${innerHeight} L ${firstX.toFixed(1)},${innerHeight} Z`;
+    const areaD = `${smoothPath} L ${lastX.toFixed(1)},${innerHeight} L ${firstX.toFixed(1)},${innerHeight} Z`;
     chartGroup.children?.push({
       id: 'area-path',
       type: 'path',
@@ -123,15 +127,11 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
       },
     });
 
-    // [REMOVED] line-path was overlaying the area fill — area charts
-    // render as filled regions. The line path has been removed so the
-    // gradient fill is the sole visual. If an outline is desired it can
-    // be added back via CSS or an explicit stroke attribute on the area path.
     chartGroup.children?.push({
       id: 'line-path',
       type: 'path',
       attributes: {
-        d: `M ${points}`,
+        d: smoothPath,
         fill: 'none',
         stroke: palette.waypoint,
         'stroke-width': 2.5,
@@ -147,15 +147,14 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
       const xVal = isTemporal ? formatDate(new Date(String(d[xField] ?? ''))) : String(d[xField] ?? '');
       chartGroup.children?.push({
         id: `area-dot-${i}`,
-        type: 'rect',
+        type: 'circle',
         attributes: {
-          x: x - 3,
-          y: y - 3,
-          width: 6,
-          height: 6,
-          fill: i === maxValIdx ? palette.waypoint : COLOR_FIELD_BRIGHT(),
-          stroke: palette.contour,
-          'stroke-width': 1,
+          cx: x,
+          cy: y,
+          r: 4,
+          fill: i === maxValIdx ? palette.waypoint : palette.waypoint,
+          stroke: COLOR_FIELD_BRIGHT(),
+          'stroke-width': 2,
           'data-vizora-item': 'true',
           'data-x-val': xVal,
           'data-y-val': String(val),
@@ -163,6 +162,26 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
         },
       });
     });
+
+    if (spec.config?.showLegend !== false) {
+      const legendNode = createInChartLegend(
+        'area-series-legend',
+        [
+          {
+            label: yLabelText(spec, yField),
+            color: palette.waypoint,
+            fill: palette.waypoint,
+          },
+        ],
+        innerWidth,
+        -14,
+        palette.datum,
+        'line-dot'
+      );
+      if (legendNode) {
+        chartGroup.children?.push(legendNode);
+      }
+    }
 
     const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || xField;
     const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || yField;
@@ -183,4 +202,8 @@ export class AreaChartStrategy implements ChartLayoutStrategy {
 
     return [chartGroup];
   }
+}
+
+function yLabelText(spec: LayoutContext['spec'], fallback: string): string {
+  return spec.encoding.y?.label || spec.encoding.y?.field || fallback;
 }

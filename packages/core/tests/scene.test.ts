@@ -323,6 +323,52 @@ describe('Headless SceneGraph Resolution', () => {
     const donutLegend = donutMain?.children?.find((c) => c.id === 'donut-legend');
     expect(donutLegend).toBeDefined();
   });
+
+  it('renders multi-series line chart with dual gridlines, smooth curves, and line-dot legend markers', () => {
+    const multiLineSpec = {
+      version: '0.1.0' as const,
+      type: 'line' as const,
+      data: [
+        { name: 'A', value: 240, series: 'pv' },
+        { name: 'B', value: 456, series: 'pv' },
+        { name: 'A', value: 400, series: 'uv' },
+        { name: 'B', value: 300, series: 'uv' },
+      ],
+      encoding: {
+        x: { field: 'name' },
+        y: { field: 'value' },
+        series: { field: 'series' },
+      },
+    };
+
+    const scene = buildSceneGraph(multiLineSpec);
+    const mainGroup = scene.children.find((c) => c.id === 'chart-main-group');
+    expect(mainGroup).toBeDefined();
+
+    // Check gridlines (both X and Y)
+    const gridGroup = mainGroup?.children?.find((c) => c.id === 'grid-group');
+    expect(gridGroup).toBeDefined();
+    expect(gridGroup?.children?.some((c) => c.id.startsWith('grid-y-'))).toBe(true);
+    expect(gridGroup?.children?.some((c) => c.id.startsWith('grid-x-'))).toBe(true);
+
+    // Check multi-series lines
+    const line0 = mainGroup?.children?.find((c) => c.id === 'line-path-0');
+    const line1 = mainGroup?.children?.find((c) => c.id === 'line-path-1');
+    expect(line0).toBeDefined();
+    expect(line1).toBeDefined();
+
+    // Check circular nodes
+    const dot0 = mainGroup?.children?.find((c) => c.id === 'line-dot-0-0');
+    expect(dot0).toBeDefined();
+    expect(dot0?.type).toBe('circle');
+
+    // Check line-dot legend
+    const legend = mainGroup?.children?.find((c) => c.id === 'line-series-legend');
+    expect(legend).toBeDefined();
+    expect(legend?.children?.some((c) => c.id.includes('line'))).toBe(true);
+    expect(legend?.children?.some((c) => c.id.includes('dot'))).toBe(true);
+  });
 });
+
 
 
