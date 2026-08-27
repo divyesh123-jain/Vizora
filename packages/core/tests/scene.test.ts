@@ -254,6 +254,121 @@ describe('Headless SceneGraph Resolution', () => {
     });
     expect(emptyFunnel.children.length).toBeGreaterThan(0);
   });
+
+  it('renders X and Y axis legends (titles) inside Cartesian charts', () => {
+    const spec = {
+      version: '0.1.0' as const,
+      type: 'bar' as const,
+      data: [
+        { month: 'Jan', revenue: 100 },
+        { month: 'Feb', revenue: 200 },
+      ],
+      encoding: {
+        x: { field: 'month', label: 'Billing Month' },
+        y: { field: 'revenue', label: 'Gross Revenue ($)' },
+      },
+    };
+
+    const scene = buildSceneGraph(spec);
+    const mainGroup = scene.children.find((c) => c.id === 'chart-main-group');
+    const axesGroup = mainGroup?.children?.find((c) => c.id === 'axes-group');
+    expect(axesGroup).toBeDefined();
+
+    const titleX = axesGroup?.children?.find((c) => c.id === 'axis-title-x');
+    expect(titleX).toBeDefined();
+    expect(titleX?.children?.[0]?.attributes?.text).toBe('Billing Month');
+
+    const titleY = axesGroup?.children?.find((c) => c.id === 'axis-title-y');
+    expect(titleY).toBeDefined();
+    expect(titleY?.children?.[0]?.attributes?.text).toBe('Gross Revenue ($)');
+  });
+
+  it('renders in-chart series legend for multi-series grouped bar and donut charts', () => {
+    const barSpec = {
+      version: '0.1.0' as const,
+      type: 'bar' as const,
+      data: [
+        { quarter: 'Q1', revenue: 100, region: 'US' },
+        { quarter: 'Q1', revenue: 150, region: 'EU' },
+      ],
+      encoding: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue' },
+        series: { field: 'region' },
+        mode: 'grouped' as const,
+      },
+    };
+
+    const barScene = buildSceneGraph(barSpec);
+    const barMain = barScene.children.find((c) => c.id === 'chart-main-group');
+    const barLegend = barMain?.children?.find((c) => c.id === 'bar-series-legend');
+    expect(barLegend).toBeDefined();
+    expect(barLegend?.children?.some((c) => c.id.includes('swatch'))).toBe(true);
+
+    const donutSpec = {
+      version: '0.1.0' as const,
+      type: 'donut' as const,
+      data: [
+        { tier: 'Free', users: 500 },
+        { tier: 'Pro', users: 200 },
+      ],
+      encoding: {
+        x: { field: 'tier' },
+        y: { field: 'users' },
+      },
+    };
+
+    const donutScene = buildSceneGraph(donutSpec);
+    const donutMain = donutScene.children.find((c) => c.id === 'chart-main-group');
+    const donutLegend = donutMain?.children?.find((c) => c.id === 'donut-legend');
+    expect(donutLegend).toBeDefined();
+  });
+
+  it('renders multi-series line chart with dual gridlines, smooth curves, and line-dot legend markers', () => {
+    const multiLineSpec = {
+      version: '0.1.0' as const,
+      type: 'line' as const,
+      data: [
+        { name: 'A', value: 240, series: 'pv' },
+        { name: 'B', value: 456, series: 'pv' },
+        { name: 'A', value: 400, series: 'uv' },
+        { name: 'B', value: 300, series: 'uv' },
+      ],
+      encoding: {
+        x: { field: 'name' },
+        y: { field: 'value' },
+        series: { field: 'series' },
+      },
+    };
+
+    const scene = buildSceneGraph(multiLineSpec);
+    const mainGroup = scene.children.find((c) => c.id === 'chart-main-group');
+    expect(mainGroup).toBeDefined();
+
+    // Check gridlines (both X and Y)
+    const gridGroup = mainGroup?.children?.find((c) => c.id === 'grid-group');
+    expect(gridGroup).toBeDefined();
+    expect(gridGroup?.children?.some((c) => c.id.startsWith('grid-y-'))).toBe(true);
+    expect(gridGroup?.children?.some((c) => c.id.startsWith('grid-x-'))).toBe(true);
+
+    // Check multi-series lines
+    const line0 = mainGroup?.children?.find((c) => c.id === 'line-path-0');
+    const line1 = mainGroup?.children?.find((c) => c.id === 'line-path-1');
+    expect(line0).toBeDefined();
+    expect(line1).toBeDefined();
+
+    // Check circular nodes
+    const dot0 = mainGroup?.children?.find((c) => c.id === 'line-dot-0-0');
+    expect(dot0).toBeDefined();
+    expect(dot0?.type).toBe('circle');
+
+    // Check line-dot legend
+    const legend = mainGroup?.children?.find((c) => c.id === 'line-series-legend');
+    expect(legend).toBeDefined();
+    expect(legend?.children?.some((c) => c.id.includes('line'))).toBe(true);
+    expect(legend?.children?.some((c) => c.id.includes('dot'))).toBe(true);
+  });
 });
+
 
 

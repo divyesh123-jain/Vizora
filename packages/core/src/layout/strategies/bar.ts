@@ -15,6 +15,9 @@ import {
   createTickTextX,
   createTickTextY,
   createBaseAxes,
+  createAxisTitleX,
+  createAxisTitleY,
+  createInChartLegend,
 } from '../primitives/axis';
 
 const parseNum = (v: unknown): number => {
@@ -109,6 +112,22 @@ export class BarChartStrategy implements ChartLayoutStrategy {
 
       if (seriesField && (isGrouped || isStacked)) {
         const seriesKeys = Array.from(new Set(spec.data.map((d) => String(d[seriesField] ?? ''))));
+
+        if (spec.config?.showLegend !== false && seriesKeys.length > 0) {
+          const legendNode = createInChartLegend(
+            'bar-series-legend',
+            seriesKeys.map((k, sIdx) => ({
+              label: k,
+              color: palette.series[sIdx % palette.series.length],
+            })),
+            innerWidth,
+            -14,
+            palette.datum
+          );
+          if (legendNode) {
+            chartGroup.children?.push(legendNode);
+          }
+        }
 
         let maxVal = 1;
         if (isStacked) {
@@ -257,6 +276,16 @@ export class BarChartStrategy implements ChartLayoutStrategy {
           );
         }
       }
+    }
+
+    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || xField;
+    const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || yField;
+
+    if (xLabel) {
+      axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
+    }
+    if (yLabel) {
+      axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
     }
 
     axesGroup.children?.push(...createBaseAxes(innerWidth, innerHeight));
