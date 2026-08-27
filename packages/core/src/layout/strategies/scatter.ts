@@ -13,6 +13,8 @@ import {
   createTickTextX,
   createTickTextY,
   createBaseAxes,
+  createAxisTitleX,
+  createAxisTitleY,
 } from '../primitives/axis';
 
 export class ScatterChartStrategy implements ChartLayoutStrategy {
@@ -76,6 +78,16 @@ export class ScatterChartStrategy implements ChartLayoutStrategy {
         },
       });
     });
+
+    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || xField;
+    const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || yField;
+
+    if (xLabel) {
+      axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
+    }
+    if (yLabel) {
+      axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
+    }
 
     axesGroup.children?.push(...createBaseAxes(innerWidth, innerHeight));
 

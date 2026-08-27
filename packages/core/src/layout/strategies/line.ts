@@ -17,6 +17,9 @@ import {
   createTickTextX,
   createTickTextY,
   createBaseAxes,
+  createAxisTitleX,
+  createAxisTitleY,
+  createInChartLegend,
 } from '../primitives/axis';
 
 const parseNum = (v: unknown): number => {
@@ -175,6 +178,36 @@ export class LineChartStrategy implements ChartLayoutStrategy {
           attributes: { x: maxX - 2, y: maxY - 18, width: 4, height: 4, fill: palette.flare },
         }
       );
+    }
+
+    const seriesField = spec.encoding.series?.field || spec.encoding.color?.field;
+    if (seriesField && spec.config?.showLegend !== false) {
+      const seriesKeys = Array.from(new Set(spec.data.map((d) => String(d[seriesField] ?? ''))));
+      if (seriesKeys.length > 0) {
+        const legendNode = createInChartLegend(
+          'line-series-legend',
+          seriesKeys.map((k, sIdx) => ({
+            label: k,
+            color: palette.series[sIdx % palette.series.length],
+          })),
+          innerWidth,
+          -14,
+          palette.datum
+        );
+        if (legendNode) {
+          chartGroup.children?.push(legendNode);
+        }
+      }
+    }
+
+    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || xField;
+    const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || yField;
+
+    if (xLabel) {
+      axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
+    }
+    if (yLabel) {
+      axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
     }
 
     axesGroup.children?.push(...createBaseAxes(innerWidth, innerHeight));

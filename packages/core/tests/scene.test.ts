@@ -254,6 +254,75 @@ describe('Headless SceneGraph Resolution', () => {
     });
     expect(emptyFunnel.children.length).toBeGreaterThan(0);
   });
+
+  it('renders X and Y axis legends (titles) inside Cartesian charts', () => {
+    const spec = {
+      version: '0.1.0' as const,
+      type: 'bar' as const,
+      data: [
+        { month: 'Jan', revenue: 100 },
+        { month: 'Feb', revenue: 200 },
+      ],
+      encoding: {
+        x: { field: 'month', label: 'Billing Month' },
+        y: { field: 'revenue', label: 'Gross Revenue ($)' },
+      },
+    };
+
+    const scene = buildSceneGraph(spec);
+    const mainGroup = scene.children.find((c) => c.id === 'chart-main-group');
+    const axesGroup = mainGroup?.children?.find((c) => c.id === 'axes-group');
+    expect(axesGroup).toBeDefined();
+
+    const titleX = axesGroup?.children?.find((c) => c.id === 'axis-title-x');
+    expect(titleX).toBeDefined();
+    expect(titleX?.children?.[0]?.attributes?.text).toBe('Billing Month');
+
+    const titleY = axesGroup?.children?.find((c) => c.id === 'axis-title-y');
+    expect(titleY).toBeDefined();
+    expect(titleY?.children?.[0]?.attributes?.text).toBe('Gross Revenue ($)');
+  });
+
+  it('renders in-chart series legend for multi-series grouped bar and donut charts', () => {
+    const barSpec = {
+      version: '0.1.0' as const,
+      type: 'bar' as const,
+      data: [
+        { quarter: 'Q1', revenue: 100, region: 'US' },
+        { quarter: 'Q1', revenue: 150, region: 'EU' },
+      ],
+      encoding: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue' },
+        series: { field: 'region' },
+        mode: 'grouped' as const,
+      },
+    };
+
+    const barScene = buildSceneGraph(barSpec);
+    const barMain = barScene.children.find((c) => c.id === 'chart-main-group');
+    const barLegend = barMain?.children?.find((c) => c.id === 'bar-series-legend');
+    expect(barLegend).toBeDefined();
+    expect(barLegend?.children?.some((c) => c.id.includes('swatch'))).toBe(true);
+
+    const donutSpec = {
+      version: '0.1.0' as const,
+      type: 'donut' as const,
+      data: [
+        { tier: 'Free', users: 500 },
+        { tier: 'Pro', users: 200 },
+      ],
+      encoding: {
+        x: { field: 'tier' },
+        y: { field: 'users' },
+      },
+    };
+
+    const donutScene = buildSceneGraph(donutSpec);
+    const donutMain = donutScene.children.find((c) => c.id === 'chart-main-group');
+    const donutLegend = donutMain?.children?.find((c) => c.id === 'donut-legend');
+    expect(donutLegend).toBeDefined();
+  });
 });
 
 

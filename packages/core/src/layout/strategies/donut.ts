@@ -5,6 +5,7 @@ import {
   resolveThemeColors,
 } from '../types';
 import { formatNumber } from '../../format/number';
+import { createInChartLegend } from '../primitives/axis';
 
 const parseNum = (v: unknown, fallback = 0): number => {
   const n = Number(v);
@@ -117,6 +118,17 @@ export class DonutChartStrategy implements ChartLayoutStrategy {
         },
         children: [{ id: 'total-lbl', type: 'text', attributes: { text: 'TOTAL' } }],
       });
+    }
+
+    if (spec.config?.showLegend !== false && spec.data.length > 0) {
+      const items = spec.data.map((d, i) => ({
+        label: String(d[xField] ?? `Item ${i + 1}`),
+        color: palette.series[i % palette.series.length],
+      }));
+      const legendNode = createInChartLegend('donut-legend', items, innerWidth, -14, palette.datum);
+      if (legendNode) {
+        chartGroup.children?.push(legendNode);
+      }
     }
 
     return [chartGroup];
