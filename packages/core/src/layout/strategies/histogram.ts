@@ -16,6 +16,7 @@ import {
   createBaseAxes,
   createAxisTitleX,
   createAxisTitleY,
+  resolveAxisLabel,
 } from '../primitives/axis';
 
 export class HistogramChartStrategy implements ChartLayoutStrategy {
@@ -74,15 +75,11 @@ export class HistogramChartStrategy implements ChartLayoutStrategy {
       axesGroup.children?.push(createTickTextX(`tick-x-${i}`, x + bw / 2, innerHeight + 18, b.label));
     });
 
-    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || 'Range';
-    const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || 'Count';
+    const xLabel = resolveAxisLabel(spec.encoding.x?.label, spec.encoding.x?.field, xField || 'Range');
+    const yLabel = spec.encoding.y?.label || 'Count';
 
-    if (xLabel) {
-      axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
-    }
-    if (yLabel) {
-      axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
-    }
+    axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
+    axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
 
     axesGroup.children?.push(...createBaseAxes(innerWidth, innerHeight));
 

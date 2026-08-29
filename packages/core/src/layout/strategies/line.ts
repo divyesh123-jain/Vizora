@@ -22,6 +22,7 @@ import {
   createAxisTitleY,
   createInChartLegend,
   generateSmoothBezierPath,
+  resolveAxisLabel,
 } from '../primitives/axis';
 
 const parseNum = (v: unknown): number => {
@@ -46,16 +47,36 @@ export class LineChartStrategy implements ChartLayoutStrategy {
     const rawDates = spec.data.map((d) => new Date(String(d[xField] ?? '')));
     const isTemporal = rawDates.every((dt) => !isNaN(dt.getTime()));
 
-    // Detect if data has multiple series (via explicit series field or series in config)
+    // Detect series format: explicit series field (long format) OR multiple numeric fields (wide format)
     const seriesField = spec.encoding.series?.field || spec.encoding.color?.field;
-    const isMultiSeries = Boolean(seriesField);
-    const seriesKeys = isMultiSeries
-      ? Array.from(new Set(spec.data.map((d) => String(d[seriesField!] ?? ''))))
-      : [yField];
+    const firstRow = spec.data[0] || {};
+    const numericKeys = Object.keys(firstRow).filter(
+      (k) => k !== xField && typeof firstRow[k] === 'number'
+    );
 
-    // Compute max value across all series
-    const values = spec.data.map((d) => parseNum(d[yField]));
-    const maxVal = Math.max(...values, 0) || 1;
+    const isLongFormat = Boolean(seriesField);
+    const isWideMultiSeries = !isLongFormat && numericKeys.length > 1 && (!spec.encoding.y?.field || numericKeys.includes(spec.encoding.y.field));
+
+    let seriesKeys: string[] = [];
+    if (isLongFormat) {
+      seriesKeys = Array.from(new Set(spec.data.map((d) => String(d[seriesField!] ?? ''))));
+    } else if (isWideMultiSeries) {
+      seriesKeys = numericKeys;
+    } else {
+      seriesKeys = [yField];
+    }
+
+    // Compute max value across all series/columns
+    let allValues: number[] = [];
+    if (isWideMultiSeries) {
+      spec.data.forEach((d) => {
+        seriesKeys.forEach((k) => allValues.push(parseNum(d[k])));
+      });
+    } else {
+      allValues = spec.data.map((d) => parseNum(d[yField]));
+    }
+
+    const maxVal = Math.max(...allValues, 0) || 1;
     const yScale = createScaleLinear([0, maxVal * 1.1], [innerHeight, 0]);
 
     let getXPos: (d: Record<string, unknown>, i: number) => number;
@@ -97,7 +118,56 @@ export class LineChartStrategy implements ChartLayoutStrategy {
     });
 
     // 3. Render series lines and points
-    if (isMultiSeries && seriesKeys.length > 1) {
+    if (isWideMultiSeries) {
+      // Wide format: each series is a separate numeric column
+      seriesKeys.forEach((sKey, sIdx) => {
+        const sColor = palette.series[sIdx % palette.series.length];
+        const sPoints = spec.data.map((d, i) => ({
+          x: getXPos(d, i),
+          y: yScale(parseNum(d[sKey])),
+        }));
+
+        const smoothPath = generateSmoothBezierPath(sPoints);
+
+        chartGroup.children?.push({
+          id: `line-path-${sIdx}`,
+          type: 'path',
+          attributes: {
+            d: smoothPath,
+            fill: 'none',
+            stroke: sColor,
+            'stroke-width': 2.5,
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+          },
+        });
+
+        spec.data.forEach((d, i) => {
+          const x = getXPos(d, i);
+          const val = parseNum(d[sKey]);
+          const y = yScale(val);
+          const xVal = isTemporal ? formatDate(new Date(String(d[xField] ?? ''))) : String(d[xField] ?? '');
+
+          chartGroup.children?.push({
+            id: `line-dot-${sIdx}-${i}`,
+            type: 'circle',
+            attributes: {
+              cx: x,
+              cy: y,
+              r: 4.5,
+              fill: sColor,
+              stroke: COLOR_FIELD_BRIGHT(),
+              'stroke-width': 2,
+              'data-vizora-item': 'true',
+              'data-x-val': `${xVal} (${sKey})`,
+              'data-y-val': String(val),
+              'data-index': `${sIdx}-${i}`,
+            },
+          });
+        });
+      });
+    } else if (isLongFormat && seriesKeys.length > 1) {
+      // Long format: records tagged by series field
       seriesKeys.forEach((sKey, sIdx) => {
         const sData = spec.data.filter((d) => String(d[seriesField!] ?? '') === sKey);
         const sColor = palette.series[sIdx % palette.series.length];
@@ -134,7 +204,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
             attributes: {
               cx: x,
               cy: y,
-              r: 4,
+              r: 4.5,
               fill: sColor,
               stroke: COLOR_FIELD_BRIGHT(),
               'stroke-width': 2,
@@ -201,7 +271,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
         },
       });
 
-      const maxValIdx = values.indexOf(maxVal);
+      const maxValIdx = allValues.indexOf(maxVal);
 
       spec.data.forEach((d, i) => {
         const x = getXPos(d, i);
@@ -215,7 +285,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
           attributes: {
             cx: x,
             cy: y,
-            r: 4,
+            r: 4.5,
             fill: i === maxValIdx ? palette.waypoint : palette.waypoint,
             stroke: COLOR_FIELD_BRIGHT(),
             'stroke-width': 2,
@@ -230,7 +300,7 @@ export class LineChartStrategy implements ChartLayoutStrategy {
 
     // 4. In-Chart Legend (Top-Right aligned with line-dot icon)
     if (spec.config?.showLegend !== false) {
-      const legendItems = isMultiSeries && seriesKeys.length > 1
+      const legendItems = (isWideMultiSeries || (isLongFormat && seriesKeys.length > 1))
         ? seriesKeys.map((k, sIdx) => ({
             label: k,
             color: palette.series[sIdx % palette.series.length],
@@ -257,15 +327,13 @@ export class LineChartStrategy implements ChartLayoutStrategy {
       }
     }
 
-    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || xField;
-    const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || yField;
+    const xLabel = resolveAxisLabel(spec.encoding.x?.label, spec.encoding.x?.field, xField);
+    const yLabel = isWideMultiSeries
+      ? (spec.encoding.y?.label || 'Metric Values')
+      : resolveAxisLabel(spec.encoding.y?.label, spec.encoding.y?.field, yField);
 
-    if (xLabel) {
-      axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
-    }
-    if (yLabel) {
-      axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
-    }
+    axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
+    axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
 
     axesGroup.children?.push(...createBaseAxes(innerWidth, innerHeight));
 

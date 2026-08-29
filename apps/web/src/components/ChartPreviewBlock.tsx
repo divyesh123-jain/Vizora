@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { LegendBand } from './LegendBand';
 import { CodeBlock } from './CodeBlock';
 import { ChartSpec } from '@vizora/core';
 
@@ -190,14 +189,6 @@ export const ChartPreviewBlock: React.FC<ChartPreviewBlockProps> = ({
             )
         )}
       </div>
-
-      {/* Persistent Legend Band */}
-      <LegendBand
-        spec={defaultSpec}
-        dataCount={dataCount}
-        dark={dark}
-        highlightField={highlightField}
-      />
     </div>
   );
 };

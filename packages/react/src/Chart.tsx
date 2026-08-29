@@ -10,6 +10,10 @@ export interface ChartProps {
   type?: ChartType;
   x?: string;
   y?: string;
+  xLabel?: string;
+  yLabel?: string;
+  xTitle?: string;
+  yTitle?: string;
   color?: string;
   series?: string;
   open?: string;
@@ -37,6 +41,10 @@ export const Chart: React.FC<ChartProps> = ({
   type,
   x,
   y,
+  xLabel,
+  yLabel,
+  xTitle,
+  yTitle,
   color,
   series,
   open,
@@ -63,6 +71,10 @@ export const Chart: React.FC<ChartProps> = ({
     type,
     x,
     y,
+    xLabel,
+    yLabel,
+    xTitle,
+    yTitle,
     color,
     series,
     open,

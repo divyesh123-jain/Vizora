@@ -17,6 +17,7 @@ import {
   createBaseAxes,
   createAxisTitleX,
   createAxisTitleY,
+  resolveAxisLabel,
 } from '../primitives/axis';
 
 const parseNum = (v: unknown, fallback = 0): number => {
@@ -164,15 +165,11 @@ export class CandlestickChartStrategy implements ChartLayoutStrategy {
       });
     });
 
-    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || xField || 'Date';
+    const xLabel = resolveAxisLabel(spec.encoding.x?.label, spec.encoding.x?.field, xField || 'Date');
     const yLabel = spec.encoding.y?.label || 'Price';
 
-    if (xLabel) {
-      axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel));
-    }
-    if (yLabel) {
-      axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel));
-    }
+    axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel));
+    axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel));
 
     axesGroup.children?.push(...createBaseAxes(innerWidth, innerHeight));
 

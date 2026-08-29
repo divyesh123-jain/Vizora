@@ -9,7 +9,6 @@ import { profileField } from '@vizora/intelligence';
 import { StepperProgress, StepItem } from '../../components/StepperProgress';
 import { CompassDial } from '../../components/CompassDial';
 import { PalettePicker } from '../../components/PalettePicker';
-import { LegendBand } from '../../components/LegendBand';
 import { ChartPreviewBlock } from '../../components/ChartPreviewBlock';
 
 const BUILDER_STEPS: StepItem[] = [
@@ -634,7 +633,7 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                   <span className="text-[#60685c] font-bold">Live Mapping Preview</span>
                   <span className="text-[#c2872e] uppercase font-bold">{chartType}</span>
                 </div>
-                <div className="h-52 p-2 flex items-center justify-center">
+                <div className="h-60 p-3 flex items-center justify-center">
                   <Chart
                     type={chartType}
                     data={dataset}
@@ -643,10 +642,6 @@ export default function Custom${chartType.replace(/-/g, '')}Chart() {
                     orientation={orientation}
                   />
                 </div>
-                <LegendBand
-                  spec={resolvedSpec}
-                  dataCount={dataset.length}
-                />
               </div>
             </div>
 

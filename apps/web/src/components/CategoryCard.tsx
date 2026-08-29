@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { Chart } from '@vizora/react';
 import { ChartType } from '@vizora/core';
-import { LegendBand } from './LegendBand';
 
 export interface CategoryInfo {
   slug: string;
@@ -59,10 +58,10 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
         </p>
       </div>
 
-      {/* Center: Live Mini-Chart Preview with LegendBand */}
+      {/* Center: Live Mini-Chart Preview */}
       <div className="my-3.5 rounded-lg overflow-hidden border border-[#18241b]/10 dark:border-[#2d3a30]">
         <div
-          className={`h-36 p-2 flex items-center justify-center pointer-events-none ${
+          className={`h-40 p-2 flex items-center justify-center pointer-events-none ${
             category.dark ? 'bg-[#0b100d]' : 'bg-[#f9fbf8]'
           }`}
         >
@@ -74,18 +73,6 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
             theme={category.dark ? 'zinc' : undefined}
           />
         </div>
-        <LegendBand
-          spec={{
-            type: category.heroChart,
-            encoding: {
-              x: category.x ? { field: category.x } : undefined,
-              y: category.y ? { field: category.y } : undefined,
-            },
-            data: category.data,
-          }}
-          dataCount={category.data.length}
-          dark={category.dark}
-        />
       </div>
 
       {/* Bottom: Action bar */}

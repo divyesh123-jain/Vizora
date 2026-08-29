@@ -240,6 +240,36 @@ export const TEMPLATES_LIST: DashboardTemplate[] = [
       },
     ],
   },
+  {
+    slug: 'multi-series-analytics',
+    title: 'Dual-Series Metric Tracking (PV vs UV)',
+    badge: 'TEMPLATE 06 • DUAL-METRIC',
+    category: 'Product Analytics',
+    theme: 'zinc',
+    description:
+      'Smooth Catmull-Rom multi-series curves with circular nodes, 0-1000 scale bounds, vertical & horizontal dashed grids, and top-right line-dot legends.',
+    metrics: [
+      { label: 'Peak Page Views (pv)', value: '980', sparkline: [240, 456, 139, 980, 390, 480] },
+      { label: 'Unique Visitors (uv)', value: '400', sparkline: [400, 300, 300, 200, 278, 189] },
+      { label: 'Retention Score', value: '88.4%', sparkline: [75, 80, 82, 85, 88.4] },
+    ],
+    charts: [
+      {
+        title: 'Page Views (pv) vs Unique Visitors (uv)',
+        type: 'line',
+        x: 'name',
+        widthClass: 'lg:col-span-3',
+        data: [
+          { name: 'A', pv: 240, uv: 400 },
+          { name: 'B', pv: 456, uv: 300 },
+          { name: 'C', pv: 139, uv: 300 },
+          { name: 'D', pv: 980, uv: 200 },
+          { name: 'E', pv: 390, uv: 278 },
+          { name: 'F', pv: 480, uv: 189 },
+        ],
+      },
+    ],
+  },
 ];
 
 // Pure 3-element KPI Card: Numeral, Label, Waypoint Sparkline
