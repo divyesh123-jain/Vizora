@@ -18,6 +18,7 @@ import {
   createAxisTitleX,
   createAxisTitleY,
   createInChartLegend,
+  resolveAxisLabel,
 } from '../primitives/axis';
 
 const parseNum = (v: unknown): number => {
@@ -278,15 +279,12 @@ export class BarChartStrategy implements ChartLayoutStrategy {
       }
     }
 
-    const xLabel = spec.encoding.x?.label || spec.encoding.x?.field || xField;
-    const yLabel = spec.encoding.y?.label || spec.encoding.y?.field || yField;
+    const isHoriz = spec.encoding.orientation === 'horizontal';
+    const xLabel = resolveAxisLabel(spec.encoding.x?.label, spec.encoding.x?.field, isHoriz ? yField : xField);
+    const yLabel = resolveAxisLabel(spec.encoding.y?.label, spec.encoding.y?.field, isHoriz ? xField : yField);
 
-    if (xLabel) {
-      axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, xLabel, palette.datum));
-    }
-    if (yLabel) {
-      axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, yLabel, palette.datum));
-    }
+    axesGroup.children?.push(createAxisTitleX('axis-title-x', innerWidth, innerHeight, isHoriz ? yLabel : xLabel, palette.datum));
+    axesGroup.children?.push(createAxisTitleY('axis-title-y', innerHeight, isHoriz ? xLabel : yLabel, palette.datum));
 
     axesGroup.children?.push(...createBaseAxes(innerWidth, innerHeight));
 

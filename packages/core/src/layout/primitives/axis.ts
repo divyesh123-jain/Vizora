@@ -270,3 +270,81 @@ export function generateSmoothBezierPath(points: { x: number; y: number }[]): st
 
   return d;
 }
+
+// ── Axis Label Utilities ──────────────────────────────────────────────
+
+/** Well-known field → readable label mappings */
+const FIELD_LABEL_MAP: Record<string, string> = {
+  // Revenue & Finance
+  arr: 'ARR',
+  mrr: 'MRR',
+  revenue: 'Revenue',
+  price: 'Price',
+  cost: 'Cost',
+  profit: 'Profit',
+  volume: 'Volume',
+  amount: 'Amount',
+  closed: 'Closed Revenue',
+  deals: 'Deals',
+  // Users & Traffic
+  visitors: 'Visitors',
+  users: 'Users',
+  subs: 'Subscribers',
+  subscribers: 'Subscribers',
+  sessions: 'Sessions',
+  views: 'Views',
+  clicks: 'Clicks',
+  // Performance & Metrics
+  cpu: 'CPU (%)',
+  latency: 'Latency (ms)',
+  memory: 'Memory',
+  count: 'Count',
+  value: 'Value',
+  score: 'Score',
+  rate: 'Rate',
+  pv: 'Page Views',
+  uv: 'Unique Visitors',
+  // Time & Category
+  month: 'Month',
+  day: 'Day',
+  week: 'Week',
+  date: 'Date',
+  year: 'Year',
+  hour: 'Hour',
+  name: 'Name',
+  category: 'Category',
+  region: 'Region',
+  stage: 'Stage',
+  device: 'Device',
+};
+
+/**
+ * Converts a raw field name into a human-readable axis label.
+ * - Checks known mappings first
+ * - Falls back to splitting camelCase/snake_case and capitalizing
+ */
+export function humanizeFieldName(field: string): string {
+  const lower = field.toLowerCase();
+  if (FIELD_LABEL_MAP[lower]) return FIELD_LABEL_MAP[lower];
+
+  // Split on camelCase boundaries, underscores, hyphens
+  return field
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (ch) => ch.toUpperCase())
+    .trim();
+}
+
+/**
+ * Resolves a proper axis label from the spec encoding, falling back to
+ * humanized field name.
+ */
+export function resolveAxisLabel(
+  encodingLabel: string | undefined,
+  encodingField: string | undefined,
+  fallbackField: string
+): string {
+  if (encodingLabel) return encodingLabel;
+  const field = encodingField || fallbackField;
+  return humanizeFieldName(field);
+}
